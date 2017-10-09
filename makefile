@@ -12,6 +12,9 @@ mergesort: mergesort.c mergesort.h shuffle.o
 LSDradix: LSDradix.c LSDradix.h shuffle.o
 	$(CC) LSDradix.c shuffle.o -o LSDradix -lm
 
+MSDradix: MSDradix.c MSDradix.h shuffle.o
+	$(CC) MSDradix.c shuffle.o -o MSDradix -lm
+
 selectionsort: selectionsort.c selectionsort.h shuffle.o
 	$(CC) selectionsort.c shuffle.o -o selectionsort
 
