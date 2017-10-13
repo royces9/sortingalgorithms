@@ -4,7 +4,7 @@ bubblesort: bubblesort.c bubblesort.h shuffle.o
 	$(CC) bubblesort.c shuffle.o -o bubblesort
 
 quicksort: quicksort.c quicksort.h shuffle.o
-	$(CC) quicksort.c shuffle.o -o quicksort
+	$(CC) quicksort.c shuffle.o -o quicksort -lm
 
 mergesort: mergesort.c mergesort.h shuffle.o
 	$(CC) mergesort.c shuffle.o -o mergesort -lm
@@ -17,6 +17,9 @@ MSDradix: MSDradix.c MSDradix.h shuffle.o
 
 selectionsort: selectionsort.c selectionsort.h shuffle.o
 	$(CC) selectionsort.c shuffle.o -o selectionsort
+
+insertionsort: insertionsort.c insertionsort.h shuffle.o
+	$(CC) insertionsort.c shuffle.o -o insertionsort
 
 shuffle.o: shuffle.c shuffle.h
 	$(CC) -c shuffle.c
