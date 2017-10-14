@@ -25,8 +25,7 @@ int main(int argc, char **argv){
   gettimeofday(&end, NULL);
 
   //  printArray(array, size);
-  int tElapse = end.tv_usec - start.tv_usec;
-  printf("Time elapse: %d ms\n", tElapse);
+  printf("Time elapse: %lf s\n", timeDifference(start, end));
 
   free(array);
 
