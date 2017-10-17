@@ -31,4 +31,3 @@ average2 = time2/intCount
 
 print("Average1: ", average1)
 print("Average2: ", average2)
-

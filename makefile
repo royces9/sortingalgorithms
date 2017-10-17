@@ -6,6 +6,9 @@ bubblesort: bubblesort.c bubblesort.h shuffle.o
 quicksort: quicksort.c quicksort.h shuffle.o
 	$(CC) quicksort.c shuffle.o -o quicksort -lm
 
+quicksort2: quicksort2.c quicksort2.h shuffle.o
+	$(CC) quicksort2.c shuffle.o -o quicksort2 -lm
+
 mergesort: mergesort.c mergesort.h shuffle.o
 	$(CC) mergesort.c shuffle.o -o mergesort -lm
 

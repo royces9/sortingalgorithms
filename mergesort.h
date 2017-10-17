@@ -12,22 +12,22 @@ void merge(int *array, int size, int size2){
     return;
   }
 
-  for(int i = 0; i < iter; i++){
+  for(int i = 0; i < iter; ++i){
     if(headTwo >= size2){
-      combinedArray[i] = *(array+headOne++);
+      combinedArray[i] = array[headOne++];
       continue;
     }
 
     if(headOne >= size){
-      combinedArray[i] = *(array+size+headTwo++);
+      combinedArray[i] = array[size+headTwo++];
       continue;
     }
 
-    if(*(array+headOne) > *(array+size+headTwo)){
-      combinedArray[i] = *(array+size+headTwo++);
+    if(array[headOne] > array[size+headTwo]){
+      combinedArray[i] = array[size+headTwo++];
     }
     else{
-      combinedArray[i] = *(array+headOne++);
+      combinedArray[i] = array[headOne++];
     }
   }
 

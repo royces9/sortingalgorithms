@@ -14,21 +14,22 @@ void sort(int *array, int size){
   int pivot2 = fmax(array[0], array[size-1]);
   pivot = fmin(pivot, pivot2);
 
-  int pivotPosition;
-  int tempArray[size];
   for(int i = 0; i < size; ++i){
-    if(array[i] < pivot){
-      tempArray[leftCount++] = array[i];
+    for(;leftCount < size; ++leftCount){
+      if(array[leftCount] >= pivot){
+	break;
+      }
     }
-    else if(array[i] > pivot){
-      tempArray[rightCount--] = array[i];
+
+    for(;rightCount >= 0; --rightCount){
+      if(array[rightCount] <= pivot){
+	break;
+      }
     }
-    else{
-      pivotPosition = i;
-    }
+    int temp = array[leftCount];
+    array[leftCount] = array[rightCount];
+    array[rightCount] = temp;
   }
-  tempArray[rightCount] = array[pivotPosition];
-  copyArray(array, tempArray, size);
   sort(array, rightCount);
   sort(array + leftCount, size - rightCount);
 }
