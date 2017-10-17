@@ -42,6 +42,5 @@ void copyArray(int *dest, int *src, int size){
 }
 
 double timeDifference(struct timeval start, struct timeval end){
-  double elapse = ((double) end.tv_usec - (double) start.tv_usec)/100000;
-  return  elapse += (end.tv_sec - start.tv_sec);
+  return ((double)end.tv_usec - (double)start.tv_usec)/1000000 + ((double)end.tv_sec - (double)start.tv_sec);
 }
