@@ -5,6 +5,9 @@
 #include "shuffle.h"
 #include "quicksort2.h"
 
+int *global;
+int globalSize;
+
 int main(int argc, char **argv){
   int size = 10;
   struct timeval start;
@@ -16,13 +19,16 @@ int main(int argc, char **argv){
 
   int *array = shuffledArray(size);
 
-  //  printArray(array, size);
-  gettimeofday(&start, NULL);
-  sort(array, size);
-  gettimeofday(&end, NULL);
-  //  printArray(array, size);
+  global = array;
+  globalSize = size;
 
-  printf("Time elapsed: %lf s\n", timeDifference(start, end));
+  printArray(array, size);
+  //gettimeofday(&start, NULL);
+  sort(array, size);
+  //gettimeofday(&end, NULL);
+  printArray(array, size);
+
+  //printf("Time elapsed: %lf s\n", timeDifference(start, end));
 
   free(array);
 

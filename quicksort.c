@@ -16,13 +16,13 @@ int main(int argc, char **argv){
 
   int *array = shuffledArray(size);
 
-  //  printArray(array, size);
-  gettimeofday(&start, NULL);
+  printArray(array, size);
+  //gettimeofday(&start, NULL);
   sort(array, size);
-  gettimeofday(&end, NULL);
-  //  printArray(array, size);
+  //gettimeofday(&end, NULL);
+  printArray(array, size);
 
-  printf("Time elapsed: %lf s\n", timeDifference(start, end));
+  //printf("Time elapsed: %lf s\n", timeDifference(start, end));
 
   free(array);
 

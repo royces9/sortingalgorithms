@@ -3,8 +3,10 @@
 
 #include <math.h>
 
-//LSD radix
+extern int *global;
+extern int globalSize;
 
+//LSD radix
 void sort(int *array, int size){
   int dupArray[size], copyIndex, tempIndex, max;
 
@@ -33,8 +35,8 @@ void sort(int *array, int size){
     for(int l = copyIndex; l < size; l++){
       array[l] = dupArray[(size + copyIndex - 1) - l];
     }
+    printArray(global, globalSize);
   }
-
 
 }
 

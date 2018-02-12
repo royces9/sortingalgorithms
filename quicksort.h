@@ -10,7 +10,7 @@ void sort(int *array, int size){
   }
 
   int leftCount = 0, rightCount = size - 1;
-  int pivot = fmax(array[0], array[(int) floor(size/2)]);
+  int pivot = fmax(array[0], array[(int) size/2]);
   int pivot2 = fmax(array[0], array[size-1]);
   pivot = fmin(pivot, pivot2);
 
