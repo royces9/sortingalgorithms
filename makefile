@@ -28,7 +28,7 @@ insertionsort: insertionsort.c insertionsort.h shuffle.o
 	$(CC) insertionsort.c shuffle.o -o insertionsort
 
 heapsort: heapsort.c heapsort.h shuffle.o
-	$(CC) heapsort.c shuffle.o -o heapsort
+	$(CC) heapsort.c shuffle.o -o heapsort -lm
 
 threadqs: threadqs.c threadqs.h shuffle.o
 	$(CC) threadqs.c shuffle.o -o threadqs -lm

@@ -15,16 +15,24 @@ int main(int argc, char **argv){
   }
 
   int *array = shuffledArray(size);
+  int flag;
+  if(argv[2] == NULL)
+    flag = 0;
+  else
+    flag = atoi(argv[2]);
 
-  //  printArray(array, size);
+  if(flag & 1)
+    printArray(array, size);
 
   gettimeofday(&start, NULL);
   sort(array, size);
   gettimeofday(&end, NULL);
 
-  //  printArray(array, size);
+  if(flag & 1)
+    printArray(array, size);
 
-  printf("Time elapsed: %lf s\n", timeDifference(start, end));
+  if(flag & 2)
+    printf("Time elapsed: %lf s\n", timeDifference(start, end));
 
   free(array);
 
