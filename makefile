@@ -15,6 +15,9 @@ mergesort: mergesort.c mergesort.h shuffle.o file.h
 mergesort2: mergesort2.c mergesort2.h shuffle.o file.h
 	$(CC) mergesort2.c shuffle.o -o mergesort2 -lm
 
+mergesort_thread: mergesort_thread.c mergesort.h shuffle.o
+	$(CC) mergesort_thread.c shuffle.o -o mergesort_thread -lm -pthread
+
 LSDradix: LSDradix.c LSDradix.h shuffle.o
 	$(CC) LSDradix.c shuffle.o -o LSDradix -lm
 
