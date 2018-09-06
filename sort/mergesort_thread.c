@@ -1,8 +1,12 @@
 #ifndef MERGESORT_THREAD
 #define MERGESORT_THREAD
 
-extern int *global;
-extern int globalSize;
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+
+#include <shuffle.h>
 
 typedef struct {
 	int *array;
@@ -10,14 +14,10 @@ typedef struct {
 } data;
 
 void merge(int *array, int size, int size2) {
-	int iter = size+ size2;
+	int iter = size + size2;
 	int *combinedArray = malloc(sizeof(*combinedArray) * iter);
-
 	int head[2] = {0, size};
 
-	if(size2 == 0){
-		return;
-	}
 
 	for(int i = 0; i < iter; ++i) {
 		if(head[1] >= iter){
@@ -29,9 +29,27 @@ void merge(int *array, int size, int size2) {
 		}
 	}
 	copyArray(array, combinedArray, iter);
+	free(combinedArray);
 }
 
 void sort_point(void *arg) {
+	int *array = (*(data *) arg).array;
+	int size = (*(data *) arg).size;
+
+	int newSize = size / 2;
+	int newSize2 = size - newSize;
+
+	if(size > 1) {
+		data left = {array, newSize};
+		data right = {array + newSize, newSize2};
+
+		sort_point((void *) &left);
+		sort_point((void *) &right);
+
+		merge(array, newSize, newSize2);
+	}
+
+
 }
 
 void sort(int *array, int size) {
@@ -40,21 +58,31 @@ void sort(int *array, int size) {
 	int part = size / count;
 
 	pthread_t *t = malloc(sizeof(*t) * count);
-	int i = 0;
-	data a = {NULL, 0};
-	for(; i < count - 1; ++i) {
-		a.array = array + (i * part);
-		a.size = part;
 
-		pthread_create(t + i, NULL, (void * (*) (void *)) &sort_point, (void *) a);
+	int i = 0;
+	data *data_struct = malloc(sizeof(*data_struct) * count);
+	for(; i < count - 1; ++i) {
+		data_struct[i].array = array + (i * part);
+		data_struct[i].size = part;
+		pthread_create(t + i, NULL, (void * (*) (void *)) &sort_point, (void *) (data_struct + i));
 	}
 
-	a.array = array + (i * count);
-	pthread_create(t + count, NULL, (void * (*) (void *)) &sort_point, (void *) a)
+	data_struct[i].array = array + (i * part);
+	data_struct[i].size = size - (i * part);
+	pthread_create(t + i, NULL, (void * (*) (void *)) &sort_point, (void *) (data_struct + i));
 
+	int j = 0;
+	for(; j < count - 1; ++j) {
+		pthread_join(*(t + j), NULL);
+	}
+	int k = 0;
+	for(; k < count - 1; ++k) {
+		merge(array + (k * part), part, part);
+	}
+	merge(array + (k * part), k * part, size - (k * part));
 
-
-	merge(array, newSize, newSize2);
+	free(t);
+	free(data_struct);
 }
 
 

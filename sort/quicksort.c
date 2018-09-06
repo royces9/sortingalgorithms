@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "shuffle.h"
+
 void sort(int *array, int size) {
 	if(size == 1)
 		return;

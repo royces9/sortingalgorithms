@@ -8,7 +8,6 @@ void sort(int *, int);
 int main(int argc, char **argv){
 	int size = 10;
 
-
 	struct timeval start;
 	struct timeval end;
   

@@ -12,13 +12,13 @@ time1 = 0;
 time2 = 0;
 
 for x in range(0, intCount):
-    p1 = subprocess.Popen(["./"+alg1, size], stdout = subprocess.PIPE)
+    p1 = subprocess.Popen(["./"+alg1, size, "2"], stdout = subprocess.PIPE)
     out1 = p1.stdout.read()
     out1 = out1.decode("utf-8")
     splitString1 = out1.split(" ")
     time1 += float(splitString1[2])
 
-    p2 = subprocess.Popen(["./"+alg2, size], stdout = subprocess.PIPE)
+    p2 = subprocess.Popen(["./"+alg2, size, "2"], stdout = subprocess.PIPE)
     out2 = p2.stdout.read()
     out2 = out2.decode("utf-8")
     splitString2 = out2.split(" ")

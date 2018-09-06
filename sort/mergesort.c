@@ -1,19 +1,17 @@
 #ifndef MERGESORT
 #define MERGESORT
 
-#include <math.h>
+#include <stdlib.h>
 #include <string.h>
 
-extern int *global;
-extern int globalSize;
+#include "shuffle.h"
 
 //mergesort
 void merge(int *array, int size, int size2){
-	int iter = size + size2, combinedArray[iter], headOne = 0, headTwo = size;
-
-	if(size2 == 0){
-		return;
-	}
+	int iter = size + size2;
+	int *combinedArray = malloc(sizeof(*combinedArray) * iter);
+	int headOne = 0;
+	int headTwo = size;
 
 	for(int i = 0; i < iter; ++i){
 		if(headTwo >= iter){
@@ -30,19 +28,18 @@ void merge(int *array, int size, int size2){
 		}
 	}
 	copyArray(array, combinedArray, iter);
+	free(combinedArray);
 }
 
-void sort(int *array, int size){
-	int newSize = floor(size/2), newSize2 = size - newSize;
-	if(size > 1){
+void sort(int *array, int size) {
+	int newSize = size / 2;
+	int newSize2 = size - newSize;
+
+	if(size > 1) {
 		sort(array, newSize);
 		sort(array+newSize, newSize2);
+		merge(array, newSize, newSize2);
 	}
-	else{
-		newSize = 1;
-		newSize2 = 0;
-	}
-	merge(array, newSize, newSize2);
 }
 
 #endif //MERGESORT

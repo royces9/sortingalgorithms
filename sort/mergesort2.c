@@ -2,10 +2,10 @@
 #define MERGESORT
 
 #include <math.h>
+#include <stdlib.h>
 #include <string.h>
 
-extern int *global;
-extern int globalSize;
+#include "shuffle.h"
 
 //mergesort
 void merge(int *array, int size, int size2) {
@@ -13,10 +13,6 @@ void merge(int *array, int size, int size2) {
 	int *combinedArray = malloc(sizeof(*combinedArray) * iter);
 
 	int head[2] = {0, size};
-
-	if(size2 == 0){
-		return;
-	}
 
 	for(int i = 0; i < iter; ++i) {
 		if(head[1] >= iter){
@@ -28,21 +24,18 @@ void merge(int *array, int size, int size2) {
 		}
 	}
 	copyArray(array, combinedArray, iter);
+	free(combinedArray);
 }
 
 void sort(int *array, int size) {
-	int newSize = floor(size/2);
+	int newSize = size / 2;
 	int newSize2 = size - newSize;
 
 	if(size > 1) {
 		sort(array, newSize);
 		sort(array + newSize, newSize2);
-	} else {
-		newSize = 1;
-		newSize2 = 0;
+		merge(array, newSize, newSize2);
 	}
-
-	merge(array, newSize, newSize2);
 }
 
 #endif //MERGESORT

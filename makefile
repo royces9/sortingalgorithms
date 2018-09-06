@@ -1,14 +1,22 @@
 CC = gcc
-FLAGS = -Wall -I.
+FLAGS = -g -Wall -I.
+LDFLAGS = -lm -pthread
+
+SORTC = $(wildcard sort/*.c)
+OBJS = $(SORTC:.c=.o)
+EXE =  $(SORTC:.c=)
 
 
-bubblesort: sort/bubblesort.o main.o shuffle.o
-	$(CC) $^ -o bubblesort
+all: $(EXE)
+
+$(EXE) : $(OBJS) main.o shuffle.o
+	$(CC) $@.o main.o shuffle.o -o ../$@ $(LDFLAGS)
+
 
 shuffle.o: shuffle.c shuffle.h
 	$(CC) $(FLAGS) -c shuffle.c -o shuffle.o
 
-main.o: main.c shuffle.c
+main.o: main.c shuffle.h
 	$(CC) $(FLAGS) -c main.c -o main.o
 
 sort/%.o: sort/%.c shuffle.c

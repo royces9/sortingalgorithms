@@ -2,19 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-//#include "shuffle.h"
-
-//include all the sorting algorithm .h
-/*
-#include "bubblesort.h"
-#include "heapsort.h"
-#include "insertionsort.h"
-#include "LSDradix.h"
-#include "mergesort.h"
-#include "MSDradix.h"
-#include "quicksort.h"
-#include "selectionsort.h"
-*/
+#include "shuffle.h"
 
 int *shuffledArray(int size) {
 	struct timeval t2;
@@ -55,34 +43,3 @@ void copyArray(int *dest, int *src, int size) {
 double timeDifference(struct timeval start, struct timeval end) {
 	return ((double)end.tv_usec - (double)start.tv_usec)/1000000 + ((double)end.tv_sec - (double)start.tv_sec);
 }
-
-/*
-void *pickFunction(char *name){
-  int number = 8;
-  static const char **nameArray[] = {
-    "bubblesort",
-    "heapsort",
-    "insertionsort",
-    "LSDradix",
-    "mergesort",
-    "MSDradix",
-    "quicksort",
-    "selectionsort"
-  }
-  int type = -1;
-  for(int i = 0;i < number; ++i){
-    if(!strcmp(name, nameArray[i])){
-      type = i;
-      break
-    }
-  }
-
- switch(type){
- case 1:
-   
- case 2:
- }
-
-  return function;
-}
-*/

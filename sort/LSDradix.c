@@ -2,9 +2,9 @@
 #define LSDRADIX
 
 #include <math.h>
+#include <stdlib.h>
 
-extern int *global;
-extern int globalSize;
+#include "shuffle.h"
 
 //LSD radix
 void sort(int *array, int size) {

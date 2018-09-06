@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-extern int *global;
-extern int globalSize;
 
 void sort(int *array, int size){
 	if(size == 1)

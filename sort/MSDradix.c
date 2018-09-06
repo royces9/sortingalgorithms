@@ -2,6 +2,9 @@
 #define MSDRADIX
 
 #include <math.h>
+#include <stdlib.h>
+
+#include "shuffle.h"
 
 //MSD radix
 void MSDradix(int *array, int size, int msd){
