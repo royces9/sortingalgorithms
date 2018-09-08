@@ -9,53 +9,65 @@
 #include <shuffle.h>
 
 typedef struct {
-	int *array;
-	int size;
+	void *array;
+	int (*compare)(void *, void *);
+	int size_a;
+	int size_e;
 } data;
 
-void merge(int *array, int size, int size2) {
+void copy(void *src, void *dest, int size_e) {
+	char *c_src = src;
+	char *c_dest = dest;
+	for(int i = 0; i < size_e; ++i)
+		*(c_dest++) = *(c_src++);
+}
+
+
+void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, void *)) {
 	int iter = size + size2;
-	int *combinedArray = malloc(sizeof(*combinedArray) * iter);
+	void *combinedArray = malloc(size_e * iter);
 	int head[2] = {0, size};
 
-
 	for(int i = 0; i < iter; ++i) {
-		if(head[1] >= iter){
-			combinedArray[i] = array[head[0]++];
+                if(head[1] >= iter){
+			copy((array + (size_e * head[0]++)), (combinedArray + size_e * i), size_e);
 		} else if(head[0] >= size) {
-			combinedArray[i] = array[head[1]++];
+			copy((array + (size_e * head[1]++)), (combinedArray + size_e * i), size_e);
 		} else {
-			combinedArray[i] = array[head[array[head[0]] > array[head[1]]]++];
+			copy((array + (size_e * head[compare((array + size_e * head[0]), (array + size_e * head[1]))]++)), (combinedArray + size_e * i), size_e);
 		}
 	}
-	copyArray(array, combinedArray, iter);
+	for(int j = 0; j < iter; ++j)
+		copy((combinedArray + size_e * j), (array + size_e * j), size_e);
+
 	free(combinedArray);
 }
 
 void sort_point(void *arg) {
-	int *array = (*(data *) arg).array;
-	int size = (*(data *) arg).size;
+	void *array = (*(data *) arg).array;
+	int (*compare)(void *, void *) = (*(data *) arg).compare;
+	int size_a = (*(data *) arg).size_a;
+	int size_e = (*(data *) arg).size_e;
+	int newSize = size_a / 2;
+	int newSize2 = size_a - newSize;
 
-	int newSize = size / 2;
-	int newSize2 = size - newSize;
-
-	if(size > 1) {
-		data left = {array, newSize};
-		data right = {array + newSize, newSize2};
+	if(size_a > 1) {
+		data left = {array, compare, newSize, size_e};
+		data right = {array + size_e * newSize, compare, newSize2, size_e};
 
 		sort_point((void *) &left);
 		sort_point((void *) &right);
 
-		merge(array, newSize, newSize2);
+		merge(array, newSize, newSize2, size_e, compare);
 	}
 
 
 }
 
-void sort(int *array, int size) {
+void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int count = 2;
 
-	int part = size / count;
+	int part = size_a / count;
 	/*
 	pthread_t t1;
 	pthread_t t2;
@@ -78,12 +90,14 @@ void sort(int *array, int size) {
 	data *data_struct = malloc(sizeof(*data_struct) * count);
 	for(; i < count - 1; ++i) {
 		data_struct[i].array = array + (i * part);
-		data_struct[i].size = part;
+		data_struct[i].compare = compare;
+		data_struct[i].size_a = part;
+		data_struct[i].size_e = size_e;
 		pthread_create(t + i, NULL, (void * (*) (void *)) &sort_point, (void *) (data_struct + i));
 	}
 
 	data_struct[i].array = array + (i * part);
-	data_struct[i].size = size - (i * part);
+	data_struct[i].size_a = size_a - (i * part);
 	pthread_create(t + i, NULL, (void * (*) (void *)) &sort_point, (void *) (data_struct + i));
 
 	int j = 0;
@@ -93,9 +107,9 @@ void sort(int *array, int size) {
 
 	int k = 0;
 	for(; k < count - 1; ++k) {
-		merge(array, part * (k + 1), part);
+		merge(array, part * (k + 1), part, size_e, compare);
 	}
-	merge(array, (count - 1) * part, size - ((count - 1) * part));
+	merge(array, (count - 1) * part, size_a - ((count - 1) * part), size_e, compare);
 
 	free(t);
 	free(data_struct);

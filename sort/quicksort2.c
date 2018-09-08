@@ -1,41 +1,53 @@
-#ifndef QUICKSORT
-#define QUICKSORT
-
 #include <stdlib.h>
-#include <math.h>
 
+void copy(void *src, void *dest, int size_e) {
+	char *c_src = src;
+	char *c_dest = dest;
+	for(int i = 0; i < size_e; ++i)
+		*(c_dest++) = *(c_src++);
+}
 
-void sort(int *array, int size){
-	if(size == 1)
-		return;
+void swap(void *a, void *b, int size_e) {
+	char temp = 0;
+	char *c_a = a;
+	char *c_b = b;
+	for(int i = 0; i < size_e; ++i) {
+		temp  = *c_a;
+		*c_a++ = *c_b;
+		*c_b++ = temp;
+	}
+}
 
-	int leftCount = 0;
-	int rightCount = size - 1;
-	int pivot = fmax(array[0], array[(int) size/2]);
-	int pivot2 = fmax(array[0], array[size-1]);
-	pivot = fmin(pivot, pivot2);
+void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+        int leftCount = 0;
+	int rightCount = size_a - 1;
 
-	for(int i = 0; i < size; ++i) {
-		for(;leftCount < size; ++leftCount) {
-			if(array[leftCount] >= pivot) {
+	char *a = array;
+
+	void *pivot = compare(a, (a + size_e * (size_a / 2))) ? a : (a + size_e * (size_a / 2));
+	void *pivot2 = compare(a, (a + size_e * (size_a - 1))) ? a : (a + size_e * (size_a - 1));
+	pivot = compare(pivot, pivot2) ? pivot2 : pivot;
+
+	void *pivot3 = malloc(size_e);
+	copy(pivot, pivot3, size_e);
+
+	for(int i = 0; i < size_a; ++i) {
+		for(;leftCount < size_a; ++leftCount) {
+			if(compare((a + size_e * leftCount), pivot3))
 				break;
-			}
 		}
 
 		for(;rightCount >= 0; --rightCount) {
-			if(array[rightCount] <= pivot) {
+			if(compare(pivot3, (a + size_e * rightCount)))
 				break;
-			}
 		}
 
-		int temp = array[leftCount-1];
-		array[leftCount-1] = array[rightCount-1];
-		array[rightCount-1] = temp;
-
+		swap((a + size_e * (leftCount - 1)), (a + size_e * (rightCount - 1)), size_e);
 	}
+	//free(pivot3);
 
-	sort(array, rightCount);
-	sort(array + leftCount, size - rightCount);
+	if(rightCount != 1)
+		sort(a, rightCount, size_e, compare);
+	if((size_a - rightCount) != 1)
+ 		sort(a + size_e * leftCount, size_a - rightCount, size_e, compare);
 }
-
-#endif //QUICKSORT

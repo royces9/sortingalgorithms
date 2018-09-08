@@ -28,24 +28,24 @@ void MSDradix(int *array, int size, int msd){
 		}
 	}
 
-	copyArray(array, dupArray, size);
-	MSDradix(array+tempIndex, (size - 1) - copyIndex, msd / 2);
+	copyArray(array, dupArray, size, sizeof(int));
+	MSDradix(array + tempIndex, (size - 1) - copyIndex, msd / 2);
 	MSDradix(array, tempIndex, msd / 2);
 
 	free(dupArray);
 }
 
-void sort(int *array, int size) {
+void sort(int *array, int size_a) {
 	int max = 0;
-	for(int k = 0; k < size; k++) {
-		if(array[k] == (size - 1)) {
+	for(int k = 0; k < size_a; k++) {
+		if(array[k] == (size_a - 1)) {
 			max = array[k];
 			break;
 		}
 	}
 	max = pow(2,floor(log(max)/log(2)));
   
-	MSDradix(array, size, max);
+	MSDradix(array, size_a, max);
 }
 
 #endif //MSDRADIX

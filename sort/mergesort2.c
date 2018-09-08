@@ -1,41 +1,46 @@
-#ifndef MERGESORT
-#define MERGESORT
-
 #include <math.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "shuffle.h"
 
+void copy(void *src, void *dest, int size_e) {
+	char *c_src = src;
+	char *c_dest = dest;
+	for(int i = 0; i < size_e; ++i)
+		*(c_dest++) = *(c_src++);
+}
+
+
 //mergesort
-void merge(int *array, int size, int size2) {
+void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, void *)) {
 	int iter = size + size2;
-	int *combinedArray = malloc(sizeof(*combinedArray) * iter);
+	void *combinedArray = malloc(size_e * iter);
 
 	int head[2] = {0, size};
 
 	for(int i = 0; i < iter; ++i) {
 		if(head[1] >= iter){
-			combinedArray[i] = array[head[0]++];
+			copy((array + (size_e * head[0]++)), (combinedArray + size_e * i), size_e);
 		} else if(head[0] >= size) {
-			combinedArray[i] = array[head[1]++];
+			copy((array + (size_e * head[1]++)), (combinedArray + size_e * i), size_e);
 		} else {
-			combinedArray[i] = array[head[array[head[0]] > array[head[1]]]++];
+			copy((array + (size_e * head[compare((array + size_e * head[0]), (array + size_e * head[1]))]++)), (combinedArray + size_e * i), size_e);
 		}
 	}
-	copyArray(array, combinedArray, iter);
+        for(int j = 0; j < iter; ++j)
+		copy((combinedArray + size_e * j), (array + size_e * j), size_e);
+
 	free(combinedArray);
 }
 
-void sort(int *array, int size) {
-	int newSize = size / 2;
-	int newSize2 = size - newSize;
 
-	if(size > 1) {
-		sort(array, newSize);
-		sort(array + newSize, newSize2);
-		merge(array, newSize, newSize2);
+void sort(int *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+	int newSize = size_a / 2;
+	int newSize2 = size_a - newSize;
+
+	if(size_a > 1) {
+		sort(array, newSize, size_e, compare);
+		sort(array + newSize, newSize2, size_e, compare);
+		merge(array, newSize, newSize2, size_e, compare);
 	}
 }
-
-#endif //MERGESORT

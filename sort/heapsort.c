@@ -64,7 +64,7 @@ int *buildHeap(int *array, int size) {
 	return outArray;
 }
 
-void sort(int *array, int size) {
+void sort(int *array, int size, int (*compare)(void *, void *)) {
 	int *heap = buildHeap(array, size);
 	int lastHeapIndex = size - 1;
 
