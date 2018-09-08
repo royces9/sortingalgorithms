@@ -35,6 +35,9 @@ int main(int argc, char **argv){
 
 	if(flag & 2)
 		printf("Time elapsed: %lf s\n", timeDifference(start, end));
+
+	if(flag & 4)
+		check_array(array, size);
   
 	free(array);
 	return 0;

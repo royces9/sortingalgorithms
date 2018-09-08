@@ -56,6 +56,21 @@ void sort(int *array, int size) {
 	int count = 2;
 
 	int part = size / count;
+	/*
+	pthread_t t1;
+	pthread_t t2;
+
+	data data_struct1 = {array, part};
+	data data_struct2 = {array + part, part};
+
+	pthread_create(&t1, NULL, (void * (*) (void *)) &sort_point, (void *) &data_struct1);
+	pthread_create(&t2, NULL, (void * (*) (void *)) &sort_point, (void *) &data_struct2);
+
+	pthread_join(t1, NULL);
+	pthread_join(t2, NULL);
+
+	merge(array, part, part);
+	*/
 
 	pthread_t *t = malloc(sizeof(*t) * count);
 
@@ -75,14 +90,16 @@ void sort(int *array, int size) {
 	for(; j < count - 1; ++j) {
 		pthread_join(*(t + j), NULL);
 	}
+
 	int k = 0;
 	for(; k < count - 1; ++k) {
-		merge(array + (k * part), part, part);
+		merge(array, part * (k + 1), part);
 	}
-	merge(array + (k * part), k * part, size - (k * part));
+	merge(array, (count - 1) * part, size - ((count - 1) * part));
 
 	free(t);
 	free(data_struct);
+
 }
 
 

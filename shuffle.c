@@ -27,6 +27,7 @@ int *shuffledArray(int size) {
 	return array;
 }
 
+
 void printArray(int *array, int size) {
 	for(int i = 0; i < size; i++) {
 		printf("%d ", array[i]);
@@ -34,12 +35,24 @@ void printArray(int *array, int size) {
 	printf("\n");
 }
 
+
 void copyArray(int *dest, int *src, int size) {
 	for(int i = 0; i < size; i++) {
 		dest[i] = src[i];
 	}
 }
 
+
 double timeDifference(struct timeval start, struct timeval end) {
 	return ((double)end.tv_usec - (double)start.tv_usec)/1000000 + ((double)end.tv_sec - (double)start.tv_sec);
+}
+
+
+void check_array(int *array, int size) {
+	for(int i = 1; i < size; ++i) {
+		if(array[i] != (array[i - 1] + 1)) {
+			printf("Sorted incorrectly.\n");
+			break;
+		}
+	}
 }
