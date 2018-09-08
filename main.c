@@ -3,9 +3,9 @@
 
 #include "shuffle.h"
 
-void sort(int *, int);
+void sort(void *, int, int, int (*)(void *, void *));
 
-int main(int argc, char **argv){
+int main(int argc, char **argv) {
 	int size = 10;
 
 	struct timeval start;
@@ -19,7 +19,7 @@ int main(int argc, char **argv){
 
 	int *array = shuffledArray(size);
 	int flag = 0;
-  
+
 	if(argv[2] != NULL)
 		flag = atoi(argv[2]);
 
@@ -27,7 +27,7 @@ int main(int argc, char **argv){
 		printArray(array, size);
 
 	gettimeofday(&start, NULL);
-	sort(array, size);
+	sort(array, size, sizeof(int), &compare);
 	gettimeofday(&end, NULL);
 
 	if(flag & 1)

@@ -12,7 +12,7 @@ void swap(void *a, void *b, int size_e) {
 }
 
 
-void sort(int *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int min = 0;
 	int i = 0;
 	for(int j = 0; j < size_a; j++) {

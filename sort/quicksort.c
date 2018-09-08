@@ -23,9 +23,9 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	void *tempArray = malloc(size_e * size_a);
 
 	for(int i = 0; i < size_a; ++i) {
-		if(compare(pivot, (a + size_e * i))) {
+		if(compare(pivot2, (a + size_e * i))) {
 			copy((a + size_e * i), (tempArray + size_e * leftCount++), size_e);
-		} else if(compare((a + size_e * i), pivot)) {
+		} else if(compare((a + size_e * i), pivot2)) {
 			copy((a + size_e * i), (tempArray + size_e * rightCount--), size_e);
 		} else {
 			pivotPosition = i;

@@ -5,16 +5,18 @@
 #include "shuffle.h"
 
 int *shuffledArray(int size) {
+	//seed rand();
 	struct timeval t2;
 	gettimeofday(&t2, NULL);
 	srand((unsigned) t2.tv_usec);
 
+	
+	//make array and populate
 	int *array = malloc(sizeof(*array) * size);
-
-	for(int i = 0; i < size; i++) {
+	for(int i = 0; i < size; i++)
 		array[i] = i;
-	}
 
+	//shuffle array
 	int temp;
 	size_t j;
 	for(int i = 0; i < (size - 1); i++) {
@@ -29,17 +31,19 @@ int *shuffledArray(int size) {
 
 
 void printArray(int *array, int size) {
-	for(int i = 0; i < size; i++) {
+	for(int i = 0; i < size; i++)
 		printf("%d ", array[i]);
-	}
+
 	printf("\n");
 }
 
 
-void copyArray(int *dest, int *src, int size) {
-	for(int i = 0; i < size; i++) {
-		dest[i] = src[i];
-	}
+void copyArray(void *src, void *dest, int size_a, int size_e) {
+	char *c_src = src;
+	char *c_dest = dest;
+	for(int i = 0; i < size_a; ++i)
+		for(int j = 0 ; j < size_e; ++j)
+			*(c_dest++) = *(c_src++);
 }
 
 
@@ -55,4 +59,8 @@ void check_array(int *array, int size) {
 			break;
 		}
 	}
+}
+
+int compare(void *a, void *b) {
+	return *(int *) a > *(int *) b;
 }

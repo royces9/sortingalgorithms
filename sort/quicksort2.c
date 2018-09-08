@@ -28,23 +28,23 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	void *pivot2 = compare(a, (a + size_e * (size_a - 1))) ? a : (a + size_e * (size_a - 1));
 	pivot = compare(pivot, pivot2) ? pivot2 : pivot;
 
-	void *pivot3 = malloc(size_e);
-	copy(pivot, pivot3, size_e);
+	pivot2 = malloc(size_e);
+	copy(pivot, pivot2, size_e);
 
 	for(int i = 0; i < size_a; ++i) {
-		for(;leftCount < size_a; ++leftCount) {
-			if(compare((a + size_e * leftCount), pivot3))
+		for(;leftCount < size_a; ++leftCount)
+			if(compare((a + size_e * leftCount), pivot2))
 				break;
-		}
 
-		for(;rightCount >= 0; --rightCount) {
-			if(compare(pivot3, (a + size_e * rightCount)))
+		for(;rightCount >= 0; --rightCount)
+			if(compare(pivot2, (a + size_e * rightCount)))
 				break;
-		}
 
-		swap((a + size_e * (leftCount - 1)), (a + size_e * (rightCount - 1)), size_e);
+		swap((a + size_e * (leftCount)),
+		     (a + size_e * (rightCount)),
+		     size_e);
 	}
-	//free(pivot3);
+	free(pivot2);
 
 	if(rightCount != 1)
 		sort(a, rightCount, size_e, compare);

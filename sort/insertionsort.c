@@ -11,9 +11,9 @@ void swap(void *a, void *b, int size_e) {
 	}
 }
 
-void sort(int *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	for(int i = 0; i < size_a; i ++) {
-		for(int j = i; j > 0; j--) {
+void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+	for(int i = 0; i < size_a; ++i) {
+		for(int j = i; j > 0; --j) {
 			if(compare(array + size_e * (j - 1), array + size_e * j)) {
 				swap((array + size_e * j), (array + size_e * (j - 1)), size_e);
 			} else {
