@@ -16,7 +16,7 @@ for x in range(0, count):
     time1 += float(split1[2])
 
     p2 = subprocess.Popen(["./"+alg2, size, "2"], stdout = subprocess.PIPE)
-    split2 = ((p2.stdout.read()).decode("utf-8")).splite(" ")
+    split2 = ((p2.stdout.read()).decode("utf-8")).split(" ")
     time2 += float(split2[2])
     if float(splitString2[2]) < 0:
         print(float(splitString2[2]))

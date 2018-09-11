@@ -4,10 +4,14 @@
 #include "shuffle.h"
 
 void copy(void *src, void *dest, int size_e) {
-	char *c_src = src;
-	char *c_dest = dest;
-	for(int i = 0; i < size_e; ++i)
-		*(c_dest++) = *(c_src++);
+        int word_loops = size_e / 4;
+	int byte_loops =  size_e % 4;
+
+	for(int i = 0; i < word_loops; ++i)
+		*(int *)(dest++) = *(int *)(src++);
+
+	for(int i = 0; i < byte_loops; ++i)
+		*(char *)(dest++) = *(char *)(src++);
 }
 
 

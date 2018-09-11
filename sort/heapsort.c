@@ -1,27 +1,36 @@
-#ifndef HEAPSORT
-#define HEAPSORT
-
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
 
 void copy(void *src, void *dest, int size_e) {
-	char *c_src = src;
-	char *c_dest = dest;
-	for(int i = 0; i < size_e; ++i)
-		*(c_dest++) = *(c_src++);
+        int word_loops = size_e / 4;
+	int byte_loops =  size_e % 4;
+
+	for(int i = 0; i < word_loops; ++i)
+		*(int *)(dest++) = *(int *)(src++);
+
+	for(int i = 0; i < byte_loops; ++i)
+		*(char *)(dest++) = *(char *)(src++);
 }
 
 
 void swap(void *a, void *b, int size_e) {
-	char temp = 0;
-	char *c_a = a;
-	char *c_b = b;
-	for(int i = 0; i < size_e; ++i) {
-		temp  = *c_a;
-		*c_a++ = *c_b;
-		*c_b++ = temp;
+        int word_loops = size_e / 4;
+	int byte_loops = size_e % 4;
+
+	int i_temp = 0;
+	for(int i = 0; i < word_loops; ++i) {
+		i_temp = *(int *)a;
+		*(int *)a++ = *(int *)b;
+		*(int *)b++ = i_temp;
+	}
+
+	char c_temp = 0;
+	for(int i = 0; i < byte_loops; ++i) {
+		c_temp  = *(char *)a;
+		*(char *)a++ = *(char *)b;
+		*(char *)b++ = c_temp;
 	}
 }
 
@@ -100,5 +109,3 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	}
 	free(heap);  
 }
-
-#endif //HEAPSORT
