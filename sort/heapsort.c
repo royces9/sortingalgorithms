@@ -1,19 +1,9 @@
 #include <stdlib.h>
-#include <string.h>
-#include <math.h>
 
+#include "shuffle.h"
 
-void copy(void *src, void *dest, int size_e) {
-        int word_loops = size_e / 4;
-	int byte_loops =  size_e % 4;
-
-	for(int i = 0; i < word_loops; ++i)
-		*(int *)(dest++) = *(int *)(src++);
-
-	for(int i = 0; i < byte_loops; ++i)
-		*(char *)(dest++) = *(char *)(src++);
-}
-
+extern int *globalArray;
+extern int globalSize;
 
 void swap(void *a, void *b, int size_e) {
         int word_loops = size_e / 4;
@@ -32,6 +22,8 @@ void swap(void *a, void *b, int size_e) {
 		*(char *)a++ = *(char *)b;
 		*(char *)b++ = c_temp;
 	}
+
+	printArray(globalArray, globalSize);
 }
 
 
@@ -41,7 +33,7 @@ void swap(void *a, void *b, int size_e) {
 //swim the last index in the heap
 void swimHeap(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	//index
-	int parent = floor((size_a - 1)/2);
+	int parent = (size_a - 1) / 2;
 	int child = size_a;
 
 	while(child > 0) {
@@ -49,7 +41,7 @@ void swimHeap(void *array, int size_a, int size_e, int (*compare)(void *, void *
 			swap(array + child * size_e, array + parent * size_e, size_e);
 
 			child = parent;
-			parent = floor((child - 1)/2);
+			parent = (child - 1) / 2;
 		} else {
 			break;
 		}
@@ -58,7 +50,7 @@ void swimHeap(void *array, int size_a, int size_e, int (*compare)(void *, void *
 
 //size is 0-indexed
 void sinkHeap(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	int child;
+	int child = 0;
 	int parent = 0;
 	int leftChild = 1;
 	int rightChild = 2;
@@ -82,30 +74,19 @@ void sinkHeap(void *array, int size_a, int size_e, int (*compare)(void *, void *
 	}
 }
 
-int *buildHeap(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	void *outArray = malloc(size_a * size_e);
-
-	//this part creates the heap
+void buildHeap(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	for(int i = 0; i < size_a; ++i) {
-		copy(array + i * size_e, outArray + i * size_e, size_e);
-		swimHeap(outArray, i, size_e, compare);
+		swimHeap(array, i, size_e, compare);
 	}
-	return outArray;
 }
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	void *heap = buildHeap(array, size_a, size_e, compare);
+	buildHeap(array, size_a, size_e, compare);
+
 	int lastHeapIndex = size_a - 1;
 
-	for(int i = size_a - 1; i >= 0; --i){
-		//send head of heap to output array
-		copy(heap, array + i * size_e, size_e);
-    
-		//send last thing in heap to the front
-		copy(heap + (lastHeapIndex--) * size_e, heap, size_e);
-
-		//sink the head node, this should fix heap property
-		sinkHeap(heap, lastHeapIndex, size_e, compare);
+	for(int i = size_a - 1; i >= 0; --i) {
+		swap(array + (lastHeapIndex--) * size_e, array, size_e);
+		sinkHeap(array, lastHeapIndex, size_e, compare);
 	}
-	free(heap);  
 }

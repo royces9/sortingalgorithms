@@ -39,11 +39,15 @@ void printArray(int *array, int size) {
 
 
 void copyArray(void *src, void *dest, int size_a, int size_e) {
-	char *c_src = src;
-	char *c_dest = dest;
-	for(int i = 0; i < size_a; ++i)
-		for(int j = 0 ; j < size_e; ++j)
-			*(c_dest++) = *(c_src++);
+        int word_loops = (size_e * size_a) / 4;
+	int byte_loops =  (size_e * size_a) % 4;
+
+	for(int i = 0; i < word_loops; ++i) {
+		*(int *)(dest++) = *(int *)(src++);
+	}
+
+	for(int i = 0; i < byte_loops; ++i)
+		*(char *)(dest++) = *(char *)(src++);
 }
 
 

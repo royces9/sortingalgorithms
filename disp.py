@@ -1,4 +1,6 @@
+import subprocess
 import sys
+
 import tkinter
 
 class Rectangle:
@@ -22,17 +24,26 @@ def update_board(string, rect):
         x = rectangle_width * index;
         dx = x - curr[0];
         board.move(r.rectangle, dx, 0);
-#    input()
 
 def start(file):
     filestr = f.readline();
+    if not filestr:
+        return;
     split = filestr.split(" ");
     update_board(split, rect);
-    root.after(100, start, file);    
+    root.after(delay, start, file);
 
-size = int(sys.argv[1]);
 
-f = open("test", "r");
+delay = int(sys.argv[1]);
+algorithm = sys.argv[2];
+s_size = sys.argv[3];
+size = int(s_size);
+
+f = open("test", "w");
+p = subprocess.Popen(["./"+algorithm, s_size, "1"], stdout = f);
+f.close();
+
+
 root = tkinter.Tk();
 root.attributes('-type', 'dialog')
 
@@ -44,10 +55,14 @@ board.pack();
 rectangle_width = width / size;
 partial_height = height / size;
 
+f = open("test", "r");
 rect = [];
 init = [int(i) for i in f.readline().split(" ")[0:-1]];
+
 for (i, j) in zip(init, range(0,len(init))):
     rect.append(Rectangle(i, j));
 
 root.after(0, start, f);
 root.mainloop();
+
+f.close();

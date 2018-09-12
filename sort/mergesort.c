@@ -45,7 +45,7 @@ void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, 
 	free(combinedArray);
 }
 
-void sort(int *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int newSize = size_a / 2;
 	int newSize2 = size_a - newSize;
 
