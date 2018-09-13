@@ -1,5 +1,9 @@
 #include <stdlib.h>
 
+extern int *globalArray;
+extern int globalSize;
+extern int flag;
+
 void copy(void *src, void *dest, int size_e) {
         int word_loops = size_e / 4;
 	int byte_loops =  size_e % 4;

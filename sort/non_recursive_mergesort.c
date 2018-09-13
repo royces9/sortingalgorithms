@@ -4,6 +4,7 @@
 
 extern int *globalArray;
 extern int globalSize;
+extern int flag;
 
 void swap(void *a, void *b, int size_e) {
 	int word_loops = size_e / 4;
@@ -23,7 +24,8 @@ void swap(void *a, void *b, int size_e) {
 		*(char *)b++ = c_temp;
 	}
 
-	//printArray(globalArray, globalSize);
+	if(flag & 8)
+		printArray(globalArray, globalSize);
 }
 
 void copy(void *src, void *dest, int size_e) {
@@ -41,28 +43,36 @@ void copy(void *src, void *dest, int size_e) {
 //mergesort
 void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, void *)) {
 	int size_total = size + size2;
+	int size_count = size_total;
 
-	int left = 0;
-	int right = size;
-	for(int i = 0; i < size_total; ++i) {
-		//printf("%d %d %d %d\n", size, size2, left, right);
-		//printf("%d %d\n", *(int *) array + size_e * left, *(int *) array + size_e * right);
-		if(compare(array + size_e * left, array + size_e * right)) {
-			swap(array + size_e * i, array + size_e * right, size_e);
-			if(i == left) {
-				left = right;
-			}
+	for(int left = 0, right = size; left < (size_total - 1); ++left, --size_count) {
+		if(left == right)
 			++right;
 
-		} else {
-			if(i == left) {
-				++left;
-			} else {
-				swap(array + size_e * left, array + size_e * i, size_e);
+		if(size_count == size)
+			--size;
 
-				if(compare(array + size_e * (i + 1), compare + size_e * i)) {
-					left = i;
-				}
+		//beginning of each sub array
+		if(compare(array + size_e * left, array + size_e * right)) {
+			swap(array + size_e * left, array + size_e * right, size_e);
+
+			//beginning of the right sub array
+			for(int j = right;
+			    (j < size_total - 1) && compare(array + size_e * j, array + size_e * (j + 1));
+			    ++j) {
+				swap(array + size_e * j, array + size_e * (j + 1), size_e);
+			}
+		}
+
+		//end of each sub array
+		if(compare(array + size_e * (size - 1), array + size_e * (size_count - 1))) {
+			swap(array + size_e * (size - 1), array + size_e * (size_count - 1), size_e);
+
+			//end of the first sub array
+			for(int j = size - 1;
+			    (j > left) && compare(array + size_e * (j-1), array + size_e * j);
+			    --j) {
+				swap(array + size_e * (j - 1), array + size_e * j, size_e);
 			}
 		}
 	}
@@ -97,8 +107,7 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 		if(left_over) {
 			merge(array + offset * size_e, size, size, size_e, compare);
 		} else {
-			printf("%d %d\n", size, size_a - (offset - 1));
-			merge(array + offset * size_e, size, size_a - (offset - 1), size_e, compare);
+			merge(array + offset * size_e, size, size_a - offset - size, size_e, compare);
 		}
 
 		temp = (merge_count + left_over) / 2;

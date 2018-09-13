@@ -40,7 +40,7 @@ s_size = sys.argv[3];
 size = int(s_size);
 
 f = open("test", "w");
-p = subprocess.Popen(["./"+algorithm, s_size, "1"], stdout = f);
+p = subprocess.Popen(["./"+algorithm, s_size, "9"], stdout = f);
 f.close();
 
 

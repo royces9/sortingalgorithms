@@ -4,6 +4,8 @@
 
 extern int *globalArray;
 extern int globalSize;
+extern int flag;
+
 
 void copy(void *src, void *dest, int size_e) {
         int word_loops = size_e / 4;
@@ -15,7 +17,8 @@ void copy(void *src, void *dest, int size_e) {
 	for(int i = 0; i < byte_loops; ++i)
 		*(char *)(dest++) = *(char *)(src++);
 
-	printArray(globalArray, globalSize);
+	if(flag & 8)
+		printArray(globalArray, globalSize);
 }
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {

@@ -4,6 +4,7 @@
 
 extern int *globalArray;
 extern int globalSize;
+extern int flag;
 
 void swap(void *a, void *b, int size_e) {
         int word_loops = size_e / 4;
@@ -23,7 +24,8 @@ void swap(void *a, void *b, int size_e) {
 		*(char *)b++ = c_temp;
 	}
 
-	printArray(globalArray, globalSize);
+	if(flag & 8)
+		printArray(globalArray, globalSize);
 }
 
 

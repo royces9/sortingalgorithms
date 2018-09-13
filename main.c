@@ -7,6 +7,7 @@ void sort(void *, int, int, int (*)(void *, void *));
 
 int *globalArray;
 int globalSize;
+int flag;
 
 int main(int argc, char **argv) {
 	int size = 10;
@@ -21,7 +22,6 @@ int main(int argc, char **argv) {
 	}
 
 	int *array = shuffledArray(size);
-	int flag = 0;
 
 	globalArray = array;
 	globalSize = size;
