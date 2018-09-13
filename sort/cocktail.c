@@ -4,6 +4,7 @@ extern int *globalArray;
 extern int globalSize;
 extern int flag;
 
+
 void swap(void *a, void *b, int size_e) {
 	int word_loops = size_e / 4;
 	int byte_loops = size_e % 4;
@@ -26,15 +27,31 @@ void swap(void *a, void *b, int size_e) {
 		printArray(globalArray, globalSize);
 }
 
+
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	for(int i = 1; i < size_a; ++i) {
-		for(int j = i; j > 0; --j) {
-			if(compare(array + size_e * (j - 1), array + size_e * j)) {
-				swap((array + size_e * j), (array + size_e * (j - 1)), size_e);
-			} else {
-				break;
+	int left_bound = 0;
+	int right_bound = size_a;
+	int min = 0;
+	int max = 0;
+
+	for(int j = 0; j < size_a/2; ++j) {
+		min = left_bound;
+		for(int i = left_bound + 1; i < right_bound; ++i) {
+			if(compare(array + min * size_e, array + i * size_e)) {
+				min = i;
 			}
 		}
+		swap(array + left_bound * size_e, array + min * size_e, size_e);
+		++left_bound;
 
+		max = right_bound - 1;
+		for(int i = right_bound - 2; i >= left_bound; --i) {
+			if(compare(array + i * size_e, array + max * size_e)) {
+				max = i;
+			}
+		}
+		
+		swap(array + (right_bound - 1) * size_e, array + max * size_e, size_e);
+		--right_bound;
 	}
 }
