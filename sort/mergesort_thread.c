@@ -3,7 +3,11 @@
 #include <stdlib.h>
 #include <pthread.h>
 
-#include <shuffle.h>
+#include "shuffle.h"
+
+int compare(void *a, void *b) {
+	return *(int *) a > *(int *) b;
+}
 
 typedef struct {
 	void *array;

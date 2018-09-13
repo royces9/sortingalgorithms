@@ -11,7 +11,7 @@ class Rectangle:
         y1 = height - ((value + 1) * partial_height);
         x2 = (index + 1) * rectangle_width;
         y2 = height;
-        self.rectangle = board.create_rectangle(x1, y1, x2, y2);
+        self.rectangle = board.create_rectangle(x1, y1, x2, y2, fill='pink');
 
 
 def update_board(string, rect):
@@ -38,6 +38,7 @@ delay = int(sys.argv[1]);
 algorithm = sys.argv[2];
 s_size = sys.argv[3];
 size = int(s_size);
+
 
 f = open("test", "w");
 p = subprocess.Popen(["./"+algorithm, s_size, "9"], stdout = f);

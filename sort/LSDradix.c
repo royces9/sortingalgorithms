@@ -5,6 +5,11 @@
 
 extern int *globalArray;
 extern int globalSize;
+extern int flag;
+
+int compare(void *a, void *b) {
+	return *(int *) a & *(int *) b;
+}
 
 void swap(void *a, void *b, int size_e) {
 	int word_loops = size_e / 4;
@@ -24,24 +29,27 @@ void swap(void *a, void *b, int size_e) {
 		*(char *)b++ = c_temp;
 	}
 
-	printArray(globalArray, globalSize);
+	if(flag & 8)
+		printArray(globalArray, globalSize);
+}
+
+
+int highest_bit(void *array, int size_a, int size_e) {
+	int out = 0;
+
+	for(int i = size_e; i >= 0; ++i) {
+
+	}
+
+	return out;
 }
 
 
 //LSD radix
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	int *a = array;
 	int *dupArray = malloc(size_e * size_a);
-	int max = 0;
 
-	for(int j = 0; j < size_a; j++) {
-		if(a[j] == (size_a - 1)) {
-			max = a[j];
-			break;
-		}
-	}
-
-	max = pow(2,floor(log(max)/log(2)));
+	int max = highest_bit(array, size_a, size_e);
 
 	int copyIndex = 0;
 	int tempIndex = 0;
@@ -49,22 +57,15 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 		copyIndex = 0;
 		tempIndex = size_a - 1;
 		for(int i = 0; i < size_a; ++i) {
-			if(!(a[i] & j)) {
+			if(!compare(array + size_e * i, &j)) {
 				//swap(a + i, a + copyIndex++, size_e);
-				dupArray[copyIndex++] = a[i];
+				dupArray[copyIndex++] = array + size_e * i;
 			} else {
 				//swap(a + i, a + tempIndex-i, size_e);
-				dupArray[tempIndex--] = a[i];
+				dupArray[tempIndex--] = array + size_e * i;
 			}
 		}
-		copyArray(dupArray, a, size_a, sizeof(int));
-
-		printf("dup: ");
-		printArray(dupArray, size_a);
-
-		printf("a  : ");
-		printArray(a, size_a);
-
+		copyArray(dupArray, array, size_a, size_e);
 
 		/*
 		for(int l = copyIndex; l < size_a; ++l) {

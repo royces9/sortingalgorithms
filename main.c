@@ -9,6 +9,8 @@ int *globalArray;
 int globalSize;
 int flag;
 
+int compare(void *a, void *b);
+
 int main(int argc, char **argv) {
 	int size = 10;
 

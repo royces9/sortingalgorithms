@@ -4,6 +4,12 @@ extern int *globalArray;
 extern int globalSize;
 extern int flag;
 
+int compare(void *a, void *b) {
+	return *(int *) a > *(int *) b;
+}
+
+
+
 void swap(void *a, void *b, int size_e) {
         int word_loops = size_e / 4;
 	int byte_loops = size_e % 4;

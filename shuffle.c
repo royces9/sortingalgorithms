@@ -64,7 +64,3 @@ void check_array(int *array, int size) {
 		}
 	}
 }
-
-int compare(void *a, void *b) {
-	return *(int *) a > *(int *) b;
-}

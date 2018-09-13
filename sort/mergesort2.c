@@ -2,6 +2,15 @@
 
 #include "shuffle.h"
 
+extern int *globalArray;
+extern int globalSize;
+extern int flag;
+
+int compare(void *a, void *b) {
+	return *(int *) a > *(int *) b;
+}
+
+
 void copy(void *src, void *dest, int size_e) {
         int word_loops = size_e / 4;
 	int byte_loops =  size_e % 4;
@@ -11,6 +20,9 @@ void copy(void *src, void *dest, int size_e) {
 
 	for(int i = 0; i < byte_loops; ++i)
 		*(char *)(dest++) = *(char *)(src++);
+
+	if(flag & 8)
+		printArray(globalArray, globalSize);
 }
 
 

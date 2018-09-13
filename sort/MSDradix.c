@@ -1,10 +1,11 @@
-#ifndef MSDRADIX
-#define MSDRADIX
-
 #include <math.h>
 #include <stdlib.h>
 
 #include "shuffle.h"
+
+int compare(void *a, void *b) {
+	return *(int *) a & *(int *) b;
+}
 
 //MSD radix
 void MSDradix(int *array, int size, int msd){
@@ -47,5 +48,3 @@ void sort(int *array, int size_a) {
   
 	MSDradix(array, size_a, max);
 }
-
-#endif //MSDRADIX
