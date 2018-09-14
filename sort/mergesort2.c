@@ -39,7 +39,9 @@ void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, 
 		} else if(head[0] >= size) {
 			copy((array + (size_e * head[1]++)), (combinedArray + size_e * i), size_e);
 		} else {
-			copy((array + (size_e * head[compare((array + size_e * head[0]), (array + size_e * head[1]))]++)), (combinedArray + size_e * i), size_e);
+			copy((array + (size_e * head[compare((array + size_e * head[0]), (array + size_e * head[1]))]++)),
+			     (combinedArray + size_e * i),
+			     size_e);
 		}
 	}
         for(int j = 0; j < iter; ++j)
@@ -55,7 +57,7 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 
 	if(size_a > 1) {
 		sort(array, newSize, size_e, compare);
-		sort(array + newSize, newSize2, size_e, compare);
+		sort(array + newSize * size_e, newSize2, size_e, compare);
 		merge(array, newSize, newSize2, size_e, compare);
 	}
 }

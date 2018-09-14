@@ -40,13 +40,16 @@ s_size = sys.argv[3];
 size = int(s_size);
 
 
-f = open("test", "w");
+file_name = "Sorting_algo_file"
+
+f = open(file_name, "w");
 p = subprocess.Popen(["./"+algorithm, s_size, "9"], stdout = f);
 f.close();
 
 
 root = tkinter.Tk();
 root.attributes('-type', 'dialog')
+root.title("Sorting");
 
 width = 1280;
 height = 720;
@@ -56,7 +59,7 @@ board.pack();
 rectangle_width = width / size;
 partial_height = height / size;
 
-f = open("test", "r");
+f = open(file_name, "r");
 rect = [];
 init = [int(i) for i in f.readline().split(" ")[0:-1]];
 

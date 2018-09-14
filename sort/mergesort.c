@@ -28,24 +28,27 @@ void copy(void *src, void *dest, int size_e) {
 
 //mergesort
 void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, void*)){
-	int iter = size + size2;
-	void *combinedArray = malloc(size_e * iter);
-	int headOne = 0;
-	int headTwo = size;
+	int total_size = size + size2;
+	void *combinedArray = malloc(size_e * total_size);
 
-	for(int i = 0; i < iter; ++i) {
-		if(headTwo >= iter) {
-			copy((array + size_e * (headOne++)), (combinedArray + i * size_e), size_e);
-		} else if(headOne >= size) {
-			copy((array + size_e * headTwo++), (combinedArray + i * size_e), size_e);
-		} else if(compare((array + size_e * headOne), (array + size_e * headTwo))) {
-			copy((array + size_e * headTwo++), (combinedArray + i * size_e), size_e);
+	int head[2] = {0, size};
+
+	void *src = NULL;
+
+	int copy_head = 0;
+	for(int i = 0; i < total_size; ++i) {
+                if(head[1] >= total_size) {
+			src = array + size_e * head[0]++;
+		} else if(head[0] >= size) {
+			src = array + size_e * head[1]++;
 		} else {
-			copy((array + size_e * headOne++), (combinedArray + i * size_e), size_e);
+			src = array + (size_e * head[compare((array + size_e * head[0]), (array + size_e * head[1]))]++);
 		}
+
+		copy(src, combinedArray + size_e * i, size_e);
 	}
 
-	for(int j = 0; j < iter; ++j)
+	for(int j = copy_head; j < total_size; ++j)
 		copy((combinedArray + size_e * j), (array + size_e * j), size_e);
 
 	free(combinedArray);

@@ -98,40 +98,11 @@ void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, 
 
 //bottom up
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	int counter = 1;
-	for(int log = size_a - 1; log != 1; log /= 2, ++counter);
-
-	//count number of tiers of merges
-	int layer = counter;
-
-	//number of merges in layer
-	int merge_count = size_a / 2;
-
-	//remainder of merge_count
-	int left_over = size_a % 2;
-
-	int offset = 0;
-
-	int size = 1;
-	int temp = 0;
-	for(int i = 0; i < layer; ++i) {
-		for(int j = 0; j < merge_count - 1; ++j) {
-			offset = 2 * size * j;
-			merge(array + offset * size_e, size, size, size_e, compare);
-		}
-
-		offset = 2 * size * (merge_count - 1);
-
-		if(left_over) {
-			merge(array + offset * size_e, size, size, size_e, compare);
-		} else {
-			merge(array + offset * size_e, size, size_a - offset - size, size_e, compare);
-		}
-
-		temp = (merge_count + left_over) / 2;
-		left_over = (merge_count + left_over) % 2;
-		merge_count = temp;
-
-		size <<= 1;
+	int newSize = size_a / 2;
+	int newSize2 = size_a - newSize;
+	if(size_a > 1) {
+		sort(array, newSize, size_e, compare);
+		sort(array + newSize * size_e, newSize2, size_e, compare);
+		merge(array, newSize, newSize2, size_e, compare);
 	}
 }
