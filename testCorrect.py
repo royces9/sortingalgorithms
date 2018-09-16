@@ -1,10 +1,9 @@
 import subprocess
 import sys
 
-alg = input("Testing:");
-
-count = int(input("Number of test:"));
-size = input("Size of list to sort:");
+alg = sys.argv[1];
+size = sys.argv[2];
+count = int(sys.argv[3]);
 
 tally = 0;
 

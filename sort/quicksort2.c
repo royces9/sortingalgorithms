@@ -7,7 +7,7 @@ extern int globalSize;
 extern int flag;
 
 int compare(void *a, void *b) {
-	return *(int *) a >= *(int *) b;
+	return *(int *) a > *(int *) b;
 }
 
 
@@ -55,19 +55,26 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	pivot2 = malloc(size_e);
 	copy(pivot, pivot2, size_e);
 
-	//for(int i = 0; i < size_a; ++i) {
-	for(int i = 0; leftCount != rightCount; ++i) {
-		for(;leftCount < size_a; ++leftCount)
-			if(compare((array + size_e * leftCount), pivot2))
-				break;
+	//allow for compare to be > or >=
+	if(compare(pivot2, pivot2)) {
+		while(leftCount != rightCount) {
+			   for(;leftCount < size_a && !compare(array + size_e * leftCount, pivot2); ++leftCount);
+			   for(;rightCount >= 0 && !compare(pivot2, array + size_e * rightCount); --rightCount);
 
-		for(;rightCount >= 0; --rightCount)
-			if(compare(pivot2, (array + size_e * rightCount)))
-				break;
+			   swap((array + size_e * (leftCount)),
+				(array + size_e * (rightCount)),
+				size_e);
+		}
+	} else {
+		while(leftCount != rightCount) {
+			for(;leftCount < size_a && compare(pivot2, (array + size_e * leftCount)); ++leftCount);
+			for(;rightCount >= 0 && compare((array + size_e * rightCount), pivot2); --rightCount);
 
-		swap((array + size_e * (leftCount)),
-		     (array + size_e * (rightCount)),
-		     size_e);
+			swap((array + size_e * (leftCount)),
+			     (array + size_e * (rightCount)),
+			     size_e);
+
+		}
 	}
 	free(pivot2);
 

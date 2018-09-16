@@ -55,15 +55,10 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	pivot2 = malloc(size_e);
 	copy(pivot, pivot2, size_e);
 
-	//for(int i = 0; i < size_a; ++i) {
-	for(int i = 0; leftCount != rightCount; ++i) {
-		for(;leftCount < size_a; ++leftCount)
-			if(compare((array + size_e * leftCount), pivot2))
-				break;
 
-		for(;rightCount >= 0; --rightCount)
-			if(compare(pivot2, (array + size_e * rightCount)))
-				break;
+	for(int i = 0; leftCount != rightCount; ++i) {
+		for(;compare(pivot2, (array + size_e * leftCount)); ++leftCount);
+		for(;compare((array + size_e * rightCount), pivot2); --rightCount);
 
 		swap((array + size_e * (leftCount)),
 		     (array + size_e * (rightCount)),

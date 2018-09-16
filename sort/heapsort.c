@@ -5,7 +5,7 @@ extern int globalSize;
 extern int flag;
 
 int compare(void *a, void *b) {
-	return *(int *) a > *(int *) b;
+	return *(int *) a >= *(int *) b;
 }
 
 
@@ -42,48 +42,37 @@ void swimHeap(void *array, int size_a, int size_e, int (*compare)(void *, void *
 	int parent = (size_a - 1) / 2;
 	int child = size_a;
 
-	while(child > 0) {
-		if(compare(array + child * size_e, array + parent * size_e)) {
-			swap(array + child * size_e, array + parent * size_e, size_e);
+	//take advantage of -0.5 cast to int goes to 0
+	//if child is 0, we've reached the top fo the heap
+	while((compare(array + child * size_e, array + parent * size_e)) && child) {
+		swap(array + child * size_e, array + parent * size_e, size_e);
 
-			child = parent;
-			parent = (child - 1) / 2;
-		} else {
-			break;
-		}
+		child = parent;
+		parent = (child - 1) / 2;
 	}
 }
 
-//size is 0-indexed
+
 void sinkHeap(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	int child = 0;
-	int parent = 0;
 	int leftChild = 1;
-	int rightChild = 2;
 
-	while(rightChild <= size_a + 1) {
+	int child = leftChild + ((leftChild < size_a) && compare(array + size_e * (leftChild + 1), array + size_e * leftChild));
+	int parent = 0;
 
-		//check that rightChild is less than maximum size, that short circuits, if it is
-		//check whether left or right child is bigger
-		child = leftChild + ((rightChild <= size_a) && (compare(array + size_e * rightChild, array + size_e * leftChild)));
+	while((leftChild <= size_a) && compare(array + size_e * child, array + size_e * parent)) {
+		swap(array + size_e * child, array + size_e * parent, size_e);
 
-		if(compare(array + size_e * child, array + size_e * parent)) {
-			swap(array + size_e * child, array + size_e * parent, size_e);
-
-			parent = child;
-		} else {
-			break;
-		}
-    
+		parent = child;
 		leftChild = 2 * parent + 1;
-		rightChild = leftChild + 1; 
+
+		child = leftChild + ((leftChild < size_a) && (compare(array + size_e * (leftChild + 1), array + size_e * leftChild)));
 	}
 }
+
 
 void buildHeap(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	for(int i = 0; i < size_a; ++i) {
+	for(int i = 0; i < size_a; ++i)
 		swimHeap(array, i, size_e, compare);
-	}
 }
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
