@@ -9,7 +9,6 @@ int compare(void *a, void *b) {
 }
 
 
-
 void swap(void *a, void *b, int size_e) {
         int word_loops = size_e / 4;
 	int byte_loops = size_e % 4;
@@ -59,12 +58,12 @@ void sinkHeap(void *array, int size_a, int size_e, int (*compare)(void *, void *
 	int child = leftChild + ((leftChild < size_a) && compare(array + size_e * (leftChild + 1), array + size_e * leftChild));
 	int parent = 0;
 
+
 	while((leftChild <= size_a) && compare(array + size_e * child, array + size_e * parent)) {
 		swap(array + size_e * child, array + size_e * parent, size_e);
 
 		parent = child;
 		leftChild = 2 * parent + 1;
-
 		child = leftChild + ((leftChild < size_a) && (compare(array + size_e * (leftChild + 1), array + size_e * leftChild)));
 	}
 }

@@ -29,9 +29,9 @@ void swap(void *a, void *b, int size_e) {
 		*(char *)b++ = c_temp;
 	}
 
-	if(flag & 8)
-		printArray(globalArray, globalSize);
+
 }
+
 
 void copy(void *src, void *dest, int size_e) {
         int word_loops = size_e / 4;
@@ -42,57 +42,39 @@ void copy(void *src, void *dest, int size_e) {
 
 	for(int i = 0; i < byte_loops; ++i)
 		*(char *)(dest++) = *(char *)(src++);
+
+	if(flag & 8)
+		printArray(globalArray, globalSize);
 }
 
 
 //mergesort
-
-//inplace merge
 void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, void *)) {
-	int size_total = size + size2;
+        int total_size = size + size2;
+	void *combinedArray = malloc(size_e * total_size);
 
-	//left_left - left list, left bound
-	//left_right - left list, right bound
-	//right_left - right list, left bound
-	//right_right - right list, right bound
+	int head[2] = {0, size};
 
-	for(int left_left = 0, left_right = size, right_left = size, right_right = size + size2;
-	    left_left < (size_total - 1);
-	    ++left_left, --right_right) {
+	void *src = NULL;
 
-		if(left_left == right_left)
-			++right_left;
-
-		if(right_right == left_right)
-			--left_right;
-
-		//beginning of each sub array
-		if(compare(array + size_e * left_left, array + size_e * right_left)) {
-			swap(array + size_e * left_left, array + size_e * right_left, size_e);
-
-			//beginning of the right sub array
-			for(int j = right_left;
-			    (j < right_right - 1) && compare(array + size_e * j, array + size_e * (j + 1));
-			    ++j) {
-				swap(array + size_e * j, array + size_e * (j + 1), size_e);
-			}
-
+	int copy_head = 0;
+	for(int i = 0; i < total_size; ++i) {
+		if(head[1] >= total_size) {
+			src = array + size_e * head[0]++;
+		} else if(head[0] >= size) {
+			src = array + size_e * head[1]++;
+		} else {
+			src = array + (size_e * head[compare((array + size_e * head[0]), (array + size_e * head[1]))]++);
 		}
 
-		//end of each sub array
-		if(compare(array + size_e * (left_right - 1), array + size_e * (right_right - 1))) {
-			swap(array + size_e * (left_right - 1), array + size_e * (right_right - 1), size_e);
-
-			//end of the first sub array
-			for(int j = left_right - 1;
-			    (j > left_left) && compare(array + size_e * (j - 1), array + size_e * j);
-			    --j) {
-				swap(array + size_e * (j - 1), array + size_e * j, size_e);
-			}
-
-		}
-
+		copy(src, combinedArray + size_e * i, size_e);
 	}
+
+	for(int j = copy_head; j < total_size; ++j)
+		copy((combinedArray + size_e * j), (array + size_e * j), size_e);
+
+	free(combinedArray);
+	
 }
 
 
