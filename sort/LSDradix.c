@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "shuffle.h"
 
@@ -7,9 +8,12 @@ extern int *globalArray;
 extern int globalSize;
 extern int flag;
 
+int printf(const char *, ...);
+
 int compare(void *a, void *b) {
 	return *(int *) a & *(int *) b;
 }
+
 
 void swap(void *a, void *b, int size_e) {
 	int word_loops = size_e / 4;
@@ -47,16 +51,19 @@ void copy(void *src, void *dest, int size_e) {
 
 
 int highest_bit(void *array, int size_a, int size_e) {
+	int total_bits = size_e * 8 - 1;
+	int place_counter = total_bits;
+
 	int out = 1;
-	int comp = 0;
+	uint64_t max = 1ULL << total_bits;
 
 	for(int i = 0; i < size_a; ++i) {
-		for(int j = size_e; j > 0; --j) {
-			for(int k = 7; k >= 0; --k) {
-				comp = 1 << k;
-				comp <<= (8 * j);
-				if(compare(array + size_e * i, &comp)) {
-					out = (8 * j) + k;
+		place_counter = total_bits;
+		for(uint64_t j = max; j > 0; j >>= 1, --place_counter) {
+			if(compare(array + size_e * i, &j)) {
+				if(place_counter > out) {
+					out = place_counter;
+					break;
 				}
 			}
 		}
@@ -66,24 +73,26 @@ int highest_bit(void *array, int size_a, int size_e) {
 }
 
 
+
 //LSD radix
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	void *dupArray = malloc(size_e * size_a);
 
 	int max = highest_bit(array, size_a, size_e);
-
 	int copyIndex = 0;
 	int tempIndex = 0;
-	for(int j = 1; j <= max; j <<= 1) {
+
+	uint64_t k = 1;
+	for(int j = 0; j <= max; ++j, k <<= 1ULL) {
 		copyIndex = 0;
 		tempIndex = size_a - 1;
 		for(int i = 0; i < size_a; ++i) {
-			if(!compare(array + size_e * i, &j)) {
+			if(!compare(array + size_e * i, &k)) {
 				//swap(a + i, a + copyIndex++, size_e);
 				copy(array + size_e * i, dupArray + size_e * copyIndex++, size_e);
 			} else {
 				//swap(a + i, a + tempIndex-i, size_e);
-				copy(array + size_e * i, dupArray + size_e * tempIndex--, size_e);
+				copy(array + size_e * i, dupArray + size_e * (tempIndex - i), size_e);
 			}
 		}
 		copyArray(dupArray, array, size_a, size_e);
@@ -95,5 +104,4 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 		}
 		*/
 	}
-
 }

@@ -27,7 +27,7 @@ void swap(void *a, void *b, int size_e) {
 	}
 
 	if(flag & 8)
-		printArray(globalArray, globalSize);	
+		printArray(globalArray, globalSize);
 }
 
 
