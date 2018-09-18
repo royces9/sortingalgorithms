@@ -1,11 +1,11 @@
 import subprocess
 import sys
 
-alg1 = input("Algorithm 1:")
-alg2 = input("Algorithm 2:")
 
-count = int(input("Number of tests:"))
-size = input("Size of list to sort:")
+alg1 = sys.argv[1];
+alg2 = sys.argv[2];
+count = int(sys.argv[3]);
+size = sys.argv[4];
 
 time1 = 0;
 time2 = 0;

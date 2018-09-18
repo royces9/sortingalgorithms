@@ -59,6 +59,50 @@ void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, 
 	free(combinedArray);
 }
 
+
+void merge_all(void *array, int size_a, int size_e, int count, int (*compare)(void *, void *)) {
+	int part = size_a / count;
+
+        int counter = 1;
+	for(int log = count - 1; log != 1; log /= 2, ++counter);
+
+	//count number of tiers of merges
+	int layer = counter;
+
+	//number of merges in layer
+	int merge_count = count / 2;
+
+	//remainder of merge_count
+	int left_over = count % 2;
+
+	int offset = 0;
+
+	int size = part;
+	int temp = 0;
+	for(int i = 0; i < layer; ++i) {
+		for(int j = 0; j < merge_count - 1; ++j) {
+			offset = 2 * size * j;
+			merge(array + offset * size_e, size, size, size_e, compare);
+		}
+
+		offset = 2 * size * (merge_count - 1);
+
+		if(left_over) {
+			merge(array + offset * size_e, size, size, size_e, compare);
+		} else {
+			merge(array + offset * size_e, size, size_a - offset - size, size_e, compare);
+		}
+
+		temp = (merge_count + left_over) / 2;
+		left_over = (merge_count + left_over) % 2;
+		merge_count = temp;
+
+		size <<= 1;
+	}
+	
+
+}
+
 void sort_point(void *arg) {
 	void *array = (*(data *) arg).array;
 	int (*compare)(void *, void *) = (*(data *) arg).compare;
@@ -80,55 +124,41 @@ void sort_point(void *arg) {
 
 }
 
-void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	int count = 2;
 
+void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+	int count = 10;
 	int part = size_a / count;
 
-	if(1) {
-		pthread_t t1;
-		pthread_t t2;
+	pthread_t *t = malloc(sizeof(*t) * count);
 
-		data data_struct1 = {array, compare, part, size_e};
-		data data_struct2 = {array + size_e * part, compare, part, size_e};
-
-		pthread_create(&t1, NULL, (void * (*) (void *)) &sort_point, (void *) &data_struct1);
-		pthread_create(&t2, NULL, (void * (*) (void *)) &sort_point, (void *) &data_struct2);
-
-		pthread_join(t1, NULL);
-		pthread_join(t2, NULL);
-
-		merge(array, part, part, size_e, compare);
-	} else {
-
-		pthread_t *t = malloc(sizeof(*t) * count);
-
-		int i = 0;
-		data *data_struct = malloc(sizeof(*data_struct) * count);
-		for(; i < count - 1; ++i) {
-			data_struct[i].array = array + (i * part);
-			data_struct[i].compare = compare;
-			data_struct[i].size_a = part;
-			data_struct[i].size_e = size_e;
-			pthread_create(t + i, NULL, (void * (*) (void *)) &sort_point, (void *) (data_struct + i));
-		}
-
-		data_struct[i].array = array + (i * part);
-		data_struct[i].size_a = size_a - (i * part);
+	int i = 0;
+	data *data_struct = malloc(sizeof(*data_struct) * count);
+	for(; i < count - 1; ++i) {
+		data_struct[i].array = array + (i * part) * size_e;
+		data_struct[i].compare = compare;
+		data_struct[i].size_a = part;
+		data_struct[i].size_e = size_e;
 		pthread_create(t + i, NULL, (void * (*) (void *)) &sort_point, (void *) (data_struct + i));
-
-		int j = 0;
-		for(; j < count - 1; ++j) {
-			pthread_join(*(t + j), NULL);
-		}
-
-		int k = 0;
-		for(; k < count - 1; ++k) {
-			merge(array, part * (k + 1), part, size_e, compare);
-		}
-		merge(array, (count - 1) * part, size_a - ((count - 1) * part), size_e, compare);
-
-		free(t);
-		free(data_struct);
 	}
+
+	data_struct[i].array = array + (i * part) * size_e;
+	data_struct[i].compare = compare;
+	data_struct[i].size_a = size_a - (i * part);
+	data_struct[i].size_e = size_e;
+	pthread_create(t + i, NULL, (void * (*) (void *)) &sort_point, (void *) (data_struct + i));
+
+
+	/*
+	for(int j = 0; j < count; ++j) {
+		pthread_join(*(t + j), NULL);
+	}
+	merge_all(array, size_a, size_e, count, compare);
+	*/
+
+	for(int j = 0; j < (count / 2); j += 2) {
+		pthread_join(*(t + j), NULL);
+		pthread_join(*(t + j + 1), NULL);
+	}
+	free(t);
+	free(data_struct);
 }

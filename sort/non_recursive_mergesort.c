@@ -74,7 +74,6 @@ void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, 
 		copy((combinedArray + size_e * j), (array + size_e * j), size_e);
 
 	free(combinedArray);
-	
 }
 
 
