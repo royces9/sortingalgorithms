@@ -24,22 +24,23 @@ def update_board(string, rect):
         board.move(rect[i].rectangle, 0, dy);
 
 
-def start(f, file_name, algorithm, size):
+def start(f, file_name, algorithm, size, args):
     filestr = f.readline();
     if not filestr:
         f.close();
-        write_to_file(file_name, algorithm, size);
+        write_to_file(file_name, algorithm, args);
         f2 = open(file_name, "r");
-        root.after(100, start, f2, file_name, algorithm, size);
+        root.after(100, start, f2, file_name, algorithm, size, args);
         return;
 
     split = filestr.split(" ");
     update_board(split, rect);
-    root.after(delay, start, f, file_name, algorithm, size);
+    root.after(delay, start, f, file_name, algorithm, size, args);
 
-def write_to_file(file_name, algorithm, size):
+def write_to_file(file_name, algorithm, args):
     f = open(file_name, "w");
-    p = subprocess.Popen(["./"+algorithm, size, "9"], stdout = f);
+    inputStr = "./" + algorithm + " -f 9 " + args;
+    p = subprocess.Popen(inputStr, shell = True, stdout = f);
     f.close();
 
 
@@ -58,13 +59,27 @@ def new_canvas(width, height, root):
 
 delay = int(sys.argv[1]);
 algorithm = sys.argv[2];
-s_size = sys.argv[3];
-size = int(s_size);
+size = 100;
+s_size = str(size);
+
+args = '';
+for i in range(3, len(sys.argv)):
+    if(sys.argv[i] == '-s'):
+        s_size = sys.argv[i + 1];
+        size = int(s_size);
+    if(sys.argv[i] == '-f'):
+        i += 2;
+        continue;
+
+    args = args + " " + sys.argv[i];
+        
+if "-s" not in args:
+    args += ("-s " + s_size);
 
 file_name = "Sorting_algo_file"
 
 f = open (file_name, "w");
-write_to_file(file_name, algorithm, s_size);
+write_to_file(file_name, algorithm, args);
 
 root = new_window();
 
@@ -81,5 +96,5 @@ rect = [];
 for i in range(0, int(s_size)):
     rect.append(Rectangle(i, rectangle_width, height));
 
-root.after(0, start, f, file_name, algorithm, s_size);
+root.after(0, start, f, file_name, algorithm, s_size, args);
 root.mainloop();

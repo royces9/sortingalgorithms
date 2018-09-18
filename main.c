@@ -3,7 +3,7 @@
 
 #include "shuffle.h"
 
-void sort(void *, int, int, int (*)(void *, void *));
+void sort(void *, int, int, int (*)(void *, void *), void *);
 
 int *globalArray;
 int globalSize;
@@ -13,29 +13,55 @@ int compare(void *a, void *b);
 
 int main(int argc, char **argv) {
 	int size = 10;
-
+	int *extra = NULL;
 	struct timeval start;
 	struct timeval end;
   
-	if(argc > 1){
-		size = atoi(argv[1]);
-		if(!size)
-			size = 10;
-	}
-
 	int *array = shuffledArray(size);
+
+	if(argc > 1) {
+		for(int i = 1; i < argc; i += 2) {
+			switch(*(argv[i] + 1)) {
+			case 'f':
+				flag = atoi(argv[i + 1]);
+				break;
+				
+			case 's':
+				free(array);
+				size = atoi(argv[i + 1]);
+				array  = shuffledArray(size);
+				break;
+
+			case 'e':
+				extra = malloc(sizeof(*extra));
+				*extra = atoi(argv[i + 1]);
+				break;
+
+			case 'r':
+				for(int i = size - 1, j = 0; i >= 0; --i, ++j) {
+					array[i] = j;
+				}
+				--i;
+				break;
+
+			default:
+				break;
+			}
+		}
+	} else {
+		flag = 7;
+		array = shuffledArray(size);
+	}
 
 	globalArray = array;
 	globalSize = size;
 
-	if(argv[2] != NULL)
-		flag = atoi(argv[2]);
 
 	if(flag & 1)
 		printArray(array, size);
 
 	gettimeofday(&start, NULL);
-	sort(array, size, sizeof(int), &compare);
+	sort(array, size, sizeof(int), &compare, extra);
 	gettimeofday(&end, NULL);
 
 	if(flag & 1)
@@ -48,5 +74,6 @@ int main(int argc, char **argv) {
 		check_array(array, size);
   
 	free(array);
+	free(extra);
 	return 0;
 }

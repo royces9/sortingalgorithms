@@ -47,6 +47,9 @@ void copy(void *src, void *dest, int size_e) {
 
 	for(int i = 0; i < byte_loops; ++i)
 		*(char *)(dest++) = *(char *)(src++);
+
+	if(flag & 8)
+		printArray(globalArray, globalSize);
 }
 
 
@@ -82,26 +85,24 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int copyIndex = 0;
 	int tempIndex = 0;
 
-	uint64_t k = 1;
-	for(int j = 0; j <= max; ++j, k <<= 1ULL) {
+	uint64_t j = 1;
+	for(int i = 0; i <= max; ++i, j <<= 1ULL) {
 		copyIndex = 0;
 		tempIndex = size_a - 1;
-		for(int i = 0; i < size_a; ++i) {
-			if(!compare(array + size_e * i, &k)) {
-				//swap(a + i, a + copyIndex++, size_e);
-				copy(array + size_e * i, dupArray + size_e * copyIndex++, size_e);
+		for(int k = 0; k < size_a; ++k) {
+			if(!compare(array + size_e * k, &j)) {
+				copy(array + size_e * k, dupArray + size_e * copyIndex++, size_e);
 			} else {
-				//swap(a + i, a + tempIndex-i, size_e);
-				copy(array + size_e * i, dupArray + size_e * (tempIndex - i), size_e);
+				copy(array + size_e * k, dupArray + size_e * tempIndex--, size_e);
 			}
 		}
-		copyArray(dupArray, array, size_a, size_e);
 
-		/*
-		for(int l = copyIndex; l < size_a; ++l) {
-			//swap(a + ((size_a + copyIndex - 1) - l), a + l, size_e);
-			a[l] = dupArray[(size_a + copyIndex - 1) - l];
-		}
-		*/
+		for(int l = 0; l < copyIndex; ++l)
+			copy(dupArray + size_e * l, array + size_e * l, size_e);
+
+		for(int l = copyIndex; l < size_a; ++l)
+			copy(dupArray + size_e * ((size_a - 1) + copyIndex - l), array + size_e * l, size_e);
+
 	}
+	free(dupArray);
 }

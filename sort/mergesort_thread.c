@@ -8,9 +8,11 @@ extern int *globalArray;
 extern int globalSize;
 extern int flag;
 
+
 int compare(void *a, void *b) {
 	return *(int *) a > *(int *) b;
 }
+
 
 typedef struct {
 	void *array;
@@ -18,6 +20,7 @@ typedef struct {
 	int size_a;
 	int size_e;
 } data;
+
 
 void copy(void *src, void *dest, int size_e) {
 	int word_loops = size_e / 4;
@@ -120,13 +123,15 @@ void sort_point(void *arg) {
 
 		merge(array, newSize, newSize2, size_e, compare);
 	}
-
-
 }
 
 
-void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	int count = 10;
+void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), void *extra) {
+	int count = 2;
+	if(extra) {
+		count = *(int *) extra;
+	}
+
 	int part = size_a / count;
 
 	pthread_t *t = malloc(sizeof(*t) * count);
@@ -148,17 +153,17 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	pthread_create(t + i, NULL, (void * (*) (void *)) &sort_point, (void *) (data_struct + i));
 
 
-	/*
 	for(int j = 0; j < count; ++j) {
 		pthread_join(*(t + j), NULL);
 	}
 	merge_all(array, size_a, size_e, count, compare);
-	*/
 
+	/*
 	for(int j = 0; j < (count / 2); j += 2) {
 		pthread_join(*(t + j), NULL);
 		pthread_join(*(t + j + 1), NULL);
 	}
+*/
 	free(t);
 	free(data_struct);
 }
