@@ -34,13 +34,13 @@ void swap(void *a, void *b, int size_e) {
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int min = 0;
-	int i = 0;
-	for(int j = 0; j < size_a; j++) {
+	for(int j = 0; j < size_a; ++j) {
 		min = j;
-		for(i = 0; i < size_a - j; i++) {
-			if(compare((array + size_e * min), (array + size_e * (i + j))))
+
+		for(int i = 0; i < size_a - j; ++i) {
+			if(compare(array + min * size_e, array + (i + j) * size_e))
 				min = i+j;
 		}
-		swap(array + size_e * min, array + size_e * j, size_e);
+		swap(array + min * size_e, array + j * size_e, size_e);
 	}
 }

@@ -44,12 +44,11 @@ int highest_bit(void *array, int size_a, int size_e) {
 
 	for(int i = 0; i < size_a; ++i) {
 		place_counter = total_bits;
+
 		for(uint64_t j = max; j > 0; j >>= 1, --place_counter) {
-			if(compare(array + size_e * i, &j)) {
-				if(place_counter > out) {
-					out = place_counter;
-					break;
-				}
+			if(compare(array + size_e * i, &j) && (place_counter > out)) {
+				out = place_counter;
+				break;
 			}
 		}
 	}
@@ -62,26 +61,22 @@ int highest_bit(void *array, int size_a, int size_e) {
 void MSDradix(void *array, int size_a, int size_e, int max, int (*compare)(void *, void *)) {
 	uint64_t bit = 1ULL << (uint64_t) max;
 
-	int readHead = size_a - 1;
 	int writeHead = size_a - 1;
-
-
-	while(readHead >= 0) {
-		if(compare(&bit, array + size_e * readHead)) {
-			swap(array + size_e * readHead,
-			     array + size_e * writeHead,
+	for(int readHead = size_a - 1; readHead >= 0; --readHead) {
+		if(compare(&bit, array + readHead * size_e)) {
+			swap(array + readHead * size_e,
+			     array + writeHead * size_e,
 			     size_e);
 			--writeHead;
 		}
-
-		--readHead;
 	}
 
 	if(max > 0) {
 		if((writeHead + 1) != 1)
 			MSDradix(array, writeHead + 1, size_e, max - 1, compare);
+
 		if((size_a - writeHead - 1) != 1)
-			MSDradix(array + size_e * (writeHead + 1), size_a - writeHead - 1, size_e, max - 1, compare);
+			MSDradix(array + (writeHead + 1) * size_e, size_a - writeHead - 1, size_e, max - 1, compare);
 	}
 }
 

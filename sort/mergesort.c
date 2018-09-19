@@ -38,18 +38,18 @@ void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, 
 	int copy_head = 0;
 	for(int i = 0; i < total_size; ++i) {
                 if(head[1] >= total_size) {
-			src = array + size_e * head[0]++;
+			src = array + head[0]++ * size_e;
 		} else if(head[0] >= size) {
-			src = array + size_e * head[1]++;
+			src = array + head[1]++ * size_e;
 		} else {
-			src = array + (size_e * head[compare((array + size_e * head[0]), (array + size_e * head[1]))]++);
+			src = array + head[compare(array + size_e * head[0], array + size_e * head[1])]++ * size_e;
 		}
 
-		copy(src, combinedArray + size_e * i, size_e);
+		copy(src, combinedArray + i * size_e, size_e);
 	}
 
 	for(int j = copy_head; j < total_size; ++j)
-		copy((combinedArray + size_e * j), (array + size_e * j), size_e);
+		copy(combinedArray + j * size_e, array + j * size_e, size_e);
 
 	free(combinedArray);
 }

@@ -22,6 +22,7 @@ void copy(void *src, void *dest, int size_e) {
 		*(char *)(dest++) = *(char *)(src++);
 }
 
+
 void swap(void *a, void *b, int size_e) {
 	int word_loops = size_e / 4;
 	int byte_loops = size_e % 4;
@@ -50,28 +51,28 @@ void sort_e(void *array, int size_a, int size_e, int (*compare)(void *, void *))
         int leftHead = 0;
 	int rightHead = size_a - 1;
 
-	void *pivot = compare(array, (array + size_e * (size_a / 2))) ? array : (array + size_e * (size_a / 2));
-	void *pivot2 = compare(array, (array + size_e * (size_a - 1))) ? array : (array + size_e * (size_a - 1));
+	void *pivot = compare(array, array + (size_a / 2) * size_e) ? array : array + (size_a / 2) * size_e;
+	void *pivot2 = compare(array, array + (size_a - 1) * size_e) ? array : array + (size_a - 1) * size_e;
 	pivot = compare(pivot, pivot2) ? pivot2 : pivot;
 
 	pivot2 = malloc(size_e);
 	copy(pivot, pivot2, size_e);
 
 	while(leftHead != rightHead) {
-		for(;(leftHead < size_a) && !compare(array + size_e * leftHead, pivot2); ++leftHead);
-		for(;(rightHead >= 0) && !compare(pivot2, array + size_e * rightHead); --rightHead);
+		for(;(leftHead < size_a) && !compare(array + leftHead * size_e, pivot2); ++leftHead);
+		for(;(rightHead >= 0) && !compare(pivot2, array + rightHead * size_e); --rightHead);
 
-		swap((array + size_e * (leftHead)),
-		     (array + size_e * (rightHead)),
+		swap(array + leftHead * size_e,
+		     array + rightHead * size_e,
 		     size_e);
 	}
-
 	free(pivot2);
 
 	if(rightHead != 1)
 		sort_e(array, rightHead, size_e, compare);
+
 	if((size_a - rightHead) != 1)
- 		sort_e(array + size_e * leftHead, size_a - rightHead, size_e, compare);
+ 		sort_e(array + leftHead * size_e, size_a - rightHead, size_e, compare);
 }
 
 
@@ -80,27 +81,28 @@ void sort_ne(void *array, int size_a, int size_e, int (*compare)(void *, void *)
         int leftHead = 0;
 	int rightHead = size_a - 1;
 
-	void *pivot = compare(array, (array + size_e * (size_a / 2))) ? array : (array + size_e * (size_a / 2));
-	void *pivot2 = compare(array, (array + size_e * (size_a - 1))) ? array : (array + size_e * (size_a - 1));
+	void *pivot = compare(array, array + (size_a / 2) * size_e) ? array : array + (size_a / 2) * size_e;
+	void *pivot2 = compare(array, array + (size_a - 1) * size_e) ? array : array + (size_a - 1) * size_e;
 	pivot = compare(pivot, pivot2) ? pivot2 : pivot;
 
 	pivot2 = malloc(size_e);
 	copy(pivot, pivot2, size_e);
 
 	while(leftHead != rightHead) {
-		for(;leftHead < size_a && compare(pivot2, (array + size_e * leftHead)); ++leftHead);
-		for(;rightHead >= 0 && compare((array + size_e * rightHead), pivot2); --rightHead);
+		for(;leftHead < size_a && compare(pivot2, array + leftHead * size_e); ++leftHead);
+		for(;rightHead >= 0 && compare(array + rightHead * size_e, pivot2); --rightHead);
 
-		swap((array + size_e * (leftHead)),
-		     (array + size_e * (rightHead)),
+		swap(array + size_e * leftHead,
+		     array + size_e * rightHead,
 		     size_e);
 	}
 	free(pivot2);
 
 	if(rightHead != 1)
 		sort_ne(array, rightHead, size_e, compare);
+
 	if((size_a - rightHead) != 1)
- 		sort_ne(array + size_e * leftHead, size_a - rightHead, size_e, compare);
+ 		sort_ne(array + leftHead * size_e, size_a - rightHead, size_e, compare);
 }
 
 

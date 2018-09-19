@@ -11,28 +11,6 @@ int compare(void *a, void *b) {
 }
 
 
-void swap(void *a, void *b, int size_e) {
-	int word_loops = size_e / 4;
-	int byte_loops = size_e % 4;
-
-	int i_temp = 0;
-	for(int i = 0; i < word_loops; ++i) {
-		i_temp = *(int *)a;
-		*(int *)a++ = *(int *)b;
-		*(int *)b++ = i_temp;
-	}
-
-	char c_temp = 0;
-	for(int i = 0; i < byte_loops; ++i) {
-		c_temp  = *(char *)a;
-		*(char *)a++ = *(char *)b;
-		*(char *)b++ = c_temp;
-	}
-
-
-}
-
-
 void copy(void *src, void *dest, int size_e) {
         int word_loops = size_e / 4;
 	int byte_loops =  size_e % 4;
@@ -60,18 +38,18 @@ void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, 
 	int copy_head = 0;
 	for(int i = 0; i < total_size; ++i) {
 		if(head[1] >= total_size) {
-			src = array + size_e * head[0]++;
+			src = array + head[0]++ * size_e;
 		} else if(head[0] >= size) {
-			src = array + size_e * head[1]++;
+			src = array + head[1]++ * size_e;
 		} else {
-			src = array + (size_e * head[compare((array + size_e * head[0]), (array + size_e * head[1]))]++);
+			src = array + head[compare(array + size_e * head[0], array + size_e * head[1])]++ * size_e;
 		}
 
-		copy(src, combinedArray + size_e * i, size_e);
+		copy(src, combinedArray + i * size_e, size_e);
 	}
 
 	for(int j = copy_head; j < total_size; ++j)
-		copy((combinedArray + size_e * j), (array + size_e * j), size_e);
+		copy(combinedArray + j * size_e, array + j * size_e, size_e);
 
 	free(combinedArray);
 }
@@ -96,6 +74,7 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int size = 1;
 	int temp = 0;
 	for(int i = 0; i < layer; ++i) {
+
 		for(int j = 0; j < merge_count - 1; ++j) {
 			offset = 2 * size * j;
 			merge(array + offset * size_e, size, size, size_e, compare);

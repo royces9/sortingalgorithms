@@ -25,12 +25,13 @@ void copy(void *src, void *dest, int size_e) {
 		printArray(globalArray, globalSize);
 }
 
+
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int leftCount = 0;
 	int rightCount = size_a - 1;
 
-	void *pivot = compare(array, (array + size_e * (size_a / 2))) ? array : (array  + size_e * (size_a / 2));
-	void *pivot2 = compare(array, (array + size_e * (size_a - 1))) ? array : (array + size_e * (size_a - 1));
+	void *pivot = compare(array, array + (size_a / 2) * size_e) ? array : array  + (size_a / 2) * size_e;
+	void *pivot2 = compare(array, array + (size_a - 1) * size_e) ? array : array + (size_a - 1) * size_e;
 	pivot = compare(pivot, pivot2) ? pivot2 : pivot;
 
 	int pivotPosition = 0;
@@ -53,6 +54,7 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 
 	if(rightCount != 1)
 		sort(array, rightCount, size_e, compare);
+
 	if((size_a - rightCount) != 1)
 		sort(array + size_e * leftCount, size_a - rightCount, size_e, compare);
 }

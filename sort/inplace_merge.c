@@ -46,7 +46,6 @@ void copy(void *src, void *dest, int size_e) {
 
 
 //mergesort
-
 //inplace merge
 void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, void *)) {
 	int size_total = size + size2;
@@ -67,31 +66,28 @@ void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, 
 			--left_right;
 
 		//beginning of each sub array
-		if(compare(array + size_e * left_left, array + size_e * right_left)) {
-			swap(array + size_e * left_left, array + size_e * right_left, size_e);
+		if(compare(array + left_left * size_e, array + right_left * size_e)) {
+			swap(array + left_left * size_e, array + right_left * size_e, size_e);
 
 			//beginning of the right sub array
 			for(int j = right_left;
-			    (j < right_right - 1) && compare(array + size_e * j, array + size_e * (j + 1));
+			    (j < right_right - 1) && compare(array + j * size_e, array + (j + 1) * size_e);
 			    ++j) {
-				swap(array + size_e * j, array + size_e * (j + 1), size_e);
+				swap(array + j * size_e, array + (j + 1) * size_e, size_e);
 			}
-
 		}
 
 		//end of each sub array
-		if(compare(array + size_e * (left_right - 1), array + size_e * (right_right - 1))) {
-			swap(array + size_e * (left_right - 1), array + size_e * (right_right - 1), size_e);
+		if(compare(array + (left_right - 1) * size_e, array + (right_right - 1) * size_e)) {
+			swap(array + (left_right - 1) * size_e, array + (right_right - 1) * size_e, size_e);
 
 			//end of the first sub array
 			for(int j = left_right - 1;
-			    (j > left_left) && compare(array + size_e * (j - 1), array + size_e * j);
+			    (j > left_left) && compare(array + (j - 1) * size_e, array + j * size_e);
 			    --j) {
-				swap(array + size_e * (j - 1), array + size_e * j, size_e);
+				swap(array + (j - 1) * size_e, array + j * size_e, size_e);
 			}
-
 		}
-
 	}
 }
 
@@ -100,6 +96,7 @@ void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int newSize = size_a / 2;
 	int newSize2 = size_a - newSize;
+
 	if(size_a > 1) {
 		sort(array, newSize, size_e, compare);
 		sort(array + newSize * size_e, newSize2, size_e, compare);

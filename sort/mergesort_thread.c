@@ -46,18 +46,18 @@ void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, 
 
 	for(int i = 0; i < total_size; ++i) {
                 if(head[1] >= total_size) {
-			src = array + size_e * head[0]++;
+			src = array + head[0]++ * size_e;
 		} else if(head[0] >= size) {
-			src = array + size_e * head[1]++;
+			src = array + head[1]++ * size_e;
 		} else {
-			src = array + (size_e * head[compare((array + size_e * head[0]), (array + size_e * head[1]))]++);
+			src = array + head[compare(array + size_e * head[0], array + size_e * head[1])]++ * size_e;
 		}
 
-		copy(src, combinedArray + size_e * i, size_e);
+		copy(src, combinedArray + i * size_e, size_e);
 	}
 
 	for(int j = 0; j < total_size; ++j)
-		copy((combinedArray + size_e * j), (array + size_e * j), size_e);
+		copy(combinedArray + j * size_e, array + j * size_e, size_e);
 
 	free(combinedArray);
 }
@@ -83,6 +83,7 @@ void merge_all(void *array, int size_a, int size_e, int count, int (*compare)(vo
 	int size = part;
 	int temp = 0;
 	for(int i = 0; i < layer; ++i) {
+
 		for(int j = 0; j < merge_count - 1; ++j) {
 			offset = 2 * size * j;
 			merge(array + offset * size_e, size, size, size_e, compare);
@@ -102,9 +103,8 @@ void merge_all(void *array, int size_a, int size_e, int count, int (*compare)(vo
 
 		size <<= 1;
 	}
-	
-
 }
+
 
 void sort_point(void *arg) {
 	void *array = (*(data *) arg).array;
@@ -116,7 +116,7 @@ void sort_point(void *arg) {
 
 	if(size_a > 1) {
 		data left = {array, compare, newSize, size_e};
-		data right = {array + size_e * newSize, compare, newSize2, size_e};
+		data right = {array + newSize * size_e, compare, newSize2, size_e};
 
 		sort_point((void *) &left);
 		sort_point((void *) &right);
@@ -128,9 +128,8 @@ void sort_point(void *arg) {
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), void *extra) {
 	int count = 2;
-	if(extra) {
+	if(extra)
 		count = *(int *) extra;
-	}
 
 	int part = size_a / count;
 
@@ -158,12 +157,6 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), v
 	}
 	merge_all(array, size_a, size_e, count, compare);
 
-	/*
-	for(int j = 0; j < (count / 2); j += 2) {
-		pthread_join(*(t + j), NULL);
-		pthread_join(*(t + j + 1), NULL);
-	}
-*/
 	free(t);
 	free(data_struct);
 }
