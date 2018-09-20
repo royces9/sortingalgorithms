@@ -11,7 +11,7 @@ class Rectangle:
         y1 = 0;
         y2 = height + 1;
 
-        self.rectangle = board.create_rectangle(x1, y1, x2, y2, fill='pink');
+        self.rectangle = board.create_rectangle(x1, y1, x2, y2, fill='#ffd1dc');
 
 
 def update_board(string, rect):
@@ -53,6 +53,8 @@ def new_window():
 
 def new_canvas(width, height, root):
     board = tkinter.Canvas(root, width = width, height = height);
+    board["bg"] = "#ffffff";
+    board["highlightbackground"] = "#ffffff";
     board.pack();
     return board;
 
@@ -83,8 +85,8 @@ write_to_file(file_name, algorithm, args);
 
 root = new_window();
 
-width = 1280;
-height = 720;
+width = 1920;
+height = 1080;
 board = new_canvas(width, height, root);
 
 rectangle_width = width / size;

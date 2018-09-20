@@ -38,9 +38,9 @@ int main(int argc, char **argv) {
 				break;
 
 			case 'r':
-				for(int i = size - 1, j = 0; i >= 0; --i, ++j) {
-					array[i] = j;
-				}
+				for(int k = size - 1, j = 0; k >= 0; --k, ++j)
+					array[k] = j;
+				
 				--i;
 				break;
 
@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
 		printArray(array, size);
 
 	gettimeofday(&start, NULL);
-	sort(array, size, sizeof(int), &compare, extra);
+	sort(array, size, sizeof(*array), &compare, extra);
 	gettimeofday(&end, NULL);
 
 	if(flag & 1)
