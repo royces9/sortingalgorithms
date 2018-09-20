@@ -13,16 +13,14 @@ void swap(void *a, void *b, int size_e) {
 	int word_loops = size_e / 4;
 	int byte_loops = size_e % 4;
 
-	int i_temp = 0;
 	for(int i = 0; i < word_loops; ++i) {
-		i_temp = *(int *)a;
+		int i_temp = *(int *)a;
 		*(int *)a++ = *(int *)b;
 		*(int *)b++ = i_temp;
 	}
 
-	char c_temp = 0;
 	for(int i = 0; i < byte_loops; ++i) {
-		c_temp  = *(char *)a;
+		char c_temp  = *(char *)a;
 		*(char *)a++ = *(char *)b;
 		*(char *)b++ = c_temp;
 	}
@@ -46,14 +44,12 @@ void copy(void *src, void *dest, int size_e) {
 //mergesort
 //inplace merge
 void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, void *)) {
-	int size_total = size + size2;
-
 	//left_left - left list, left bound
 	//left_right - left list, right bound
 	//right_left - right list, left bound
 	//right_right - right list, right bound
 
-	for(int left_left = 0, left_right = size, right_left = size, right_right = size + size2;
+	for(int size_total = size + size2, left_left = 0, left_right = size, right_left = size, right_right = size_total;
 	    left_left < (size_total - 1);
 	    ++left_left, --right_right) {
 
@@ -92,10 +88,10 @@ void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, 
 
 //bottom up
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	int newSize = size_a / 2;
-	int newSize2 = size_a - newSize;
-
 	if(size_a > 1) {
+		int newSize = size_a / 2;
+		int newSize2 = size_a - newSize;
+
 		sort(array, newSize, size_e, compare);
 		sort(array + newSize * size_e, newSize2, size_e, compare);
 		merge(array, newSize, newSize2, size_e, compare);

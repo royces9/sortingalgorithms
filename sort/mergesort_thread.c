@@ -106,14 +106,14 @@ void merge_all(void *array, int size_a, int size_e, int count, int (*compare)(vo
 
 
 void sort_point(void *arg) {
-	void *array = (*(data *) arg).array;
-	int (*compare)(void *, void *) = (*(data *) arg).compare;
 	int size_a = (*(data *) arg).size_a;
-	int size_e = (*(data *) arg).size_e;
-	int newSize = size_a / 2;
-	int newSize2 = size_a - newSize;
-
 	if(size_a > 1) {
+		void *array = (*(data *) arg).array;
+		int (*compare)(void *, void *) = (*(data *) arg).compare;
+		int size_e = (*(data *) arg).size_e;
+		int newSize = size_a / 2;
+		int newSize2 = size_a - newSize;
+
 		data left = {array, compare, newSize, size_e};
 		data right = {array + newSize * size_e, compare, newSize2, size_e};
 
@@ -127,6 +127,7 @@ void sort_point(void *arg) {
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), void *extra) {
 	int count = 2;
+
 	if(extra)
 		count = *(int *) extra;
 
@@ -154,6 +155,7 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), v
 	for(int j = 0; j < count; ++j) {
 		pthread_join(*(t + j), NULL);
 	}
+
 	merge_all(array, size_a, size_e, count, compare);
 
 	free(t);
