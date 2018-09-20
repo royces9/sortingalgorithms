@@ -54,10 +54,10 @@ void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, 
 }
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	int newSize = size_a / 2;
-	int newSize2 = size_a - newSize;
-
 	if(size_a > 1) {
+		int newSize = size_a / 2;
+		int newSize2 = size_a - newSize;
+
 		sort(array, newSize, size_e, compare);
 		sort(array + newSize * size_e, newSize2, size_e, compare);
 		merge(array, newSize, newSize2, size_e, compare);
