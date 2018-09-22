@@ -50,7 +50,6 @@ int main(int argc, char **argv) {
 		}
 	} else {
 		flag = 7;
-		array = shuffledArray(size);
 	}
 
 	globalArray = array;
