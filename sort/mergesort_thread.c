@@ -21,6 +21,8 @@ typedef struct {
 } data;
 
 
+pthread_mutex_t print_lock;
+
 void copy(void *src, void *dest, int size_e) {
 	int word_loops = size_e / 4;
 	int byte_loops =  size_e % 4;
@@ -31,8 +33,11 @@ void copy(void *src, void *dest, int size_e) {
 	for(int i = 0; i < byte_loops; ++i)
 		*(char *)(dest++) = *(char *)(src++);
 
-	if(flag & 8)
+	if(flag & 8) {
+		pthread_mutex_lock(&print_lock);
 		printArray(globalArray, globalSize);
+		pthread_mutex_unlock(&print_lock);
+	}
 }
 
 
