@@ -75,10 +75,14 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	buildHeap(array, size_a, size_e, compare);
 
 	for(int lastHeapIndex = 0;
-	    lastHeapIndex < (size_a - 1);
+	    lastHeapIndex < (size_a - 3);
 	    ++lastHeapIndex) {
 
 		swap(array + lastHeapIndex * size_e, array + (size_a - 1) * size_e, size_e);
 		sinkHeap(array + (lastHeapIndex + 1) * size_e, size_a - (lastHeapIndex + 1), size_e, compare);
 	}
+
+	swap(array + (size_a - 3) * size_e, array + (size_a - 1) * size_e, size_e);
+	if(compare(array + (size_a - 2) * size_e, array + (size_a - 1) * size_e))
+		swap(array + (size_a - 2) * size_e, array + (size_a - 1) * size_e, size_e);
 }
