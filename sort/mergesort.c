@@ -32,19 +32,19 @@ void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, 
 
 	int head[2] = {0, size};
 
-	void *src = NULL;
+	int src = 0;
 
 	int copy_head = 0;
 	for(int i = 0; i < total_size; ++i) {
                 if(head[1] >= total_size) {
-			src = array + head[0]++ * size_e;
+			src = head[0]++;
 		} else if(head[0] >= size) {
-			src = array + head[1]++ * size_e;
+			src = head[1]++;
 		} else {
-			src = array + head[compare(array + size_e * head[0], array + size_e * head[1])]++ * size_e;
+			src = head[compare(array + head[0] * size_e, array + head[1] * size_e)]++;
 		}
 
-		copy(src, combinedArray + i * size_e, size_e);
+		copy(array + src * size_e, combinedArray + i * size_e, size_e);
 	}
 
 	for(int j = copy_head; j < total_size; ++j)
