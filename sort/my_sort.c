@@ -9,10 +9,9 @@ extern int flag;
 
 typedef struct{
 	void *array;
-	int h_left;
-	int h_right;
-	int l_left;
-	int l_right;
+	int left;
+	int right;
+	int occ;
 } queue;
 	      
 
@@ -30,86 +29,130 @@ void copy(void *src, void *dest, int size_e) {
 
 	for(int i = 0; i < byte_loops; ++i)
 		*(char *)(dest++) = *(char *)(src++);
+
+	if(flag & 8)
+		printArray(globalArray, globalSize);
 }
 
 
 void init_queue(void *array, queue *qq, int size_e, int (*compare)(void *, void *)) {
+	qq->occ = 1;
 	if(compare(array, array + size_e)) {
-		copy(array,          qq->array + qq->h_left * size_e,  size_e);
-		copy(array + size_e, qq->array + qq->l_right * size_e, size_e);
+		copy(array,          qq->array, size_e);
+		copy(array + size_e, qq->array + qq->right * size_e, size_e);
 	} else {
-		copy(array + size_e, qq->array + qq->h_left * size_e,  size_e);
-		copy(array,          qq->array + qq->l_right * size_e, size_e);
+		copy(array + size_e, qq->array, size_e);
+		copy(array,          qq->array + qq->right * size_e, size_e);
 	}
 }
 
 
 int append_queue(queue *qq, void *value, int size_a, int size_e) {
 	int out = 0;
-	if(compare(qq->array + qq->l_left * size_e, value)) {
-		copy(value, qq->array + --qq->l_left * size_e, size_e);
+	if(compare(value, qq->array + qq->left * size_e)) {
+		copy(value, qq->array + ++qq->left * size_e, size_e);
 		out = 1;
-	} else if(compare(value, qq->array + qq->h_right * size_e)){
-		copy(value, qq->array + ++qq->h_right * size_e, size_e);
+		qq->occ = 1;
+	} else if(compare(qq->array + qq->right * size_e, value)){
+		copy(value, qq->array + --qq->right * size_e, size_e);
 		out = 2;
+		qq->occ = 1;
 	}
 
 	return out;
 }
 
 
-void merge_queue(void *array, queue *qq, int size_a, int size_e, int (*compare)(void *, void *)) {
-	int left_max = size_a - qq->l_left;
-	int head[2] = {qq->l_left, qq->l_right};
+void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, void*)){
+	int total_size = size + size2;
+	void *combinedArray = malloc(size_e * total_size);
+
+	int head[2] = {0, size};
 
 	int src = 0;
-	for(int i = 0; i < left_max; ++i) {
-		if(head[1] >= size_a) {
+
+	int copy_head = 0;
+	for(int i = 0; i < total_size; ++i) {
+		if(head[1] >= total_size) {
 			src = head[0]++;
-		} else if(head[0] >= qq->l_left) {
+		} else if(head[0] >= size) {
 			src = head[1]++;
 		} else {
-			src = head[compare(qq->array + head[0] * size_e, qq->array + head[1] * size_e)]++;
+			src = head[compare(array + head[0] * size_e, array + head[1] * size_e)]++;
 		}
 
-		copy(qq->array + src * size_e, array + i * size_e, size_e);
+		copy(array + src * size_e, combinedArray + i * size_e, size_e);
 	}
+
+	for(int j = copy_head; j < total_size; ++j)
+		copy(combinedArray + j * size_e, array + j * size_e, size_e);
+
+	free(combinedArray);
 }
+
 
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	queue *qq = calloc(1, sizeof(queue));
 	qq->array = malloc(size_a * size_e);
-	qq->l_left = size_a - 1;
-	qq->l_right = size_a - 1;
-	
-	int flag = 0;
+	qq->left = 0;
+	qq->right = size_a - 1;
+	qq->occ = 0;
 
+	int *stack = calloc(sizeof(*stack), size_a);
+	stack[0] = 0;
 	init_queue(array, qq, size_e, compare);
-	printArray(qq->array, size_a);
 
+	int count = 0;
 	for(int i = 2; i < size_a; ++i) {
-		printf("\n%d\n", i);
-		int out = append_queue(qq, array + i * size_e, size_a, size_e);
-		printf("%d\n", out);
-		if(!out) {
-			//init queue again?
-			if(!flag) {
-				qq->h_left = ++qq->h_right;
-				qq->l_right = --qq->l_left;
-				init_queue(array + i * size_e, qq, size_e, compare);
-				flag = 1;
-			} else {
-				merge_queue(array, qq, size_a, size_e, compare);
-				qq->l_left = size_a - 1;
-				qq->l_right = size_a - 1;
+		if(!append_queue(qq, array + i * size_e, size_a, size_e)) {
+			int m = stack[count];
+			stack[++count] = i;
+			for(int j = qq->right; j < size_a; ++j, ++m) {
+				copy(qq->array + j * size_e, array + m * size_e, size_e);
+			}
 
-				qq->h_left = 0;
-				qq->h_right = 0;
-				
-				flag = 0;
+			for(int k = 0; k <= qq->left; ++k, ++m) {
+				copy(qq->array + k * size_e, array + m * size_e, size_e);
+			}
+
+			qq->left = 0;
+			qq->right = size_a - 1;
+			qq->occ = 0;
+			if(i < (size_a - 1)) {
+				init_queue(array + i * size_e, qq, size_e, compare);
+				++i;
 			}
 		}
-		printArray(qq->array, size_a);
 	}
+
+	if(qq->occ) {
+		int m = stack[count];
+		for(int j = qq->right; j < size_a; ++j, ++m) {
+			copy(qq->array + j * size_e, array + m * size_e, size_e);
+		}
+
+		for(int k = 0; k <= qq->left; ++k, ++m) {
+			copy(qq->array + k * size_e, array + m * size_e, size_e);
+		}
+	}
+	
+	stack[++count] = size_a;
+
+	for(int merge_count = count / 2; stack[1] != size_a; count = (count + 1) / 2, merge_count = count / 2){
+
+		for(int l = 0; l < merge_count; ++l) {
+			merge(array + stack[2 * l] * size_e,
+			      stack[2 * l + 1] - stack[2 * l],
+			      stack[2 * l + 2] - stack[2 * l + 1],
+			      size_e, compare);
+
+			stack[l + 1] = stack[2 * l + 2];
+		}
+		stack[merge_count + (count % 2)] = size_a;
+	}
+
+	free(qq->array);
+	free(qq);
+	free(stack);
 }

@@ -11,7 +11,7 @@ time1 = 0;
 time2 = 0;
 
 for x in range(0, count):
-    p1 = subprocess.Popen(["./"+alg1, "-f 2 -s", size], stdout = subprocess.PIPE)
+    p1 = subprocess.Popen(["./"+alg1, "-f 2 -s", size], shell = True, stdout = subprocess.PIPE)
     split1 = ((p1.stdout.read()).decode("utf-8")).split(" ")
     time1 += float(split1[2])
 
@@ -28,7 +28,6 @@ len2 = len(alg2);
 
 diff = abs(len1 - len2);
 addition = " " * diff;
-print(addition);
 
 if len1 > len2:
     alg2 += addition;
