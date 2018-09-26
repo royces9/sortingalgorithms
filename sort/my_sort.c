@@ -93,13 +93,14 @@ void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, 
 
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+	int *stack = NULL;
 	queue qq;
-	qq.array = malloc(2 * size_a * size_e);
+	qq.array = malloc(size_a * size_e + sizeof(*stack) * size_a);
 	qq.left = 0;
 	qq.right = size_a - 1;
-	qq-.occ = 0;
+	qq.occ = 0;
 
-	int *stack = calloc(sizeof(*stack), size_a);
+	stack = qq.array + size_a + size_e;
 	stack[0] = 0;
 	init_queue(array, &qq, size_e, compare);
 
@@ -152,6 +153,5 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 		stack[merge_count + (count % 2)] = size_a;
 	}
 
-	free(qq->array);
-	free(stack);
+	free(qq.array);
 }
