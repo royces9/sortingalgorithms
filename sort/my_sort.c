@@ -93,47 +93,47 @@ void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, 
 
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	queue *qq = calloc(1, sizeof(queue));
-	qq->array = malloc(size_a * size_e);
-	qq->left = 0;
-	qq->right = size_a - 1;
-	qq->occ = 0;
+	queue qq;
+	qq.array = malloc(2 * size_a * size_e);
+	qq.left = 0;
+	qq.right = size_a - 1;
+	qq-.occ = 0;
 
 	int *stack = calloc(sizeof(*stack), size_a);
 	stack[0] = 0;
-	init_queue(array, qq, size_e, compare);
+	init_queue(array, &qq, size_e, compare);
 
 	int count = 0;
 	for(int i = 2; i < size_a; ++i) {
-		if(!append_queue(qq, array + i * size_e, size_a, size_e)) {
+		if(!append_queue(&qq, array + i * size_e, size_a, size_e)) {
 			int m = stack[count];
 			stack[++count] = i;
-			for(int j = qq->right; j < size_a; ++j, ++m) {
-				copy(qq->array + j * size_e, array + m * size_e, size_e);
+			for(int j = qq.right; j < size_a; ++j, ++m) {
+				copy(qq.array + j * size_e, array + m * size_e, size_e);
 			}
 
-			for(int k = 0; k <= qq->left; ++k, ++m) {
-				copy(qq->array + k * size_e, array + m * size_e, size_e);
+			for(int k = 0; k <= qq.left; ++k, ++m) {
+				copy(qq.array + k * size_e, array + m * size_e, size_e);
 			}
 
-			qq->left = 0;
-			qq->right = size_a - 1;
-			qq->occ = 0;
+			qq.left = 0;
+			qq.right = size_a - 1;
+			qq.occ = 0;
 			if(i < (size_a - 1)) {
-				init_queue(array + i * size_e, qq, size_e, compare);
+				init_queue(array + i * size_e, &qq, size_e, compare);
 				++i;
 			}
 		}
 	}
 
-	if(qq->occ) {
+	if(qq.occ) {
 		int m = stack[count];
-		for(int j = qq->right; j < size_a; ++j, ++m) {
-			copy(qq->array + j * size_e, array + m * size_e, size_e);
+		for(int j = qq.right; j < size_a; ++j, ++m) {
+			copy(qq.array + j * size_e, array + m * size_e, size_e);
 		}
 
-		for(int k = 0; k <= qq->left; ++k, ++m) {
-			copy(qq->array + k * size_e, array + m * size_e, size_e);
+		for(int k = 0; k <= qq.left; ++k, ++m) {
+			copy(qq.array + k * size_e, array + m * size_e, size_e);
 		}
 	}
 	
@@ -153,6 +153,5 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	}
 
 	free(qq->array);
-	free(qq);
 	free(stack);
 }
