@@ -38,7 +38,7 @@ def start(f, file_name, alg, root, board, rect):
     filestr = f.readline();
     if not filestr:
         f.close();
-        write_to_file(file_name, alg.algorithm, alg.args);
+        write_to_file(file_name, alg);
         f2 = open(file_name, "r");
         root.after(alg.delay + 100, start, f2, file_name, alg, root, board, rect);
         return;
@@ -48,9 +48,9 @@ def start(f, file_name, alg, root, board, rect):
     root.after(alg.delay, start, f, file_name, alg, root, board, rect);
 
     
-def write_to_file(file_name, algorithm, args):
+def write_to_file(file_name, alg):
     f = open(file_name, "w");
-    inputStr = "./" + algorithm + " -f 9 " + args;
+    inputStr = "./" + alg.algorithm + " -f 9 " + alg.args;
     p = subprocess.Popen(inputStr, shell = True, stdout = f);
     f.close();
 
@@ -62,7 +62,35 @@ def new_window():
     return root;
 
 
+def resize_canvas(Canvas):
+    def __init__(self,parent,**kwargs):
+        Canvas.__init__(self,parent,**kwargs)
+        self.bind("<Configure>", self.on_resize)
+        self.height = self.winfo_reqheight()
+        sel.width = self.winfo_reqwidth()
+
+    def on_resize(self,event):
+        # determine the ratio of old width/height to new width/height
+        wscale = float(event.width)/self.width
+        hscale = float(event.height)/self.height
+        self.width = event.width
+        self.height = event.height
+        # resize the canvas
+        self.config(width=self.width, height=self.height)
+        # rescale all the objects tagged with the "all" tag
+        self.scale("all",0,0,wscale,hscale)
+
+        
 def new_canvas(width, height, root):
+    """
+    frame = tkinter.Frame(root);
+    frame.pack(fill = tkinter.BOTH, expand=tkinter.YES);
+
+    board = resize_canvas(frame);
+    #board = resize_canvas(frame, background = "#ffffff", highlightthickness = 0);
+    board.pack(fill = tkinter.BOTH, expand = tkinter.YES);
+
+    """
     board = tkinter.Canvas(root, width = width, height = height);
     board["bg"] = "#ffffff";
     board["highlightbackground"] = "#ffffff";
@@ -98,7 +126,7 @@ def main():
     alg = Alg_details(algorithm, s_size, args, delay);
 
     f = open (file_name, "w");
-    write_to_file(file_name, algorithm, args);
+    write_to_file(file_name, alg);
 
     root = new_window();
 
