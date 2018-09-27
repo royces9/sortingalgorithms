@@ -109,17 +109,17 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 		if(!append_queue(&qq, array + i * size_e, size_a, size_e)) {
 			int m = stack[count];
 			stack[++count] = i;
-			for(int j = qq.right; j < size_a; ++j, ++m) {
-				copy(qq.array + j * size_e, array + m * size_e, size_e);
-			}
 
-			for(int k = 0; k <= qq.left; ++k, ++m) {
+			for(int j = qq.right; j < size_a; ++j, ++m)
+				copy(qq.array + j * size_e, array + m * size_e, size_e);
+
+			for(int k = 0; k <= qq.left; ++k, ++m)
 				copy(qq.array + k * size_e, array + m * size_e, size_e);
-			}
 
 			qq.left = 0;
 			qq.right = size_a - 1;
 			qq.occ = 0;
+
 			if(i < (size_a - 1)) {
 				init_queue(array + i * size_e, &qq, size_e, compare);
 				++i;
@@ -129,18 +129,18 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 
 	if(qq.occ) {
 		int m = stack[count];
-		for(int j = qq.right; j < size_a; ++j, ++m) {
+		for(int j = qq.right; j < size_a; ++j, ++m)
 			copy(qq.array + j * size_e, array + m * size_e, size_e);
-		}
 
-		for(int k = 0; k <= qq.left; ++k, ++m) {
+		for(int k = 0; k <= qq.left; ++k, ++m)
 			copy(qq.array + k * size_e, array + m * size_e, size_e);
-		}
 	}
 	
 	stack[++count] = size_a;
 
-	for(int merge_count = count / 2; stack[1] != size_a; count = (count + 1) / 2, merge_count = count / 2){
+	for(int merge_count = count / 2;
+	    stack[1] != size_a;
+	    count = (count + 1) / 2, merge_count = count / 2){
 
 		for(int l = 0; l < merge_count; ++l) {
 			merge(array + stack[2 * l] * size_e,
