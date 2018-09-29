@@ -27,41 +27,32 @@ void copy(void *src, void *dest, int size_e) {
 
 
 //mergesort
-void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, void *)) {
-        int total_size = size + size2;
-	void *combinedArray = malloc(size_e * total_size);
+void merge(void *array, void *scratch, int left_size, int right_size, int size_e, int (*compare)(void *, void *)) {
+        int total_size = left_size + right_size;
+	int head[2] = {0, left_size};
 
-	int head[2] = {0, size};
-
-	void *src = NULL;
-
-	int copy_head = 0;
+	int src = 0;
 	for(int i = 0; i < total_size; ++i) {
 		if(head[1] >= total_size) {
-			src = array + head[0]++ * size_e;
-		} else if(head[0] >= size) {
-			src = array + head[1]++ * size_e;
+			src = head[0]++;
+		} else if(head[0] >= left_size) {
+			src = head[1]++;
 		} else {
-			src = array + head[compare(array + size_e * head[0], array + size_e * head[1])]++ * size_e;
+			src = head[compare(array + head[0] * size_e, array + head[1] * size_e)]++;
 		}
 
-		copy(src, combinedArray + i * size_e, size_e);
+		copy(array + src * size_e, scratch + i * size_e, size_e);
 	}
 
-	for(int j = copy_head; j < total_size; ++j)
-		copy(combinedArray + j * size_e, array + j * size_e, size_e);
-
-	free(combinedArray);
+	for(int j = 0; j < total_size; ++j)
+		copy(scratch + j * size_e, array + j * size_e, size_e);
 }
 
 
 //bottom up
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	int counter = 1;
-	for(int log = size_a - 1; log != 1; log /= 2, ++counter);
-
-	//count number of tiers of merges
-	int layer = counter;
+	int layer = 1;
+	for(int log = size_a - 1; log != 1; log /= 2, ++layer);
 
 	//number of merges in layer
 	int merge_count = size_a / 2;
@@ -70,25 +61,22 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int left_over = size_a % 2;
 
 	int offset = 0;
-
 	int size = 1;
-	int temp = 0;
+
+	void *scratch = malloc(size_a * size_e);
 	for(int i = 0; i < layer; ++i) {
 
 		for(int j = 0; j < merge_count - 1; ++j) {
-			offset = 2 * size * j;
-			merge(array + offset * size_e, size, size, size_e, compare);
+			offset = 2  * size * j;
+			merge(array + offset * size_e, scratch, size, size, size_e, compare);
 		}
 
 		offset = 2 * size * (merge_count - 1);
+		int second_size = left_over ? size : size_a - offset - size;
+		merge(array + offset * size_e, scratch, size, second_size, size_e, compare);
+		
 
-		if(left_over) {
-			merge(array + offset * size_e, size, size, size_e, compare);
-		} else {
-			merge(array + offset * size_e, size, size_a - offset - size, size_e, compare);
-		}
-
-		temp = (merge_count + left_over) / 2;
+		int temp = (merge_count + left_over) / 2;
 		left_over = (merge_count + left_over) % 2;
 		merge_count = temp;
 

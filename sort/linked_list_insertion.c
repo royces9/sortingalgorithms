@@ -1,10 +1,12 @@
+#include <stdlib.h>
+
 #include "shuffle.h"
 
 extern int *globalArray;
 extern int globalSize;
 extern int flag;
 
-typedef struct{
+typedef struct list{
 	struct list *prev;
 	struct list *next;
 	void *data;
@@ -43,7 +45,7 @@ list *init_list(void) {
 	list *out = malloc(sizeof(*out));
 	out->prev = out;
 	out->next = out;
-	data = NULL;
+	out->data = NULL;
 
 	return out;
 }

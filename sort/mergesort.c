@@ -26,40 +26,44 @@ void copy(void *src, void *dest, int size_e) {
 }
 
 //mergesort
-void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, void*)){
-	int total_size = size + size2;
-	void *combinedArray = malloc(size_e * total_size);
-
-	int head[2] = {0, size};
+void merge(void *array, void *scratch, int left_size, int right_size, int size_e, int (*compare)(void *, void*)){
+	int total_size = left_size + right_size;
+	int head[2] = {0, left_size};
 
 	int src = 0;
-
-	int copy_head = 0;
 	for(int i = 0; i < total_size; ++i) {
                 if(head[1] >= total_size) {
 			src = head[0]++;
-		} else if(head[0] >= size) {
+		} else if(head[0] >= left_size) {
 			src = head[1]++;
 		} else {
 			src = head[compare(array + head[0] * size_e, array + head[1] * size_e)]++;
 		}
 
-		copy(array + src * size_e, combinedArray + i * size_e, size_e);
+		copy(array + src * size_e, scratch + i * size_e, size_e);
 	}
 
-	for(int j = copy_head; j < total_size; ++j)
-		copy(combinedArray + j * size_e, array + j * size_e, size_e);
-
-	free(combinedArray);
+	for(int j = 0; j < total_size; ++j)
+		copy(scratch + j * size_e, array + j * size_e, size_e);
 }
 
-void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	if(size_a > 1) {
-		int newSize = size_a / 2;
-		int newSize2 = size_a - newSize;
 
-		sort(array, newSize, size_e, compare);
-		sort(array + newSize * size_e, newSize2, size_e, compare);
-		merge(array, newSize, newSize2, size_e, compare);
+void start_sort(void *array, void *scratch, int size_a, int size_e, int (*compare)(void *, void *)) {
+	if(size_a > 1) {
+		int left_size = size_a / 2;
+		int right_size = size_a - left_size;
+
+		start_sort(array, scratch, left_size, size_e, compare);
+		start_sort(array + left_size * size_e, scratch, right_size, size_e, compare);
+		merge(array, scratch, left_size, right_size, size_e, compare);
 	}
+}
+
+
+void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+	void *scratch = malloc(size_a * size_e);
+
+	start_sort(array, scratch, size_a, size_e, compare);
+
+	free(scratch);
 }
