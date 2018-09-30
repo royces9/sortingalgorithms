@@ -91,7 +91,16 @@ void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, 
 }
 
 
-
+/*
+ * queue elements onto a deque until elements can't be added,
+ *
+ * enqueue when elements are bigger than the biggest, or 
+ * smaller than the smallest element
+ *
+ * when the next element can not be enqueued, copy elements of queue
+ * into array, and start a new queue, then merge all the sorted subarrays
+ *
+ */
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int *stack = NULL;
 	queue qq;

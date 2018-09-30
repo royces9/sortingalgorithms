@@ -66,14 +66,24 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	void *scratch = malloc(size_a * size_e);
 	for(int i = 0; i < layer; ++i) {
 
+		if(0) {
 		for(int j = 0; j < merge_count - 1; ++j) {
-			offset = 2  * size * j;
+			offset = 2 * size * j;
+			printf("%d\n", offset);
 			merge(array + offset * size_e, scratch, size, size, size_e, compare);
 		}
-
+		} else {
+		for(int j = 0; j < merge_count - 1; offset = 2 * size * ++j) {
+			printf("%d\n", offset);
+			merge(array + offset * size_e, scratch, size, size, size_e, compare);
+		}
+		}
 		offset = 2 * size * (merge_count - 1);
-		int second_size = left_over ? size : size_a - offset - size;
-		merge(array + offset * size_e, scratch, size, second_size, size_e, compare);
+		merge(array + offset * size_e,
+		      scratch,
+		      size,
+		      left_over ? size : size_a - offset - size,
+		      size_e, compare);
 		
 
 		int temp = (merge_count + left_over) / 2;
@@ -82,4 +92,6 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 
 		size <<= 1;
 	}
+
+	free(scratch);
 }

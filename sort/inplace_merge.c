@@ -43,13 +43,13 @@ void copy(void *src, void *dest, int size_e) {
 
 //mergesort
 //inplace merge
-void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, void *)) {
+void merge(void *array, int l_size, int r_size, int size_e, int (*compare)(void *, void *)) {
 	//left_left - left list, left bound
 	//left_right - left list, right bound
 	//right_left - right list, left bound
 	//right_right - right list, right bound
 
-	for(int size_total = size + size2, left_left = 0, left_right = size, right_left = size, right_right = size_total;
+	for(int size_total = l_size + r_size, left_left = 0, left_right = l_size, right_left = l_size, right_right = size_total;
 	    left_left < (size_total - 1);
 	    ++left_left, --right_right) {
 

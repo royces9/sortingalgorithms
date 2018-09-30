@@ -49,14 +49,16 @@ void merge(void *array, void *scratch, int left_size, int right_size, int size_e
 
 
 void start_sort(void *array, void *scratch, int size_a, int size_e, int (*compare)(void *, void *)) {
-	if(size_a > 1) {
-		int left_size = size_a / 2;
-		int right_size = size_a - left_size;
+	int left_size = size_a / 2;
+	int right_size = size_a - left_size;
 
+	if(left_size > 1)
 		start_sort(array, scratch, left_size, size_e, compare);
+
+	if(right_size > 1)
 		start_sort(array + left_size * size_e, scratch, right_size, size_e, compare);
-		merge(array, scratch, left_size, right_size, size_e, compare);
-	}
+
+	merge(array, scratch, left_size, right_size, size_e, compare);
 }
 
 
