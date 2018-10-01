@@ -100,7 +100,9 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 
 	for(int i = 0; i < size_a; ++i) {
 		copy(curr->data, array + i * size_e, size_e);
+
 		curr = curr->next;
+
 		free(curr->prev->data);
 		free(curr->prev);
 	}
