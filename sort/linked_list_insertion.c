@@ -65,6 +65,19 @@ list *init_list(void) {
 }
 
 
+void free_list(list *data) {
+	list *curr = data->next;
+	while(curr->data) {
+		list *next = curr->next;
+
+		free(curr->data);
+		free(curr);
+
+		curr = next;
+	}
+
+	free(data);
+}
 //insert after *ll
 void append_list(list *ll, void *array, int size_e) {
 	list *new = malloc(sizeof(*new));
@@ -105,19 +118,24 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	for(int i = 1; i < size_a; ++i) {
 		while(curr->data) {
 			if(compare(array + i * size_e, curr->data)) {
-				curr = curr->next;
-			} else {
-				prepend_list(curr, array + i * size_e, size_e);
-				curr = data->next;
+				append_list(curr, array + i * size_e, size_e);
 				break;
+			} else {
+				curr = curr->prev;
+				if(!curr->data)
+					append_list(curr, array + i * size_e, size_e);
 			}
 		}
+
+		curr = data->prev;
 	}
 
 	curr = data->next;
 
 	for(int i = 0; i < size_a; ++i) {
-		copy(curr, array + i * size_e, size_e);
+		copy(curr->data, array + i * size_e, size_e);
 		curr = curr->next;
 	}
+
+	free_list(data);
 }
