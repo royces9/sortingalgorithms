@@ -12,9 +12,11 @@ typedef struct list{
 	void *data;
 } list;
 
+
 int compare(void *a, void *b) {
 	return *(int *) a > *(int *) b;
 }
+
 
 void swap(void *a, void *b, int size_e) {
 	int word_loops = size_e / 4;
@@ -37,7 +39,19 @@ void swap(void *a, void *b, int size_e) {
 }
 
 
+void copy(void *src, void *dest, int size_e) {
+	int word_loops = size_e / 4;
+	int byte_loops =  size_e % 4;
 
+	for(int i = 0; i < word_loops; ++i)
+		*(int *)(dest++) = *(int *)(src++);
+
+	for(int i = 0; i < byte_loops; ++i)
+		*(char *)(dest++) = *(char *)(src++);
+
+	if(flag & 8)
+		printArray(globalArray, globalSize);
+}
 
 
 list *init_list(void) {
@@ -52,62 +66,58 @@ list *init_list(void) {
 
 
 //insert after *ll
-void append_list(list *ll, void *array) {
+void append_list(list *ll, void *array, int size_e) {
 	list *new = malloc(sizeof(*new));
-	new->prev = ll;
+
 	new->next = ll->next;
+	new->prev = ll;
 
+	ll->next->prev = new;
 	ll->next = new;
-	new->next->prev = new;
 
-	new->data = array;
+	new->data = malloc(size_e);
+	copy(array, new->data, size_e);
 }
 
 
 //insert before *ll
-void prepend_list(list *ll, void *array) {
+void prepend_list(list *ll, void *array, int size_e) {
 	list *new = malloc(sizeof(*new));
+
 	new->next = ll;
 	new->prev = ll->prev;
 
+	ll->prev->next = new;
 	ll->prev = new;
-	new->prev->next = new;
 
-	new->data = array;
-}
-
-
-list *binary_search() {
+	new->data = malloc(size_e);
+	copy(array, new->data, size_e);
 }
 
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	list *data = init_list();
 
+	append_list(data, array, size_e);
 
-
-	if(compare(array, array + size_e)) {
-		append_list(data, array);
-		append_list(data, array + size_e);
-	} else {
-		append_list(data, array + size_e);
-		append_list(data, array);
-	}
-
-	list *middle = data->next;
-
-	for(int i = 2; i < size_a; ++i) {
-
-	}
+	list *curr = data->next;
 
 	for(int i = 1; i < size_a; ++i) {
-
-		for(int j = i; j > 0; --j) {
-			if(compare(array + (j - 1) * size_e, array + j * size_e)) {
-				swap((array + (j - 1) * size_e), (array + j * size_e), size_e);
+		while(curr->data) {
+			if(compare(array + i * size_e, curr->data)) {
+				curr = curr->next;
 			} else {
+				prepend_list(curr, array + i * size_e, size_e);
+				curr = data->next;
 				break;
 			}
 		}
+	}
+
+	curr = data->next;
+
+	for(int i = 0; i < size_a; ++i) {
+		copy(curr, array + i * size_e, size_e);
+		curr = curr->next;
 	}
 }
