@@ -6,8 +6,7 @@ extern int *globalArray;
 extern int globalSize;
 extern int flag;
 
-typedef struct list{
->>>>>>> be0b6872b4ab85884248b870d7735f139598cb35
+typedef struct list {
 	struct list *prev;
 	struct list *next;
 	void *data;
