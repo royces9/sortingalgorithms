@@ -107,9 +107,13 @@ void sort_ne(void *array, int size_a, int size_e, int (*compare)(void *, void *)
 
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+	if(size_a == 1)
+		return;
+
 	if(compare(array, array)) {
 		sort_e(array, size_a, size_e, compare);
 	} else {
 		sort_ne(array, size_a, size_e, compare);
 	}
+	
 }
