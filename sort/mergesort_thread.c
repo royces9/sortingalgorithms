@@ -41,40 +41,32 @@ void copy(void *src, void *dest, int size_e) {
 }
 
 
-void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, void *)) {
-	int total_size = size + size2;
-	void *combinedArray = malloc(size_e * total_size);
-	int head[2] = {0, size};
+void merge(void *array, void * scratch, int left_size, int right_size, int size_e, int (*compare)(void *, void *)) {
+	int total_size = left_size + right_size;
+	int head[2] = {0, left_size};
 
-	void *src = NULL;
-
-	for(int i = 0; i < total_size; ++i) {
+	for(int i = 0, src = 0; i < total_size; ++i) {
                 if(head[1] >= total_size) {
-			src = array + head[0]++ * size_e;
-		} else if(head[0] >= size) {
-			src = array + head[1]++ * size_e;
+			src = head[0]++;
+		} else if(head[0] >= left_size) {
+			src = head[1]++;
 		} else {
-			src = array + head[compare(array + size_e * head[0], array + size_e * head[1])]++ * size_e;
+			src = head[compare(array + size_e * head[0], array + size_e * head[1])]++;
 		}
 
-		copy(src, combinedArray + i * size_e, size_e);
+		copy(array + src * size_e, scratch + i * size_e, size_e);
 	}
 
 	for(int j = 0; j < total_size; ++j)
-		copy(combinedArray + j * size_e, array + j * size_e, size_e);
-
-	free(combinedArray);
+		copy(scratch + j * size_e, array + j * size_e, size_e);
 }
 
 
-void merge_all(void *array, int size_a, int size_e, int count, int (*compare)(void *, void *)) {
+void merge_all(void *array, void *scratch, int size_a, int size_e, int count, int (*compare)(void *, void *)) {
 	int part = size_a / count;
 
-        int counter = 1;
-	for(int log = count - 1; log != 1; log /= 2, ++counter);
-
-	//count number of tiers of merges
-	int layer = counter;
+        int layer = 1;
+	for(int log = count - 1; log != 1; log /= 2, ++layer);
 
 	//number of merges in layer
 	int merge_count = count / 2;
@@ -82,51 +74,47 @@ void merge_all(void *array, int size_a, int size_e, int count, int (*compare)(vo
 	//remainder of merge_count
 	int left_over = count % 2;
 
-	int offset = 0;
+	for(int i = 0, size = part, offset = 0; i < layer; ++i, size <<= 1) {
 
-	int size = part;
-	int temp = 0;
-	for(int i = 0; i < layer; ++i) {
+		for(int j = 0; j < merge_count - 1; offset = 2 * size * ++j)
+			merge(array + offset * size_e, scratch, size, size, size_e, compare);
 
-		for(int j = 0; j < merge_count - 1; ++j) {
-			offset = 2 * size * j;
-			merge(array + offset * size_e, size, size, size_e, compare);
-		}
+		merge(array + offset * size_e, scratch,
+		      size, left_over ? size : size_a - offset - size,
+		      size_e, compare);
 
-		offset = 2 * size * (merge_count - 1);
-
-		if(left_over) {
-			merge(array + offset * size_e, size, size, size_e, compare);
-		} else {
-			merge(array + offset * size_e, size, size_a - offset - size, size_e, compare);
-		}
-
-		temp = (merge_count + left_over) / 2;
+		int temp = (merge_count + left_over) / 2;
 		left_over = (merge_count + left_over) % 2;
 		merge_count = temp;
-
-		size <<= 1;
 	}
 }
 
 
-void sort_point(void *arg) {
+void start_sort(void *array, void *scratch, int size_a, int size_e, int (*compare)(void *, void *)) {
+	int left_size = size_a / 2;
+	int right_size = size_a - left_size;
+
+	if(left_size > 1)
+		start_sort(array, scratch, left_size, size_e, compare);
+
+	if(right_size > 1)
+		start_sort(array + left_size * size_e, scratch, right_size, size_e, compare);
+
+	merge(array, scratch, left_size, right_size, size_e, compare);
+}
+
+
+void init_sort_thread(void *arg) {
+	void *array = (*(data *) arg).array;
+	int (*compare)(void *, void *) = (*(data *) arg).compare;
 	int size_a = (*(data *) arg).size_a;
-	if(size_a > 1) {
-		void *array = (*(data *) arg).array;
-		int (*compare)(void *, void *) = (*(data *) arg).compare;
-		int size_e = (*(data *) arg).size_e;
-		int newSize = size_a / 2;
-		int newSize2 = size_a - newSize;
+	int size_e = (*(data *) arg).size_e;
 
-		data left = {array, compare, newSize, size_e};
-		data right = {array + newSize * size_e, compare, newSize2, size_e};
+	void *scratch = malloc(size_e * size_a);
 
-		sort_point((void *) &left);
-		sort_point((void *) &right);
+	start_sort(array, scratch, size_a, size_e, compare);
 
-		merge(array, newSize, newSize2, size_e, compare);
-	}
+	free(scratch);
 }
 
 
@@ -147,21 +135,22 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), v
 		data_struct[i].compare = compare;
 		data_struct[i].size_a = part;
 		data_struct[i].size_e = size_e;
-		pthread_create(t + i, NULL, (void * (*) (void *)) &sort_point, (void *) (data_struct + i));
+		pthread_create(t + i, NULL, (void * (*) (void *)) &init_sort_thread, (void *) (data_struct + i));
 	}
 
 	data_struct[i].array = array + (i * part) * size_e;
 	data_struct[i].compare = compare;
 	data_struct[i].size_a = size_a - (i * part);
 	data_struct[i].size_e = size_e;
-	pthread_create(t + i, NULL, (void * (*) (void *)) &sort_point, (void *) (data_struct + i));
+	pthread_create(t + i, NULL, (void * (*) (void *)) &init_sort_thread, (void *) (data_struct + i));
 
 
 	for(int j = 0; j < count; ++j) {
 		pthread_join(*(t + j), NULL);
 	}
 
-	merge_all(array, size_a, size_e, count, compare);
+	void *scratch = malloc(size_a * size_e);
+	merge_all(array, scratch, size_a, size_e, count, compare);
 
 	free(t);
 	free(data_struct);
