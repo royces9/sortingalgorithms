@@ -71,11 +71,9 @@ void MSDradix(void *array, int size_a, int size_e, int max, int (*compare)(void 
 	}
 
 	if(max > 0) {
-		//if((writeHead + 1) != 1)
 		if(writeHead)
 			MSDradix(array, writeHead + 1, size_e, max - 1, compare);
 
-		//if((size_a - writeHead - 1) != 1)
 		if(size_a - writeHead - 1)
 			MSDradix(array + (writeHead + 1) * size_e, size_a - writeHead - 1, size_e, max - 1, compare);
 	}
