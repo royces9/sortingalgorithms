@@ -15,7 +15,7 @@ class Rectangle:
         self.rectangle = board.create_rectangle(x1, y1, x2, y2, fill='#ffd1dc');
 
 
-class Alg_details:
+class Algorithm:
     def __init__(self, algorithm, s_size, args, delay):
         self.algorithm = algorithm;
         self.s_size = s_size;
@@ -67,7 +67,7 @@ def resize_canvas(Canvas):
         Canvas.__init__(self,parent,**kwargs)
         self.bind("<Configure>", self.on_resize)
         self.height = self.winfo_reqheight()
-        sel.width = self.winfo_reqwidth()
+        self.width = self.winfo_reqwidth()
 
     def on_resize(self,event):
         # determine the ratio of old width/height to new width/height
@@ -75,8 +75,10 @@ def resize_canvas(Canvas):
         hscale = float(event.height)/self.height
         self.width = event.width
         self.height = event.height
+
         # resize the canvas
         self.config(width=self.width, height=self.height)
+
         # rescale all the objects tagged with the "all" tag
         self.scale("all",0,0,wscale,hscale)
 
@@ -105,12 +107,13 @@ def main():
     s_size = str(size);
 
     args = '';
+
     for i in range(3, len(sys.argv)):
         if(sys.argv[i] == '-s'):
             s_size = sys.argv[i + 1];
             size = int(s_size);
 
-        if(sys.argv[i] == '-f'):
+        elif(sys.argv[i] == '-f'):
             i += 2;
             continue;
 
@@ -123,7 +126,7 @@ def main():
 
     file_name = "Sorting_algo_file"
 
-    alg = Alg_details(algorithm, s_size, args, delay);
+    alg = Algorithm(algorithm, s_size, args, delay);
 
     f = open (file_name, "w");
     write_to_file(file_name, alg);
