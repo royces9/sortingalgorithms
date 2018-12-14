@@ -133,8 +133,8 @@ def main():
 
     root = new_window();
 
-    width = 1920;
-    height = 1080;
+    width = 640;
+    height = 520;
     board = new_canvas(width, height, root);
 
     rectangle_width = width / size;

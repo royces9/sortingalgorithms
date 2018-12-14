@@ -6,12 +6,13 @@ SORTC = $(wildcard sort/*.c)
 OBJS = $(SORTC:.c=.o)
 EXE =  $(SORTC:.c=)
 
+OBJF = obj
+SORTF = sort
 
 all: $(EXE)
 
 $(EXE) : $(OBJS) main.o shuffle.o
-	$(CC) $@.o main.o shuffle.o -o ../$@ $(LDFLAGS)
-
+	$(CC) $(OBJF)/$(@F).o main.o shuffle.o -o ../$@ $(LDFLAGS)
 
 shuffle.o: shuffle.c shuffle.h
 	$(CC) $(FLAGS) -c shuffle.c -o shuffle.o
@@ -19,11 +20,12 @@ shuffle.o: shuffle.c shuffle.h
 main.o: main.c shuffle.h
 	$(CC) $(FLAGS) -c main.c -o main.o
 
-sort/%.o: sort/%.c shuffle.c
-	$(CC) $(FLAGS) -c $< -o $@
+$(SORTF)/%.o: $(SORTF)/%.c shuffle.c
+	$(CC) $(FLAGS) -c $< -o $(OBJF)/$*.o
 
 
 .PHONY: clean
 clean:
 	del *.o
-	del sort/*.o
+	del obj/*.o
+	del $(EXE)
