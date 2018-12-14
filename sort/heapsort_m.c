@@ -35,47 +35,47 @@ void swap(void *a, void *b, int size_e) {
 
 //swim the last index in the heap
 void swimHeap(void *array, int last_index, int size_e, int (*compare)(void *, void *)) {
-	//index
 	int child = last_index;
-	int parent = (child - 1) / 2;
-
-	//take advantage of -0.5 cast to int goes to 0
-	//if child is 0, we've reached the top of the heap
-	while((compare(array + child * size_e, array + parent * size_e)) && child) {
-		swap(array + child * size_e, array + parent * size_e, size_e);
+	int parent = (child - size_e) / 2;
+	parent -= parent % size_e;
+	while((compare(array + child, array + parent)) && child) {
+		swap(array + child, array + parent, size_e);
 
 		child = parent;
-		parent = (child - 1) / 2;
+		parent = (child - size_e) / 2;
+		parent -= parent % size_e;
 	}
 }
 
 
 void sinkHeap(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	int child = compare(array + 2 * size_e, array + size_e) ? 2 : 1;
+	int child = compare(array + 2 * size_e, array + size_e) ? 2 * size_e : size_e;
 	int parent = 0;
 
-	while((child < size_a) && compare(array + child * size_e, array + parent * size_e)) {
-		swap(array + child * size_e, array + parent * size_e, size_e);
+	while((child < size_a) && compare(array + child, array + parent)) {
+		swap(array + child, array + parent, size_e);
 
 		parent = child;
-		int leftChild = 2 * parent + 1;
-		child = leftChild + (((leftChild + 1) < size_a) && compare(array + (leftChild + 1) * size_e, array + leftChild * size_e));
+		int left = 2 * parent + size_e;
+		int right = left + size_e;
+		child = ((right < size_a) && compare(array + right, array + left)) ? right : left;
 	}
 }
 
 
 void buildHeap(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	for(int i = 1; i < size_a; ++i)
+	for(int i = size_e; i < size_a; i += size_e)
 		swimHeap(array, i, size_e, compare);
 }
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	buildHeap(array, size_a , size_e, compare);
+	size_a *= size_e;
+	buildHeap(array, size_a, size_e, compare);
 
-	for(int lastHeapIndex = size_a - 1;
-	    lastHeapIndex > 2;
-	    --lastHeapIndex) {
-		swap(array + lastHeapIndex * size_e, array, size_e);
+	for(int lastHeapIndex = size_a - size_e;
+	    lastHeapIndex > 2 * size_e;
+	    lastHeapIndex -= size_e) {
+		swap(array + lastHeapIndex, array, size_e);
 		sinkHeap(array, lastHeapIndex, size_e, compare);
 	}
 

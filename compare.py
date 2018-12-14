@@ -1,11 +1,8 @@
 import subprocess
 import sys
 
-
-
-
 def compare_sorts(algorithms, no_algs, count, size):
-    avg = [0] * (no_algs + 1);
+    avg = [0] * (no_algs);
 
     for j, alg in enumerate(algorithms):
         time = 0;
