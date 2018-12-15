@@ -37,12 +37,10 @@ int highest_bit(void *array, int size_a, int size_e) {
 	int out = 0;
 
 	int total_bits = size_e * 8 - 1;
-	int place_counter = total_bits;
-
 	uint64_t max = 1ULL << total_bits;
 
 	for(int i = 0; i < size_a; ++i) {
-		place_counter = total_bits;
+		int place_counter = total_bits;
 
 		for(uint64_t j = max; j > 0; j >>= 1, --place_counter) {
 			if(compare(array + size_e * i, &j) && (place_counter > out)) {

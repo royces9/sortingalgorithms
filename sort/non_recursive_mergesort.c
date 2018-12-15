@@ -31,6 +31,21 @@ void merge(void *array, void *scratch, int left_size, int right_size, int size_e
         int total_size = left_size + right_size;
 	int head[2] = {0, left_size};
 
+	int i = 0;
+	for(; (head[1] <= total_size) && (head[0] <= left_size); ++i) {
+		int src = head[compare(array + head[0] * size_e, array + head[1] * size_e)]++;
+		copy(array + src * size_e, scratch + i * size_e, size_e);
+	}
+	int cpy = 0;
+	if(head[0] >= left_size) {
+		cpy = 1;
+	}
+	for(; i < total_size; ++i) {
+		copy(array + (head[cpy]++) * size_e, scratch + i * size_e, size_e);
+	}
+	for(int j = 0; j < total_size; ++j)
+		copy(scratch + j * size_e, array + j * size_e, size_e);
+	/*
 	int src = 0;
 	for(int i = 0; i < total_size; ++i) {
 		if(head[1] >= total_size) {
@@ -46,14 +61,12 @@ void merge(void *array, void *scratch, int left_size, int right_size, int size_e
 
 	for(int j = 0; j < total_size; ++j)
 		copy(scratch + j * size_e, array + j * size_e, size_e);
+	*/
 }
 
 
 //bottom up
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	int layer = 1;
-	for(int log = size_a - 1; log != 1; log /= 2, ++layer);
-
 	//number of merges in layer
 	int merge_count = size_a / 2;
 
@@ -61,10 +74,9 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int left_over = size_a % 2;
 
 	int offset = 0;
-	int size = 1;
-
 	void *scratch = malloc(size_a * size_e);
-	for(int i = 0; i < layer; ++i) {
+
+	for(int size = 1; size < size_a; size <<= 1) {
 
 		for(int j = 0; j < merge_count - 1; ++j) {
 			offset = 2 * size * j;
@@ -82,8 +94,6 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 		int temp = (merge_count + left_over) / 2;
 		left_over = (merge_count + left_over) % 2;
 		merge_count = temp;
-
-		size <<= 1;
 	}
 
 	free(scratch);
