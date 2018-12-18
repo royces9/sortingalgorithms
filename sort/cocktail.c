@@ -37,18 +37,16 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 
 		int min = left_bound;
 		for(int i = left_bound + 1; i < right_bound; ++i) {
-			if(compare(array + min * size_e, array + i * size_e)) {
+			if(compare(array + min * size_e, array + i * size_e))
 				min = i;
-			}
 		}
 		swap(array + left_bound * size_e, array + min * size_e, size_e);
 		++left_bound;
 
 		int max = right_bound - 1;
 		for(int i = right_bound - 2; i >= left_bound; --i) {
-			if(compare(array + i * size_e, array + max * size_e)) {
+			if(compare(array + i * size_e, array + max * size_e))
 				max = i;
-			}
 		}
 		
 		swap(array + (right_bound - 1) * size_e, array + max * size_e, size_e);

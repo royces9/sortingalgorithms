@@ -28,4 +28,4 @@ $(SORTF)/%.o: $(SORTF)/%.c shuffle.c
 clean:
 	del *.o
 	del obj/*.o
-	del $(EXE)
+	del $(patsubst $(SORTF)/%, %, $(EXE))

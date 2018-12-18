@@ -44,6 +44,20 @@ int main(int argc, char **argv) {
 				--i;
 				break;
 
+			case 'a':
+				for(int k = 0; k < size; ++k)
+					array[k] = k;
+
+				--i;
+				break;
+
+			case 'd':
+				for(int k = 0; k < size; ++k)
+					array[k] = 1;
+
+				--i;
+				break;
+
 			default:
 				break;
 			}
