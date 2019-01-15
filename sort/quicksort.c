@@ -54,9 +54,9 @@ void sort_r(void *array, int size_a, int size_e, int (*compare)(void *, void *))
 
 	swap(array, pivot, size_e);
 
-	while(right >left) {
-		for(; (left < right) && !compare(array + left * size_e, array); ++left);
-		for(; (right > left) && !compare(array, array + right * size_e); --right);
+	while(right > left) {
+		for(; (left < right) && compare(array, array + left * size_e); ++left);
+		for(; (right > left) && compare(array + right * size_e, array); --right);
 
 		swap(array + left * size_e,
 		     array + right * size_e,
