@@ -17,11 +17,9 @@ int *shuffledArray(int size) {
 		array[i] = i;
 
 	//shuffle array
-	int temp;
-	size_t j;
 	for(int i = 0; i < (size - 1); i++) {
-		j = i + rand() / (RAND_MAX / (size - i) + 1);
-		temp = array[j];
+		int j = i + rand() / (RAND_MAX / (size - i) + 1);
+		int temp = array[j];
 		array[j] = array[i];
 		array[i] = temp;
 	}
