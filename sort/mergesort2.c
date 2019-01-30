@@ -30,19 +30,18 @@ void merge(void *array, void *scratch, int left_size, int right_size, int size_e
 	int total_size = left_size + right_size;
 	int head[2] = {0, left_size};
 
-        int i = 0;
-	for(; (head[1] < total_size) && (head[0] < left_size); ++i) {
-		int index = compare(array + head[0] * size_e, array + head[1] * size_e);
-		int src = head[index]++;
+	int src = 0;
+	for(int i = 0; i < total_size; ++i) {
+		if(head[1] >= total_size) {
+			src = head[0]++;
+		} else if(head[0] >= left_size) {
+			src = head[1]++;
+		} else {
+			src = head[compare(array + head[0] * size_e, array + head[1] * size_e)]++;
+		}
+
 		copy(array + src * size_e, scratch + i * size_e, size_e);
 	}
-
-	int cpy = 0;
-	if(head[0] >= left_size)
-		cpy = 1;
-
-	for(; i < total_size; ++i)
-		copy(array + (head[cpy]++) * size_e, scratch + i * size_e, size_e);
 
 	for(int j = 0; j < total_size; ++j)
 		copy(scratch + j * size_e, array + j * size_e, size_e);

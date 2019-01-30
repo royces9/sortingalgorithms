@@ -1,5 +1,8 @@
 #!/usr/bin/python
 
+#input format
+# ./compare.py alg1 alg2 ... algn list_count list_size
+
 import subprocess
 import sys
 

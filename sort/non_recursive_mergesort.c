@@ -33,7 +33,8 @@ void merge(void *array, void *scratch, int left_size, int right_size, int size_e
 
 	int i = 0;
 	for(; (head[1] < total_size) && (head[0] < left_size); ++i) {
-		int src = head[compare(array + head[0] * size_e, array + head[1] * size_e)]++;
+                int index = compare(array + head[0] * size_e, array + head[1] * size_e);
+		int src = head[index]++;
 		copy(array + src * size_e, scratch + i * size_e, size_e);
 	}
 
