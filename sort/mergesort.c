@@ -37,15 +37,34 @@ void merge(void *array, void *scratch, int left_size, int right_size, int size_e
 		copy(array + src * size_e, scratch + i * size_e, size_e);
 	}
 
-	int cpy = 0;
-	if(head[0] >= left_size)
-		cpy = 1;
+	if(head[0] < left_size) {
+		for(; i < total_size; ++i)
+			copy(array + (head[0]++) * size_e, scratch + i * size_e, size_e);
+	}
 
-	for(; i < total_size; ++i)
-		copy(array + (head[cpy]++) * size_e, scratch + i * size_e, size_e);
-
-	for(int j = 0; j < total_size; ++j)
+	for(int j = 0; j < i; ++j)
 		copy(scratch + j * size_e, array + j * size_e, size_e);
+
+	/*
+	//this is actually faster using -O3
+	//only slightly slower or even with -O0/1/2
+
+        int src = 0;
+        for(int i = 0; i < total_size; ++i) {
+                if(head[1] >= total_size) {
+                        src = head[0]++;
+                } else if(head[0] >= left_size) {
+                        src = head[1]++;
+                } else {
+                        src = head[compare(array + head[0] * size_e, array + head[1] * size_e)]++;
+                }
+
+                copy(array + src * size_e, scratch + i * size_e, size_e);
+        }
+
+        for(int j = 0; j < total_size; ++j)
+                copy(scratch + j * size_e, array + j * size_e, size_e);
+	*/
 }
 
 
