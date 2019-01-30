@@ -45,17 +45,18 @@ void merge(void *array, void * scratch, int left_size, int right_size, int size_
 	int total_size = left_size + right_size;
 	int head[2] = {0, left_size};
 
-	for(int i = 0, src = 0; i < total_size; ++i) {
-                if(head[1] >= total_size) {
-			src = head[0]++;
-		} else if(head[0] >= left_size) {
-			src = head[1]++;
-		} else {
-			src = head[compare(array + size_e * head[0], array + size_e * head[1])]++;
-		}
-
+        int i = 0;
+	for(; (head[1] < total_size) && (head[0] < left_size); ++i) {
+		int src = head[compare(array + head[0] * size_e, array + head[1] * size_e)]++;
 		copy(array + src * size_e, scratch + i * size_e, size_e);
 	}
+
+	int cpy = 0;
+	if(head[0] >= left_size)
+		cpy = 1;
+
+	for(; i < total_size; ++i)
+		copy(array + (head[cpy]++) * size_e, scratch + i * size_e, size_e);
 
 	for(int j = 0; j < total_size; ++j)
 		copy(scratch + j * size_e, array + j * size_e, size_e);
@@ -65,22 +66,21 @@ void merge(void *array, void * scratch, int left_size, int right_size, int size_
 void merge_all(void *array, void *scratch, int size_a, int size_e, int count, int (*compare)(void *, void *)) {
 	int part = size_a / count;
 
-        int layer = 1;
-	for(int log = count - 1; log != 1; log /= 2, ++layer);
-
 	//number of merges in layer
 	int merge_count = count / 2;
 
 	//remainder of merge_count
 	int left_over = count % 2;
 
-	for(int i = 0, size = part, offset = 0; i < layer; ++i, size <<= 1) {
-
-		for(int j = 0; j < merge_count - 1; offset = 2 * size * ++j)
+	for(int size = part, offset = 0; size < size_a; size <<= 1) {
+		for(int j = 0; j < merge_count - 1; offset = 2 * size * ++j) {
 			merge(array + offset * size_e, scratch, size, size, size_e, compare);
+			offset = 2 * size * j;
+		}
 
-		merge(array + offset * size_e, scratch,
-		      size, left_over ? size : size_a - offset - size,
+		offset = 2 * size * (merge_count - 1);
+		merge(array + offset * size_e, scratch, size,
+		      left_over ? size : size_a - offset - size,
 		      size_e, compare);
 
 		int temp = (merge_count + left_over) / 2;
@@ -110,7 +110,7 @@ void init_sort_thread(void *arg) {
 	int size_a = (*(data *) arg).size_a;
 	int size_e = (*(data *) arg).size_e;
 
-	void *scratch = malloc(size_e * size_a);
+	void *scratch = malloc(size_a * size_e);
 
 	start_sort(array, scratch, size_a, size_e, compare);
 
@@ -126,10 +126,10 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), v
 
 	int part = size_a / count;
 
-	pthread_t *t = malloc(sizeof(*t) * count);
+	pthread_t *t = malloc(count * sizeof(*t));
 
 	int i = 0;
-	data *data_struct = malloc(sizeof(*data_struct) * count);
+	data *data_struct = malloc(count * sizeof(*data_struct));
 	for(; i < count - 1; ++i) {
 		data_struct[i].array = array + (i * part) * size_e;
 		data_struct[i].compare = compare;
@@ -153,4 +153,5 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), v
 
 	free(t);
 	free(data_struct);
+	free(scratch);
 }
