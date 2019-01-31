@@ -48,18 +48,24 @@ void swimHeap(void *array, int child, int size_a, int size_e, int (*compare)(voi
 
 
 void sinkHeap(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	int leftChild = size_a - 2;
+	int child = size_a - 2;
 
-	int child = leftChild - ((leftChild > 0) && compare(array + leftChild * size_e, array + (leftChild  - 1) * size_e));
+	if((child > 0) && compare(array + child * size_e, array + (child  - 1) * size_e))
+		--child;
+
 	int parent = size_a - 1;
 
-	while((leftChild >= 0) && compare(array + parent * size_e, array + child * size_e)) {
+	while((child >= 0) && compare(array + parent * size_e, array + child * size_e)) {
 		swap(array + parent * size_e, array + child * size_e, size_e);
 
 		parent = child;
-		leftChild = 2 * parent - size_a;
-		child = leftChild - ((leftChild > 0) && (compare(array + leftChild * size_e, array + (leftChild - 1) * size_e)));
+		child = 2 * parent - size_a;
+
+		if((child > 0) && compare(array + child * size_e, array + (child  - 1) * size_e))
+			--child;
 	}
+
+
 }
 
 

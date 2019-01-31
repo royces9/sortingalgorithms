@@ -41,6 +41,6 @@ if __name__ == "__main__":
 
     for i, a in enumerate(avg):
         padding = max_length - alg_name_length[i];
-        print(algorithms[i] + ":" + " " * padding, a);
+        print(algorithms[i] + ": " + " " * padding + str(a));
 
 

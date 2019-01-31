@@ -29,7 +29,6 @@ struct heap_data {
 
 pthread_mutex_t print_lock;
 
-
 void swap(void *a, void *b, int size_e) {
 	int word_loops = size_e / 4;
 	int byte_loops = size_e % 4;
@@ -69,11 +68,24 @@ void copy(void *src, void *dest, int size_e) {
 }
 
 
+void print_heap(struct heap_data *heap, int count, int size_e) {
+	for(int a = 0; a < count; ++a) {
+		int b = 0;
+		for(void *start = heap[a].array; start < heap[a].end; start += size_e, ++b) {
+			printf("%d ", ((int *)heap[a].array)[b]);
+		}
+	}
+	printf("\n");
+}
+
+
 void swim_heap(struct heap_data *heap, int child, int (*compare)(void *, void *)) {
 	int parent = (child - 1) / 2;
 
-	while(!compare(heap[child].array, heap[parent].array) && child) {
-		swap(heap + child, heap + parent, sizeof(*heap));
+	while(child && compare(heap[parent].array, heap[child].array)) {
+		struct heap_data temp = heap[child];
+		heap[child] = heap[parent];
+		heap[parent] = temp;
 
 		child = parent;
 		parent = (child - 1) / 2;
@@ -82,22 +94,45 @@ void swim_heap(struct heap_data *heap, int child, int (*compare)(void *, void *)
 
 
 void sink_heap(struct heap_data *heap, int size_a, int (*compare)(void *, void *)) {
-	int child = compare(heap[2].array, heap[1].array) ? 2 : 1;
+	int child = 1;
+
+	if(size_a > 2)
+		child = compare(heap[2].array, heap[1].array) ? 1 : 2;
+
 	int parent = 0;
 
-	while((child < size_a) && compare(heap[child].array, heap[parent].array)) {
-		swap(heap + child, heap + parent, sizeof(*heap));
+	while((child < size_a) && compare(heap[parent].array, heap[child].array)) {
+		struct heap_data temp = heap[child];
+		heap[child] = heap[parent];
+		heap[parent] = temp;
 
 		parent = child;
-		int leftChild = 2 * parent + 1;
-		child = leftChild + (((leftChild + 1) < size_a) && (compare(heap[leftChild + 1].array, heap[leftChild].array)));
+		child = 2 * (parent + 1);
+
+		if((child < size_a) && compare(heap[child].array, heap[child - 1].array))
+			--child;
 	}
 }
 
 
-void build_heap(struct heap_data *heap, int size_a, int (*compare)(void *, void *)) {
-	for(int i = 1; i < size_a; ++i)
-		swim_heap(heap, i, compare);
+struct heap_data *build_heap(int count, void *array, int size_a, int size_e,
+			     int part, int (*compare)(void *, void *)) {
+
+	struct heap_data *heap = malloc(count * sizeof(*heap));
+
+	int i = 0;
+	for(; i < (count - 1); ++i) {
+		heap[i].array = array + (i * part) * size_e;
+		heap[i].end =  heap[i].array + part * size_e;
+	}
+
+	heap[i].array = array + (i * part) * size_e;
+	heap[i].end = array + size_a * size_e;
+
+	for(int j = 1; j < count; ++j)
+		swim_heap(heap, j, compare);
+
+	return heap;
 }
 
 
@@ -106,40 +141,27 @@ void merge_all(void *array, void *scratch,
 	       int part, int count,
 	       int (*compare)(void *, void *)) {
 
-	struct heap_data *heap = malloc(count * sizeof(*heap));
+	struct heap_data *heap = build_heap(count, array, size_a, size_e, part, compare);
 
-	int i = 0;
-	for(; i < (count - 1); ++i) {
-		heap[i].array = array + (i * part) * size_e;
-		heap[i].end =  array + ((i + 1) * part) * size_e;
-	}
+	for(int i = 0; i < size_a; ++i) {
+		copy(heap[0].array, scratch + i * size_e, size_e);
+		heap[0].array += size_e;
 
-	heap[i].array = array + (i * part) * size_e;
-	heap[i].end = array + size_a * size_e;
+		if(heap->array > heap->end) {
+			struct heap_data temp = heap[0];
+			heap[0] = heap[count - 1];
+			heap[count - 1] = temp;
 
-	build_heap(heap, count, compare);
-
-	for(int a = 0; a < count; ++a) {
-		int b = 0;
-		for(void *start = heap[a].array; start < heap[a].end; start += size_e, ++b) {
-			printf("%d ", ((int *)heap[a].array)[b]);
-		}
-	}
-	printf("\n");
-
-	for(int j = 0; j < size_a; ++j) {
-		copy(heap->array, scratch + j * size_e, size_e);
-		heap->array += size_e;
-
-		if(heap->array == heap->end) {
-			swap(heap, heap + (count - 1), sizeof(*heap));
 			--count;
 		}
+
 		sink_heap(heap, count, compare);
 	}
 
-	for(int k = 0; k < size_a; ++k)
-		copy(scratch + k * size_e, array + k * size_e, size_e);
+	for(int j = 0; j < size_a; ++j)
+		copy(scratch + j * size_e, array + j * size_e, size_e);
+
+	free(heap);
 }
 
 

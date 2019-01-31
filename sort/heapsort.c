@@ -40,7 +40,7 @@ void swimHeap(void *array, int child, int size_e, int (*compare)(void *, void *)
 
 	//take advantage of -0.5 cast to int goes to 0
 	//if child is 0, we've reached the top of the heap
-	while((compare(array + child * size_e, array + parent * size_e)) && child) {
+	while(child && compare(array + child * size_e, array + parent * size_e)) {
 		swap(array + child * size_e, array + parent * size_e, size_e);
 
 		child = parent;
@@ -57,8 +57,10 @@ void sinkHeap(void *array, int size_a, int size_e, int (*compare)(void *, void *
 		swap(array + child * size_e, array + parent * size_e, size_e);
 
 		parent = child;
-		int leftChild = 2 * parent + 1;
-		child = leftChild + (((leftChild + 1) < size_a) && compare(array + (leftChild + 1) * size_e, array + leftChild * size_e));
+		child = 2 * (parent + 1);
+
+		if((child < size_a) && compare(array + (child - 1) * size_e, array + child * size_e))
+			--child;
 	}
 }
 

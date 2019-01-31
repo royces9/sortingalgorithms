@@ -1,5 +1,5 @@
 CC = gcc
-FLAGS = -g -Wall -I. -O2
+FLAGS = -g -Wall -I.
 LDFLAGS = -lm -pthread
 
 SORTC = $(wildcard sort/*.c)
