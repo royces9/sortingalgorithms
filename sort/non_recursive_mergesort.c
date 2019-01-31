@@ -32,20 +32,20 @@ void merge(void *array, void *scratch, int left_size, int right_size, int size_e
 	int head[2] = {0, left_size};
 
 	int i = 0;
+	//keeps iterating until one of the sub lists is exhausted of elements
 	for(; (head[1] < total_size) && (head[0] < left_size); ++i) {
                 int index = compare(array + head[0] * size_e, array + head[1] * size_e);
 		int src = head[index]++;
 		copy(array + src * size_e, scratch + i * size_e, size_e);
 	}
 
-	int cpy = 0;
-	if(head[0] >= left_size)
-		cpy = 1;
+	//check if the left list still has elements to be merged
+	if(head[0] < left_size) {
+		for(; i < total_size; ++i)
+			copy(array + (head[0]++) * size_e, scratch + i * size_e, size_e);
+	}
 
-	for(; i < total_size; ++i)
-		copy(array + (head[cpy]++) * size_e, scratch + i * size_e, size_e);
-
-	for(int j = 0; j < total_size; ++j)
+	for(int j = 0; j < i; ++j)
 		copy(scratch + j * size_e, array + j * size_e, size_e);
 }
 

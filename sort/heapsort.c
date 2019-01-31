@@ -34,9 +34,8 @@ void swap(void *a, void *b, int size_e) {
 //max heap
 
 //swim the last index in the heap
-void swimHeap(void *array, int last_index, int size_e, int (*compare)(void *, void *)) {
+void swimHeap(void *array, int child, int size_e, int (*compare)(void *, void *)) {
 	//index
-	int child = last_index;
 	int parent = (child - 1) / 2;
 
 	//take advantage of -0.5 cast to int goes to 0
@@ -68,6 +67,7 @@ void buildHeap(void *array, int size_a, int size_e, int (*compare)(void *, void 
 	for(int i = 1; i < size_a; ++i)
 		swimHeap(array, i, size_e, compare);
 }
+
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	buildHeap(array, size_a , size_e, compare);

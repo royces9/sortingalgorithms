@@ -21,7 +21,35 @@ typedef struct {
 } data;
 
 
+struct heap_data {
+	void *array;
+	void *end;
+};
+
+
 pthread_mutex_t print_lock;
+
+
+void swap(void *a, void *b, int size_e) {
+	int word_loops = size_e / 4;
+	int byte_loops = size_e % 4;
+
+	for(int i = 0; i < word_loops; ++i) {
+		int i_temp = *(int *)a;
+		*(int *)a++ = *(int *)b;
+		*(int *)b++ = i_temp;
+	}
+
+	for(int i = 0; i < byte_loops; ++i) {
+		char c_temp  = *(char *)a;
+		*(char *)a++ = *(char *)b;
+		*(char *)b++ = c_temp;
+	}
+
+	if(flag & 8)
+		printArray(globalArray, globalSize);
+}
+
 
 void copy(void *src, void *dest, int size_e) {
 	int word_loops = size_e / 4;
@@ -38,6 +66,80 @@ void copy(void *src, void *dest, int size_e) {
 		printArray(globalArray, globalSize);
 		pthread_mutex_unlock(&print_lock);
 	}
+}
+
+
+void swim_heap(struct heap_data *heap, int child, int (*compare)(void *, void *)) {
+	int parent = (child - 1) / 2;
+
+	while(!compare(heap[child].array, heap[parent].array) && child) {
+		swap(heap + child, heap + parent, sizeof(*heap));
+
+		child = parent;
+		parent = (child - 1) / 2;
+	}
+}
+
+
+void sink_heap(struct heap_data *heap, int size_a, int (*compare)(void *, void *)) {
+	int child = compare(heap[2].array, heap[1].array) ? 2 : 1;
+	int parent = 0;
+
+	while((child < size_a) && compare(heap[child].array, heap[parent].array)) {
+		swap(heap + child, heap + parent, sizeof(*heap));
+
+		parent = child;
+		int leftChild = 2 * parent + 1;
+		child = leftChild + (((leftChild + 1) < size_a) && (compare(heap[leftChild + 1].array, heap[leftChild].array)));
+	}
+}
+
+
+void build_heap(struct heap_data *heap, int size_a, int (*compare)(void *, void *)) {
+	for(int i = 1; i < size_a; ++i)
+		swim_heap(heap, i, compare);
+}
+
+
+void merge_all(void *array, void *scratch,
+	       int size_a, int size_e,
+	       int part, int count,
+	       int (*compare)(void *, void *)) {
+
+	struct heap_data *heap = malloc(count * sizeof(*heap));
+
+	int i = 0;
+	for(; i < (count - 1); ++i) {
+		heap[i].array = array + (i * part) * size_e;
+		heap[i].end =  array + ((i + 1) * part) * size_e;
+	}
+
+	heap[i].array = array + (i * part) * size_e;
+	heap[i].end = array + size_a * size_e;
+
+	build_heap(heap, count, compare);
+
+	for(int a = 0; a < count; ++a) {
+		int b = 0;
+		for(void *start = heap[a].array; start < heap[a].end; start += size_e, ++b) {
+			printf("%d ", ((int *)heap[a].array)[b]);
+		}
+	}
+	printf("\n");
+
+	for(int j = 0; j < size_a; ++j) {
+		copy(heap->array, scratch + j * size_e, size_e);
+		heap->array += size_e;
+
+		if(heap->array == heap->end) {
+			swap(heap, heap + (count - 1), sizeof(*heap));
+			--count;
+		}
+		sink_heap(heap, count, compare);
+	}
+
+	for(int k = 0; k < size_a; ++k)
+		copy(scratch + k * size_e, array + k * size_e, size_e);
 }
 
 
@@ -59,33 +161,6 @@ void merge(void *array, void * scratch, int left_size, int right_size, int size_
 
 	for(int j = 0; j < i; ++j)
 		copy(scratch + j * size_e, array + j * size_e, size_e);
-}
-
-
-void merge_all(void *array, void *scratch, int size_a, int size_e, int count, int (*compare)(void *, void *)) {
-	int part = size_a / count;
-
-	//number of merges in layer
-	int merge_count = count / 2;
-
-	//remainder of merge_count
-	int left_over = count % 2;
-
-	for(int size = part, offset = 0; size < size_a; size <<= 1) {
-		for(int j = 0; j < merge_count - 1; offset = 2 * size * ++j) {
-			merge(array + offset * size_e, scratch, size, size, size_e, compare);
-			offset = 2 * size * j;
-		}
-
-		offset = 2 * size * (merge_count - 1);
-		merge(array + offset * size_e, scratch, size,
-		      left_over ? size : size_a - offset - size,
-		      size_e, compare);
-
-		int temp = (merge_count + left_over) / 2;
-		left_over = (merge_count + left_over) % 2;
-		merge_count = temp;
-	}
 }
 
 
@@ -148,7 +223,7 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), v
 		pthread_join(*(t + j), NULL);
 
 	void *scratch = malloc(size_a * size_e);
-	merge_all(array, scratch, size_a, size_e, count, compare);
+	merge_all(array, scratch, size_a, size_e, part, count, compare);
 
 	free(t);
 	free(data_struct);

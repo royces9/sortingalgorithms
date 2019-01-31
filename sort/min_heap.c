@@ -34,13 +34,10 @@ void swap(void *a, void *b, int size_e) {
 //min heap
 
 //swim the last index in the heap
-void swimHeap(void *array, int last_index, int size_a, int size_e, int (*compare)(void *, void *)) {
+void swimHeap(void *array, int child, int size_a, int size_e, int (*compare)(void *, void *)) {
 	//index
-	int child = last_index;
 	int parent = (size_a + 1 + child) / 2;
 
-	//take advantage of -0.5 cast to int goes to 0
-	//if child is 0, we've reached the top of the heap
 	while((child < (size_a - 1) && (compare(array + parent * size_e, array + child * size_e)))) {
 		swap(array + parent * size_e, array + child * size_e, size_e);
 
