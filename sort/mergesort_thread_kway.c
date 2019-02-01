@@ -69,17 +69,6 @@ void copy(void *src, void *dest, int size_e) {
 }
 
 
-void print_heap(struct heap_data *heap, int count, int size_e) {
-	for(int a = 0; a < count; ++a) {
-		int b = 0;
-		for(void *start = heap[a].array; start < heap[a].end; start += size_e, ++b) {
-			printf("%d ", ((int *)heap[a].array)[b]);
-		}
-	}
-	printf("\n");
-}
-
-
 void swim_heap(struct heap_data *heap, int child, int (*compare)(void *, void *)) {
 	int parent = (child - 1) / 2;
 

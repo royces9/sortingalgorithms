@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+# ./disp.py tick algorithm flags
+
 import subprocess
 import sys
 
