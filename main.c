@@ -3,6 +3,13 @@
 
 #include "shuffle.h"
 
+/*
+ * 1: print array
+ * 2: print time
+ * 4: check sorted
+ * 8: print swap/copy
+ */
+
 void sort(void *, int, int, int (*)(void *, void *), void *);
 
 int *globalArray;

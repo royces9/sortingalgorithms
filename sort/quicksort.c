@@ -5,7 +5,7 @@ extern int globalSize;
 extern int flag;
 
 int compare(void *a, void *b) {
-	return *(int *) a > *(int *) b;
+	return *(int *) a >= *(int *) b;
 }
 
 
@@ -72,7 +72,6 @@ void sort_r(void *array, int size_a, int size_e, int (*compare)(void *, void *))
 	if((size_a - left) > 1)
  		sort_r(array + left * size_e, size_a - left, size_e, compare);
 }
-
 
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
