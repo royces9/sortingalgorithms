@@ -15,6 +15,7 @@ int compare(void *a, void *b) {
 
 typedef struct {
 	void *array;
+	void *scratch;
 	int (*compare)(void *, void *);
 	int size_a;
 	int size_e;
@@ -97,7 +98,7 @@ void sink_heap(struct heap_data *heap, int size_a, int (*compare)(void *, void *
 	int child = 1;
 
 	if(size_a > 2)
-		child = compare(heap[2].array, heap[1].array) ? 1 : 2;
+		child = compare(heap[1].array, heap[2].array) ? 2 : 1;
 
 	int parent = 0;
 
@@ -109,7 +110,7 @@ void sink_heap(struct heap_data *heap, int size_a, int (*compare)(void *, void *
 		parent = child;
 		child = 2 * (parent + 1);
 
-		if((child < size_a) && compare(heap[child].array, heap[child - 1].array))
+		if((child >= size_a) || compare(heap[child].array, heap[child - 1].array))
 			--child;
 	}
 }
@@ -143,16 +144,16 @@ void merge_all(void *array, void *scratch,
 
 	struct heap_data *heap = build_heap(count, array, size_a, size_e, part, compare);
 
-	for(int i = 0; i < size_a; ++i) {
+	for(int i = 0; (i < size_a); ++i) {
 		copy(heap[0].array, scratch + i * size_e, size_e);
 		heap[0].array += size_e;
 
-		if(heap->array > heap->end) {
-			struct heap_data temp = heap[0];
-			heap[0] = heap[count - 1];
-			heap[count - 1] = temp;
-
+		if(heap[0].array >= heap[0].end) {
 			--count;
+			
+			struct heap_data temp = heap[0];
+			heap[0] = heap[count];
+			heap[count] = temp;
 		}
 
 		sink_heap(heap, count, compare);
@@ -205,12 +206,9 @@ void init_sort_thread(void *arg) {
 	int (*compare)(void *, void *) = (*(data *) arg).compare;
 	int size_a = (*(data *) arg).size_a;
 	int size_e = (*(data *) arg).size_e;
-
-	void *scratch = malloc(size_a * size_e);
+	void *scratch = (*(data *) arg).scratch;
 
 	start_sort(array, scratch, size_a, size_e, compare);
-
-	free(scratch);
 }
 
 
@@ -226,8 +224,11 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), v
 
 	int i = 0;
 	data *data_struct = malloc(count * sizeof(*data_struct));
+	void *scratch = malloc(size_a * size_e);
+
 	for(; i < count - 1; ++i) {
 		data_struct[i].array = array + (i * part) * size_e;
+		data_struct[i].scratch = scratch + (i * part) * size_e;
 		data_struct[i].compare = compare;
 		data_struct[i].size_a = part;
 		data_struct[i].size_e = size_e;
@@ -235,6 +236,7 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), v
 	}
 
 	data_struct[i].array = array + (i * part) * size_e;
+	data_struct[i].scratch = scratch + (i * part) * size_e;
 	data_struct[i].compare = compare;
 	data_struct[i].size_a = size_a - (i * part);
 	data_struct[i].size_e = size_e;
@@ -244,7 +246,6 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), v
 	for(int j = 0; j < count; ++j)
 		pthread_join(*(t + j), NULL);
 
-	void *scratch = malloc(size_a * size_e);
 	merge_all(array, scratch, size_a, size_e, part, count, compare);
 
 	free(t);
