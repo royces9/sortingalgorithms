@@ -6,31 +6,14 @@ extern int *globalArray;
 extern int globalSize;
 extern int flag;
 
+#include "compare.h"
+#include "copy.h"
+
 typedef struct list {
 	struct list *prev;
 	struct list *next;
 	void *data;
 } list;
-
-
-int compare(void *a, void *b) {
-	return *(int *) a > *(int *) b;
-}
-
-
-void copy(void *src, void *dest, int size_e) {
-	int word_loops = size_e / 4;
-	int byte_loops =  size_e % 4;
-
-	for(int i = 0; i < word_loops; ++i)
-		*(int *)(dest++) = *(int *)(src++);
-
-	for(int i = 0; i < byte_loops; ++i)
-		*(char *)(dest++) = *(char *)(src++);
-
-	if(flag & 8)
-		printArray(globalArray, globalSize);
-}
 
 
 list *init_list(void) {

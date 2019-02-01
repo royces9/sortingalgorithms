@@ -6,25 +6,8 @@ extern int *globalArray;
 extern int globalSize;
 extern int flag;
 
-int compare(void *a, void *b) {
-	return *(int *) a > *(int *) b;
-}
-
-
-void copy(void *src, void *dest, int size_e) {
-        int word_loops = size_e / 4;
-	int byte_loops =  size_e % 4;
-
-	for(int i = 0; i < word_loops; ++i)
-		*(int *)(dest++) = *(int *)(src++);
-
-	for(int i = 0; i < byte_loops; ++i)
-		*(char *)(dest++) = *(char *)(src++);
-
-	if(flag & 8)
-		printArray(globalArray, globalSize);
-}
-
+#include "compare.h"
+#include "copy.h"
 
 //mergesort
 void merge(void *array, void *scratch, int left_size, int right_size, int size_e, int (*compare)(void *, void *)) {

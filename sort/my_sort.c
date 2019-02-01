@@ -7,32 +7,15 @@ extern int globalSize;
 extern int flag;
 
 
+#include "compare.h"
+#include "copy.h"
+
 typedef struct{
 	void *array;
 	int left;
 	int right;
 	int occ;
 } queue;
-	      
-
-int compare(void *a, void *b) {
-	return *(int *) a > *(int *) b;
-}
-
-
-void copy(void *src, void *dest, int size_e) {
-	int word_loops = size_e / 4;
-	int byte_loops =  size_e % 4;
-
-	for(int i = 0; i < word_loops; ++i)
-		*(int *)(dest++) = *(int *)(src++);
-
-	for(int i = 0; i < byte_loops; ++i)
-		*(char *)(dest++) = *(char *)(src++);
-
-	if(flag & 8)
-		printArray(globalArray, globalSize);
-}
 
 
 void init_queue(void *array, queue *qq, int size_e, int (*compare)(void *, void *)) {

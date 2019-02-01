@@ -6,12 +6,10 @@
 extern int *globalArray;
 extern int globalSize;
 extern int flag;
+pthread_mutex_t print_lock;
 
-
-int compare(void *a, void *b) {
-	return *(int *) a > *(int *) b;
-}
-
+#include "compare.h"
+#include "copy.h"
 
 typedef struct {
 	void *array;
@@ -19,26 +17,6 @@ typedef struct {
 	int size_a;
 	int size_e;
 } data;
-
-
-pthread_mutex_t print_lock;
-
-void copy(void *src, void *dest, int size_e) {
-	int word_loops = size_e / 4;
-	int byte_loops =  size_e % 4;
-
-	for(int i = 0; i < word_loops; ++i)
-		*(int *)(dest++) = *(int *)(src++);
-
-	for(int i = 0; i < byte_loops; ++i)
-		*(char *)(dest++) = *(char *)(src++);
-
-	if(flag & 8) {
-		pthread_mutex_lock(&print_lock);
-		printArray(globalArray, globalSize);
-		pthread_mutex_unlock(&print_lock);
-	}
-}
 
 
 void merge(void *array, void * scratch, int left_size, int right_size, int size_e, int (*compare)(void *, void *)) {

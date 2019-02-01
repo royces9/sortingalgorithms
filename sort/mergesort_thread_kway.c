@@ -6,20 +6,20 @@
 extern int *globalArray;
 extern int globalSize;
 extern int flag;
+pthread_mutex_t print_lock;
+
+#include "compare.h"
+#include "copy.h"
+#include "swap.h"
 
 
-int compare(void *a, void *b) {
-	return *(int *) a > *(int *) b;
-}
-
-
-typedef struct {
+struct thread_data {
 	void *array;
 	void *scratch;
 	int (*compare)(void *, void *);
 	int size_a;
 	int size_e;
-} data;
+};
 
 
 struct heap_data {
@@ -28,54 +28,11 @@ struct heap_data {
 };
 
 
-pthread_mutex_t print_lock;
-
-void swap(void *a, void *b, int size_e) {
-	int word_loops = size_e / 4;
-	int byte_loops = size_e % 4;
-
-	for(int i = 0; i < word_loops; ++i) {
-		int i_temp = *(int *)a;
-		*(int *)a++ = *(int *)b;
-		*(int *)b++ = i_temp;
-	}
-
-	for(int i = 0; i < byte_loops; ++i) {
-		char c_temp  = *(char *)a;
-		*(char *)a++ = *(char *)b;
-		*(char *)b++ = c_temp;
-	}
-
-	if(flag & 8)
-		printArray(globalArray, globalSize);
-}
-
-
-void copy(void *src, void *dest, int size_e) {
-	int word_loops = size_e / 4;
-	int byte_loops =  size_e % 4;
-
-	for(int i = 0; i < word_loops; ++i)
-		*(int *)(dest++) = *(int *)(src++);
-
-	for(int i = 0; i < byte_loops; ++i)
-		*(char *)(dest++) = *(char *)(src++);
-
-	if(flag & 8) {
-		pthread_mutex_lock(&print_lock);
-		printArray(globalArray, globalSize);
-		pthread_mutex_unlock(&print_lock);
-	}
-}
-
-
 void swim_heap(struct heap_data *heap, int child, int (*compare)(void *, void *)) {
 	int parent = (child - 1) / 2;
 
 	while(child && compare(heap[parent].array, heap[child].array)) {
-		struct heap_data temp = heap[child];
-		heap[child] = heap[parent];
-		heap[parent] = temp;
+		swap(heap + parent, heap + child, sizeof(*heap));
 
 		child = parent;
 		parent = (child - 1) / 2;
@@ -92,9 +49,7 @@ void sink_heap(struct heap_data *heap, int size_a, int (*compare)(void *, void *
 	int parent = 0;
 
 	while((child < size_a) && compare(heap[parent].array, heap[child].array)) {
-		struct heap_data temp = heap[child];
-		heap[child] = heap[parent];
-		heap[parent] = temp;
+		swap(heap + child, heap + parent, sizeof(*heap));
 
 		parent = child;
 		child = 2 * (parent + 1);
@@ -140,9 +95,7 @@ void merge_all(void *array, void *scratch,
 		if(heap[0].array >= heap[0].end) {
 			--count;
 			
-			struct heap_data temp = heap[0];
-			heap[0] = heap[count];
-			heap[count] = temp;
+			swap(heap, heap + count, sizeof(*heap));
 		}
 
 		sink_heap(heap, count, compare);
@@ -191,13 +144,9 @@ void start_sort(void *array, void *scratch, int size_a, int size_e, int (*compar
 
 
 void init_sort_thread(void *arg) {
-	void *array = (*(data *) arg).array;
-	int (*compare)(void *, void *) = (*(data *) arg).compare;
-	int size_a = (*(data *) arg).size_a;
-	int size_e = (*(data *) arg).size_e;
-	void *scratch = (*(data *) arg).scratch;
+	struct thread_data _d = *(struct thread_data *)arg;
 
-	start_sort(array, scratch, size_a, size_e, compare);
+	start_sort(_d.array, _d.scratch, _d.size_a, _d.size_e, _d.compare);
 }
 
 
@@ -210,34 +159,34 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), v
 	int part = size_a / count;
 
 	pthread_t *t = malloc(count * sizeof(*t));
-
-	int i = 0;
-	data *data_struct = malloc(count * sizeof(*data_struct));
+	struct thread_data *_d = malloc(count * sizeof(*_d));
 	void *scratch = malloc(size_a * size_e);
 
+	int i = 0;
 	for(; i < count - 1; ++i) {
-		data_struct[i].array = array + (i * part) * size_e;
-		data_struct[i].scratch = scratch + (i * part) * size_e;
-		data_struct[i].compare = compare;
-		data_struct[i].size_a = part;
-		data_struct[i].size_e = size_e;
-		pthread_create(t + i, NULL, (void * (*) (void *)) &init_sort_thread, (void *) (data_struct + i));
+		_d[i].array = array + (i * part) * size_e;
+		_d[i].scratch = scratch + (i * part) * size_e;
+		_d[i].compare = compare;
+		_d[i].size_a = part;
+		_d[i].size_e = size_e;
+		pthread_create(t + i, NULL, (void * (*) (void *)) &init_sort_thread, (void *) (_d + i));
 	}
 
-	data_struct[i].array = array + (i * part) * size_e;
-	data_struct[i].scratch = scratch + (i * part) * size_e;
-	data_struct[i].compare = compare;
-	data_struct[i].size_a = size_a - (i * part);
-	data_struct[i].size_e = size_e;
-	pthread_create(t + i, NULL, (void * (*) (void *)) &init_sort_thread, (void *) (data_struct + i));
+	_d[i].array = array + (i * part) * size_e;
+	_d[i].scratch = scratch + (i * part) * size_e;
+	_d[i].compare = compare;
+	_d[i].size_a = size_a - (i * part);
+	_d[i].size_e = size_e;
+	pthread_create(t + i, NULL, (void * (*) (void *)) &init_sort_thread, (void *) (_d + i));
 
 
 	for(int j = 0; j < count; ++j)
 		pthread_join(*(t + j), NULL);
 
+	free(t);
+	free(_d);
+
 	merge_all(array, scratch, size_a, size_e, part, count, compare);
 
-	free(t);
-	free(data_struct);
 	free(scratch);
 }
