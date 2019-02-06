@@ -1,13 +1,9 @@
 #include "shuffle.h"
-
-extern int *globalArray;
-extern int globalSize;
-extern int flag;
-
 #include "compare.h"
 #include "swap.h"
 
 
+//insertion sort
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	for(int i = 0; i < size_a; ++i) {
 

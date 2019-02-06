@@ -1,3 +1,9 @@
+extern int *globalArray;
+extern int globalSize;
+extern int flag;
+extern SDL_Texture **tex;
+extern SDL_Rect *rect;
+
 void swap(void *a, void *b, int size_e) {
 	int word_loops = size_e / sizeof(int);
 	int byte_loops = size_e % sizeof(int);
@@ -22,4 +28,7 @@ void swap(void *a, void *b, int size_e) {
 
 	if(flag & 8)
 		printArray(globalArray, globalSize);
+
+	if(flag & 16)
+		disp_array(tex, rect, globalSize);
 }

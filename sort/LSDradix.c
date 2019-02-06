@@ -2,11 +2,6 @@
 #include <stdint.h>
 
 #include "shuffle.h"
-
-extern int *globalArray;
-extern int globalSize;
-extern int flag;
-
 #include "compare.h"
 #include "copy.h"
 
@@ -32,7 +27,6 @@ int highest_bit(void *array, int size_a, int size_e) {
 
 	return out;
 }
-
 
 
 //LSD radix

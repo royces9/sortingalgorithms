@@ -1,6 +1,6 @@
 CC = gcc
-FLAGS = -g -Wall -I.
-LDFLAGS = -lm -pthread
+FLAGS = -g -Wall `sdl2-config --cflags` -I. 
+LDFLAGS = `sdl2-config --libs` -lSDL2_image -lm -pthread
 
 SORTC = $(wildcard sort/*.c)
 OBJS = $(SORTC:.c=.o)

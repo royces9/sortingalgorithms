@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+
 #include "shuffle.h"
 
 /*
@@ -8,6 +11,7 @@
  * 2: print time
  * 4: check sorted
  * 8: print swap/copy
+ * 16: disp swap/copy in SDL
  */
 
 void sort(void *, int, int, int (*)(void *, void *), void *);
@@ -15,6 +19,11 @@ void sort(void *, int, int, int (*)(void *, void *), void *);
 int *globalArray;
 int globalSize;
 int flag;
+
+SDL_Window *win;
+SDL_Renderer *ren;
+SDL_Texture **tex;
+SDL_Rect *rect;
 
 int compare(void *a, void *b);
 
@@ -77,12 +86,44 @@ int main(int argc, char **argv) {
 	globalSize = size;
 
 
+	if(flag & 16) {
+		SDL_Init(SDL_INIT_VIDEO);
+		int width = 1280;
+		int height = 720;
+		int w_flags = SDL_WINDOW_SHOWN;
+
+		int r_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
+
+		win = SDL_CreateWindow("Sorting", 0, 0, width, height, w_flags);
+		ren = SDL_CreateRenderer(win, -1, r_flags);
+		tex = malloc(size * sizeof(*tex));
+		rect = malloc(size * sizeof(*rect));
+
+		for(int i = 0; i < size; ++i) {
+			tex[i] = IMG_LoadTexture(ren, "pink.png");
+
+			rect[i].w = ((float)width / size);
+
+			rect[i].x = (width * i) / size;
+
+			rect[i].h = (height * array[i]) / (size - 1);
+			rect[i].y = height - rect[i].h;
+		}
+	}
+
 	if(flag & 1)
 		printArray(array, size);
 
+	if(flag & 16)
+		disp_array(tex, rect, size);
+
 	gettimeofday(&start, NULL);
-	sort(array, size, sizeof(*array), &compare, extra);
+	sort(rect, size, sizeof(*rect), &compare, extra);
+	//sort(array, size, sizeof(*array), &compare, extra);
 	gettimeofday(&end, NULL);
+
+	if(flag & 16)
+		disp_array(tex, rect, size);
 
 	if(flag & 1)
 		printArray(array, size);
@@ -92,7 +133,9 @@ int main(int argc, char **argv) {
 
 	if(flag & 4)
 		check_array(array, size);
-  
+
+	while(1);
+
 	free(array);
 	free(extra);
 	return 0;

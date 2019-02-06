@@ -1,13 +1,9 @@
 #include <stdint.h>
 
 #include "shuffle.h"
-
-extern int *globalArray;
-extern int globalSize;
-extern int flag;
-
 #include "compare.h"
 #include "swap.h"
+
 
 int highest_bit(void *array, int size_a, int size_e) {
 	int out = 0;

@@ -1,11 +1,6 @@
 #include <stdlib.h>
 
 #include "shuffle.h"
-
-extern int *globalArray;
-extern int globalSize;
-extern int flag;
-
 #include "compare.h"
 #include "copy.h"
 #include "swap.h"

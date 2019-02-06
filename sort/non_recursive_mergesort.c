@@ -1,13 +1,9 @@
 #include <stdlib.h>
 
 #include "shuffle.h"
-
-extern int *globalArray;
-extern int globalSize;
-extern int flag;
-
 #include "compare.h"
 #include "copy.h"
+
 
 //mergesort
 void merge(void *array, void *scratch, int left_size, int right_size, int size_e, int (*compare)(void *, void *)) {

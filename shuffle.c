@@ -2,7 +2,13 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+
 #include "shuffle.h"
+
+extern SDL_Window *win;
+extern SDL_Renderer *ren;
 
 int *shuffledArray(int size) {
 	//seed rand();
@@ -61,4 +67,14 @@ void check_array(int *array, int size) {
 			break;
 		}
 	}
+}
+
+
+void disp_array(SDL_Texture **tex, SDL_Rect *rect, int size) {
+	for(int i = 0; i < size; ++i) {
+		SDL_RenderCopy(ren, tex[i], NULL, rect + i);
+	}
+
+	SDL_RenderPresent(ren);
+	SDL_RenderClear(ren);
 }

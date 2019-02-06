@@ -3,9 +3,6 @@
 
 #include "shuffle.h"
 
-extern int *globalArray;
-extern int globalSize;
-extern int flag;
 pthread_mutex_t print_lock;
 
 #include "compare.h"
