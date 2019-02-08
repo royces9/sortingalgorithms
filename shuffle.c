@@ -9,6 +9,8 @@
 
 extern SDL_Window *win;
 extern SDL_Renderer *ren;
+extern SDL_Rect rect_bg;
+extern SDL_Texture *bg;
 
 int *shuffledArray(int size) {
 	//seed rand();
@@ -72,11 +74,22 @@ void check_array(int *array, int size) {
 
 void disp_array(SDL_Texture **tex, SDL_Rect *rect, int size) {
 	int width = rect->w;
+	SDL_RenderCopy(ren, bg, NULL, &rect_bg);
+
 	for(int i = 0; i < size; ++i) {
 		rect[i].x = width * i;
 		SDL_RenderCopy(ren, tex[i], NULL, rect + i);
 	}
 
+
+
 	SDL_RenderPresent(ren);
 	SDL_RenderClear(ren);
+
+	SDL_Event event;
+	while(SDL_PollEvent(&event)) {
+		if(event.type == SDL_QUIT) {
+			exit(1);
+		}
+	}
 }

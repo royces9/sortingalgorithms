@@ -25,6 +25,10 @@ SDL_Renderer *ren;
 SDL_Texture **tex;
 SDL_Rect *rect;
 
+SDL_Rect rect_bg = {0, 0, 1280, 720};
+SDL_Texture *bg;
+char *img;
+
 int compare(void *a, void *b);
 
 int main(int argc, char **argv) {
@@ -32,7 +36,9 @@ int main(int argc, char **argv) {
 	int *extra = NULL;
 	struct timeval start;
 	struct timeval end;
-  
+	int repeat = 0;  
+
+ start:;
 	int *array = shuffledArray(size);
 
 	if(argc > 1) {
@@ -85,19 +91,23 @@ int main(int argc, char **argv) {
 	globalArray = array;
 	globalSize = size;
 
-
 	if(flag & 16) {
-		SDL_Init(SDL_INIT_VIDEO);
-		int width = 1280;
-		int height = 720;
-		int w_flags = SDL_WINDOW_SHOWN;
 
+		int width = rect_bg.w;
+		int height = rect_bg.h;
+		int w_flags = SDL_WINDOW_SHOWN;
 		int r_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
 
-		win = SDL_CreateWindow("Sorting", 0, 0, width, height, w_flags);
-		ren = SDL_CreateRenderer(win, -1, r_flags);
-		tex = malloc(size * sizeof(*tex));
-		rect = malloc(size * sizeof(*rect));
+		if(!repeat) {
+			SDL_Init(SDL_INIT_VIDEO);
+			win = SDL_CreateWindow("Sorting", 0, 0, width, height, w_flags);
+			ren = SDL_CreateRenderer(win, -1, r_flags);
+			tex = malloc(size * sizeof(*tex));
+			rect = malloc(size * sizeof(*rect));
+			repeat = 1;
+
+			bg = IMG_LoadTexture(ren, img);
+		}
 
 		float rect_width = ((float)width / size);
 		for(int i = 0; i < size; ++i) {
@@ -135,8 +145,10 @@ int main(int argc, char **argv) {
 	if(flag & 4)
 		check_array(array, size);
 
-
 	free(array);
 	free(extra);
+
+	if(flag & 16)
+		goto start;
 	return 0;
 }

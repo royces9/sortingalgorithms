@@ -1,3 +1,10 @@
+extern int *globalArray;
+extern int globalSize;
+extern int flag;
+extern SDL_Texture **tex;
+extern SDL_Rect *rect;
+
+
 void copy(void *src, void *dest, int size_e) {
 	int word_loops = size_e / sizeof(int);
 	int byte_loops =  size_e % sizeof(int);
@@ -15,4 +22,7 @@ void copy(void *src, void *dest, int size_e) {
 		dest += sizeof(char);
 		src += sizeof(char);
 	}
+
+        if(flag & 16)
+		disp_array(tex, rect, globalSize);
 }
