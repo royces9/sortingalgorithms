@@ -71,7 +71,9 @@ void check_array(int *array, int size) {
 
 
 void disp_array(SDL_Texture **tex, SDL_Rect *rect, int size) {
+	int width = rect->w;
 	for(int i = 0; i < size; ++i) {
+		rect[i].x = width * i;
 		SDL_RenderCopy(ren, tex[i], NULL, rect + i);
 	}
 

@@ -99,14 +99,15 @@ int main(int argc, char **argv) {
 		tex = malloc(size * sizeof(*tex));
 		rect = malloc(size * sizeof(*rect));
 
+		float rect_width = ((float)width / size);
 		for(int i = 0; i < size; ++i) {
 			tex[i] = IMG_LoadTexture(ren, "pink.png");
 
-			rect[i].w = ((float)width / size);
+			rect[i].w = rect_width;
 
-			rect[i].x = (width * i) / size;
+			rect[i].x = rect_width * i;
 
-			rect[i].h = (height * array[i]) / (size - 1);
+			rect[i].h = (height * (array[i] + 1)) / size;
 			rect[i].y = height - rect[i].h;
 		}
 	}
@@ -134,7 +135,6 @@ int main(int argc, char **argv) {
 	if(flag & 4)
 		check_array(array, size);
 
-	while(1);
 
 	free(array);
 	free(extra);
