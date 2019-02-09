@@ -1,31 +1,33 @@
 CC = gcc
-FLAGS = -g -Wall `sdl2-config --cflags` -I. 
+FLAGS = -g -MMD -Wall `sdl2-config --cflags` -I. -I..
 LDFLAGS = `sdl2-config --libs` -lSDL2_image -lm -pthread
 
-SORTC = $(wildcard sort/*.c)
-OBJS = $(SORTC:.c=.o)
-EXE =  $(SORTC:.c=)
+MAINC = $(wildcard *.c)
+MAINO = $(MAINC:.c=.o)
+MAINH = $(MAINC:.c=.h)
 
 OBJF = obj
 SORTF = sort
 
-all: $(EXE)
+SORTC = $(subst $(SORTF)/,,$(wildcard $(SORTF)/*.c))
+OBJS = $(OBJF)/$(SORTC:.c=.o)
+EXE =  $(SORTC:.c=)
 
-$(EXE) : $(OBJS) main.o shuffle.o
-	$(CC) $(OBJF)/$(@F).o main.o shuffle.o -o ../$@ $(LDFLAGS)
+$(EXE): $(MAINO) $(OBJS)
+	$(CC) $(MAINO) $(OBJF)/$(@F).o -o $@ $(LDFLAGS)
 
-shuffle.o: shuffle.c shuffle.h
-	$(CC) $(FLAGS) -c shuffle.c -o shuffle.o
+$(OBJS): $(MAINC)
+	$(CC) $(FLAGS) -c $< -o $(SORTF)/$@
 
-main.o: main.c shuffle.h
-	$(CC) $(FLAGS) -c main.c -o main.o
-
-$(SORTF)/%.o: $(SORTF)/%.c shuffle.c
-	$(CC) $(FLAGS) -c $< -o $(OBJF)/$*.o
-
+$(MAINO): $(MAINC) $(MAINH)
+	$(CC) $(FLAGS) -c $*.c -o $(@F)
 
 .PHONY: clean
 clean:
+	del *.d
 	del *.o
 	del obj/*.o
 	del $(patsubst $(SORTF)/%, %, $(EXE))
+
+-include $(SORTC:.c=d)
+-include $(MAINC:.c=.d);

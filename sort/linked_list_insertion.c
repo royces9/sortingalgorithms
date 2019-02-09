@@ -1,7 +1,6 @@
 #include <stdlib.h>
 
 #include "shuffle.h"
-#include "compare.h"
 #include "copy.h"
 
 

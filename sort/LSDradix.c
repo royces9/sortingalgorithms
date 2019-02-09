@@ -2,11 +2,10 @@
 #include <stdint.h>
 
 #include "shuffle.h"
-#include "compare.h"
 #include "copy.h"
 
 
-int highest_bit(void *array, int size_a, int size_e) {
+int highest_bit(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int out = 1;
 
 	int total_bits = size_e * 8 - 1;
@@ -33,7 +32,7 @@ int highest_bit(void *array, int size_a, int size_e) {
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	void *dupArray = malloc(size_e * size_a);
 
-	int max = highest_bit(array, size_a, size_e);
+	int max = highest_bit(array, size_a, size_e, compare);
 
 	uint64_t j = 1;
 	for(int i = 0; i <= max; ++i, j <<= 1ULL) {

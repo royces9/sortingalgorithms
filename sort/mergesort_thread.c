@@ -5,7 +5,6 @@
 
 pthread_mutex_t print_lock;
 
-#include "compare.h"
 #include "copy.h"
 
 typedef struct {

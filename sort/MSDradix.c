@@ -1,11 +1,10 @@
 #include <stdint.h>
 
 #include "shuffle.h"
-#include "compare.h"
 #include "swap.h"
 
 
-int highest_bit(void *array, int size_a, int size_e) {
+int highest_bit(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int out = 0;
 
 	int total_bits = size_e * 8 - 1;
@@ -51,7 +50,7 @@ void MSDradix(void *array, int size_a, int size_e, int max, int (*compare)(void 
 
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	int max = highest_bit(array, size_a, size_e);
+	int max = highest_bit(array, size_a, size_e, compare);
 
 	MSDradix(array, size_a, size_e, max, compare);
 }

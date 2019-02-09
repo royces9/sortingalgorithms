@@ -1,5 +1,4 @@
 #include "shuffle.h"
-#include "compare.h"
 #include "swap.h"
 
 

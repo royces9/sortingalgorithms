@@ -1,7 +1,6 @@
 #include <stdlib.h>
 
 #include "shuffle.h"
-#include "compare.h"
 #include "copy.h"
 
 
@@ -25,7 +24,7 @@ void init_queue(void *array, queue *qq, int size_e, int (*compare)(void *, void 
 }
 
 
-int append_queue(queue *qq, void *value, int size_a, int size_e) {
+int append_queue(queue *qq, void *value, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int out = 0;
 	if(compare(value, qq->array + qq->left * size_e)) {
 		copy(value, qq->array + ++qq->left * size_e, size_e);
@@ -93,7 +92,7 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 
 	int count = 0;
 	for(int i = 2; i < size_a; ++i) {
-		if(!append_queue(&qq, array + i * size_e, size_a, size_e)) {
+		if(!append_queue(&qq, array + i * size_e, size_a, size_e, compare)) {
 			int m = stack[count];
 			stack[++count] = i;
 

@@ -4,6 +4,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+
+#include "compare.h"
+#include "sdl_compare.h"
 #include "shuffle.h"
 
 /*
@@ -28,8 +31,6 @@ SDL_Rect *rect;
 SDL_Rect rect_bg = {0, 0, 1280, 720};
 SDL_Texture *bg;
 char *img;
-
-int compare(void *a, void *b);
 
 int main(int argc, char **argv) {
 	int size = 10;
@@ -106,7 +107,7 @@ int main(int argc, char **argv) {
 			rect = malloc(size * sizeof(*rect));
 			repeat = 1;
 
-			bg = IMG_LoadTexture(ren, img);
+			//bg = IMG_LoadTexture(ren, img);
 		}
 
 		float rect_width = ((float)width / size);
@@ -114,27 +115,27 @@ int main(int argc, char **argv) {
 			tex[i] = IMG_LoadTexture(ren, "pink.png");
 
 			rect[i].w = rect_width;
-
 			rect[i].x = rect_width * i;
 
 			rect[i].h = (height * (array[i] + 1)) / size;
 			rect[i].y = height - rect[i].h;
 		}
+
+		disp_array(tex, rect, size);
 	}
 
 	if(flag & 1)
 		printArray(array, size);
 
-	if(flag & 16)
-		disp_array(tex, rect, size);
-
-	gettimeofday(&start, NULL);
-	sort(rect, size, sizeof(*rect), &compare, extra);
-	//sort(array, size, sizeof(*array), &compare, extra);
-	gettimeofday(&end, NULL);
-
-	if(flag & 16)
-		disp_array(tex, rect, size);
+	if(flag &16) {
+		gettimeofday(&start, NULL);
+		sort(rect, size, sizeof(*rect), &sdl_compare, extra);
+		gettimeofday(&end, NULL);
+	} else {
+		gettimeofday(&start, NULL);
+		sort(array, size, sizeof(*array), &compare, extra);
+		gettimeofday(&end, NULL);
+	}
 
 	if(flag & 1)
 		printArray(array, size);
@@ -150,5 +151,6 @@ int main(int argc, char **argv) {
 
 	if(flag & 16)
 		goto start;
+
 	return 0;
 }
