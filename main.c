@@ -4,8 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-
-#include "compare.h"
+#include "int_compare.h"
 #include "sdl_compare.h"
 #include "shuffle.h"
 
@@ -133,7 +132,7 @@ int main(int argc, char **argv) {
 		gettimeofday(&end, NULL);
 	} else {
 		gettimeofday(&start, NULL);
-		sort(array, size, sizeof(*array), &compare, extra);
+		sort(array, size, sizeof(*array), &int_compare, extra);
 		gettimeofday(&end, NULL);
 	}
 

@@ -10,14 +10,17 @@ OBJF = obj
 SORTF = sort
 
 SORTC = $(subst $(SORTF)/,,$(wildcard $(SORTF)/*.c))
-OBJS = $(OBJF)/$(SORTC:.c=.o)
+OBJS = $(SORTC:.c=.o)
 EXE =  $(SORTC:.c=)
 
-$(EXE): $(MAINO) $(OBJS)
-	$(CC) $(MAINO) $(OBJF)/$(@F).o -o $@ $(LDFLAGS)
+
+all: $(EXE)
+
+$(EXE): $(OBJS) $(MAINO)
+	$(CC) $(OBJF)/$(@F).o $(MAINO) -o $@ $(LDFLAGS)
 
 $(OBJS): $(MAINC)
-	$(CC) $(FLAGS) -c $< -o $(SORTF)/$@
+	$(CC) $(FLAGS) -c $(SORTF)/$*.c -o $(OBJF)/$@
 
 $(MAINO): $(MAINC) $(MAINH)
 	$(CC) $(FLAGS) -c $*.c -o $(@F)
@@ -28,6 +31,7 @@ clean:
 	del *.o
 	del obj/*.o
 	del $(patsubst $(SORTF)/%, %, $(EXE))
+
 
 -include $(SORTC:.c=d)
 -include $(MAINC:.c=.d);
