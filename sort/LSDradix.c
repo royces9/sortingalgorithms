@@ -17,7 +17,7 @@ int highest_bit(void *array, int size_a, int size_e, int (*compare)(void *, void
 		place_counter = total_bits;
 
 		for(uint64_t j = max; j > 0; j >>= 1, --place_counter) {
-			if((compare(array + i * size_e, &j) && (place_counter > out))) {
+			if((compare(&j, array + i * size_e) && (place_counter > out))) {
 				out = place_counter;
 				break;
 			}
@@ -40,7 +40,7 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 		int tempIndex = size_a - 1;
 
 		for(int k = 0; k < size_a; ++k) {
-			if(!compare(array + k * size_e, &j)) {
+			if(!compare(&j, array + k * size_e)) {
 				copy(array + k * size_e, dupArray + copyIndex++ * size_e, size_e);
 			} else {
 				copy(array + k * size_e, dupArray + tempIndex-- * size_e, size_e);

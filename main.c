@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
 #include "int_compare.h"
+#include "radix_compare.h"
 #include "sdl_compare.h"
+#include "sdl_radix_compare.h"
 #include "shuffle.h"
 
 /*
@@ -31,12 +34,22 @@ SDL_Rect rect_bg = {0, 0, 1280, 720};
 SDL_Texture *bg;
 char *img;
 
+
+void *comp_array[] = {&int_compare, &radix_compare,
+		      &sdl_compare, &sdl_radix_compare};
+
 int main(int argc, char **argv) {
 	int size = 10;
 	int *extra = NULL;
 	struct timeval start;
 	struct timeval end;
 	int repeat = 0;  
+
+	int radix_flag = 0;
+
+	if(strstr(argv[0], "radix"))
+		radix_flag = 1;
+
 
  start:;
 	int *array = shuffledArray(size);
@@ -91,8 +104,12 @@ int main(int argc, char **argv) {
 	globalArray = array;
 	globalSize = size;
 
-	if(flag & 16) {
+	void *comp = comp_array[radix_flag];
 
+	void *sort_obj = array;
+	int size_obj = sizeof(int);
+
+	if(flag & 16) {
 		int width = rect_bg.w;
 		int height = rect_bg.h;
 		int w_flags = SDL_WINDOW_SHOWN;
@@ -121,20 +138,19 @@ int main(int argc, char **argv) {
 		}
 
 		disp_array(tex, rect, size);
+
+		comp = comp_array[radix_flag + 2];
+
+		sort_obj = rect;
+		size_obj = sizeof(*rect);
 	}
 
 	if(flag & 1)
 		printArray(array, size);
 
-	if(flag &16) {
-		gettimeofday(&start, NULL);
-		sort(rect, size, sizeof(*rect), &sdl_compare, extra);
-		gettimeofday(&end, NULL);
-	} else {
-		gettimeofday(&start, NULL);
-		sort(array, size, sizeof(*array), &int_compare, extra);
-		gettimeofday(&end, NULL);
-	}
+	gettimeofday(&start, NULL);
+	sort(sort_obj, size, size_obj, comp, extra);
+	gettimeofday(&end, NULL);
 
 	if(flag & 1)
 		printArray(array, size);

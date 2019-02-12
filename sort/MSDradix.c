@@ -14,7 +14,7 @@ int highest_bit(void *array, int size_a, int size_e, int (*compare)(void *, void
 		int place_counter = total_bits;
 
 		for(uint64_t j = max; j > 0; j >>= 1, --place_counter) {
-			if(compare(array + size_e * i, &j) && (place_counter > out)) {
+			if(compare(&j, array + size_e * i) && (place_counter > out)) {
 				out = place_counter;
 				break;
 			}
