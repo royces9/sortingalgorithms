@@ -13,7 +13,7 @@ void sort_r(void *array, int size_a, int size_e, int (*compare)(void *, void *))
 		pivot = compare(array, end) ? end : array;
 
 	swap(array, pivot, size_e);
-
+	
 	while(right > left) {
 		for(; (left < right) && compare(array, array + left * size_e); ++left);
 		for(; (right > left) && compare(array + right * size_e, array); --right);
@@ -23,6 +23,16 @@ void sort_r(void *array, int size_a, int size_e, int (*compare)(void *, void *))
 		     size_e);
 	}
 
+	
+	if(compare(array, array + left * size_e))
+		swap(array, array + (left - 1) * size_e, size_e);
+
+	if((left - 1) > 1)
+		sort_r(array, left - 1, size_e, compare);
+	
+	if((size_a - left) > 1)
+		sort_r(array + left * size_e, size_a - left - 1, size_e, compare);
+	/*
 	if(compare(array, array + left * size_e))
 		swap(array, array + left * size_e, size_e);
 
@@ -31,6 +41,7 @@ void sort_r(void *array, int size_a, int size_e, int (*compare)(void *, void *))
 
 	if((size_a - left) > 1)
  		sort_r(array + left * size_e, size_a - left, size_e, compare);
+	*/
 }
 
 
