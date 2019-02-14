@@ -21,8 +21,10 @@ def compare_sorts(algorithms, no_algs, count, size):
 
 
 if __name__ == "__main__":
-
     length = len(sys.argv);
+    if(length == 1):
+        sys.exit('./compare.py alg1 alg2 ... algn list_count list_size');
+        
 
     algorithms = sys.argv[1:(length - 2)];
     no_algs = len(algorithms);

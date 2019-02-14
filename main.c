@@ -30,25 +30,33 @@ SDL_Renderer *ren;
 SDL_Texture **tex;
 SDL_Rect *rect;
 
-SDL_Rect rect_bg = {0, 0, 1280, 720};
+SDL_Rect rect_bg = {0, 0, 1920, 1080};
 SDL_Texture *bg;
 char *img;
 
-
 void *comp_array[] = {&int_compare, &radix_compare,
 		      &sdl_compare, &sdl_radix_compare};
+void print_flags();
 
 int main(int argc, char **argv) {
+
+	if(argc == 1)
+		print_flags();
+
 	int size = 10;
 	int *extra = NULL;
 	struct timeval start;
 	struct timeval end;
-	int repeat = 0;  
+
+	int repeat = 1;
 
 	int radix_flag = 0;
 
 	if(strstr(argv[0], "radix"))
 		radix_flag = 1;
+
+	int width = rect_bg.w;
+	int height = rect_bg.h;
 
 
  start:;
@@ -64,7 +72,7 @@ int main(int argc, char **argv) {
 			case 's':
 				free(array);
 				size = atoi(argv[i + 1]);
-				array  = shuffledArray(size);
+				array = shuffledArray(size);
 				break;
 
 			case 'e':
@@ -110,23 +118,21 @@ int main(int argc, char **argv) {
 	int size_obj = sizeof(int);
 
 	if(flag & 16) {
-		int width = rect_bg.w;
-		int height = rect_bg.h;
-		int w_flags = SDL_WINDOW_SHOWN;
-		int r_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
-
-		if(!repeat) {
+		float rect_width = ((float)width / size);
+		if(repeat) {
+			int w_flags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
+			int r_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
 			SDL_Init(SDL_INIT_VIDEO);
 			win = SDL_CreateWindow("Sorting", 0, 0, width, height, w_flags);
 			ren = SDL_CreateRenderer(win, -1, r_flags);
 			tex = malloc(size * sizeof(*tex));
 			rect = malloc(size * sizeof(*rect));
-			repeat = 1;
 
+			SDL_RenderSetLogicalSize(ren, width, height);
 			//bg = IMG_LoadTexture(ren, img);
+			repeat = 0;
 		}
 
-		float rect_width = ((float)width / size);
 		for(int i = 0; i < size; ++i) {
 			tex[i] = IMG_LoadTexture(ren, "pink.png");
 
@@ -164,8 +170,41 @@ int main(int argc, char **argv) {
 	free(array);
 	free(extra);
 
-	if(flag & 16)
+	if(flag & 16) {
+		SDL_Delay(500);
 		goto start;
+	}
 
 	return 0;
+}
+
+
+void print_flags(void) {
+	puts("./<alg name> -f <#> -s <#> -e <#> -[rad]");
+	puts("");
+		
+	puts("-f: flags");
+	puts("Add values together to use multiple");
+	puts("1: print array to stdout");
+	puts("2: Time sort");
+	puts("4: Verify correctly sorted");
+	puts("8: Print to stdout when swap/copy is called");
+	puts("16: Use SDL to visualize");
+	puts("");
+
+	puts("-s: size of array");
+	puts("");
+		
+	puts("-e: extra flags");
+	puts("number of threads for threaded sorts");
+	puts("");
+
+	puts("-r: reverse sorted array as input");
+	puts("");
+
+	puts("-a: sorted array as input");
+	puts("");
+
+	puts("-d: all elements of array are 1");
+	puts("");
 }

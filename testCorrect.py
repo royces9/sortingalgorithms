@@ -5,6 +5,9 @@ import sys
 
 
 if __name__ == "__main__":
+    if(len(sys.argv) == 1):
+        sys.exit("./testCorrect.py alg size count");
+
     alg = sys.argv[1];
     size = sys.argv[2];
     count = int(sys.argv[3]);

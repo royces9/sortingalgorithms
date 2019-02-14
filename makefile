@@ -1,5 +1,5 @@
 CC = gcc
-FLAGS = -g -MMD -Wall `sdl2-config --cflags` -I. -I..
+FLAGS = -g -MMD -O3 -Wall `sdl2-config --cflags` -I. -I..
 LDFLAGS = `sdl2-config --libs` -lSDL2_image -lm -pthread
 
 MAINC = $(wildcard *.c)
