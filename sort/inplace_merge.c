@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "shuffle.h"
 #include "swap.h"
 
@@ -20,15 +22,25 @@ void insertion(void *array, int size_a, int size_e, int (*compare)(void *, void 
 //inplace merge
 void merge(void *array, int l_size, int r_size, int size_e, int (*compare)(void *, void *)) {
 
-	int smaller = l_size > r_size ? r_size : l_size;
+	int size = l_size + r_size;
 
-	int end = l_size + r_size;
+	void *store = malloc(size_e);
 
-	for(int left = l_size, right = end - 1; right > left; ++left, --right) {
-		swap(array + left * size_e, array + right * size_e, size_e);
+	for(int i = l_size - 1; i > 1; --i) {
+		int new_ind = i * 2;
+		swap(array + i * size_e, array + new_ind * size_e, size_e);
 	}
 
+	int stored_ind = -1;
+	
+	for(int i = size - 2; i > 0; --i) {
+		int new_ind = (i - l_size) * 2 + 1;
+		if(i % 2) {
+			
+		}
+	}
 
+	insertion(array, size, size_e, compare);
 	/*
 	//left_left - left list, left bound
 	//left_right - left list, right bound
