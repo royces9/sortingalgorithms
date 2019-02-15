@@ -1,10 +1,35 @@
 #include "shuffle.h"
 #include "swap.h"
 
+void insertion(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+	for(int i = 0; i < size_a; ++i) {
+
+		for(int j = i; j >= 0; --j) {
+			if(compare(array + j * size_e, array + (j + 1) * size_e)) {
+				swap(array + j * size_e, array + (j + 1) * size_e, size_e);
+			} else {
+				break;
+			}
+		}
+	}
+}
+	  
+
 
 //mergesort
 //inplace merge
 void merge(void *array, int l_size, int r_size, int size_e, int (*compare)(void *, void *)) {
+
+	int smaller = l_size > r_size ? r_size : l_size;
+
+	int end = l_size + r_size;
+
+	for(int left = l_size, right = end - 1; right > left; ++left, --right) {
+		swap(array + left * size_e, array + right * size_e, size_e);
+	}
+
+
+	/*
 	//left_left - left list, left bound
 	//left_right - left list, right bound
 	//right_left - right list, left bound
@@ -44,6 +69,7 @@ void merge(void *array, int l_size, int r_size, int size_e, int (*compare)(void 
 			}
 		}
 	}
+	*/
 }
 
 
