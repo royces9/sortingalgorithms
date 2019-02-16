@@ -35,19 +35,24 @@ void merge(void *array, int l_size, int r_size, int size_e, int (*compare)(void 
 	int stored_ind = -1;
 	
 	for(int i = size - 2; i > l_size; --i) {
+		//final position of element
 		int new_ind = (i - l_size) * 2 + 1;
+
+		//where the element is now
 		int cur_ind = i;
 		while(!(cur_ind % 2)) {
 			cur_ind /= 2;
 		}
 
-		if(i == stored_ind) {
+		swap(array + new_ind * size_e, array + cur_ind * size_e);
 
-		} else {
-			copy(array + cur_ind * size_e, store, size_e);
-			swap(array + cur_ind * size_e, array + new_ind * size_e);
-			stored_ind = new_ind;
-		}
+		//store a temp element
+		stored_ind = cur_ind;
+		copy(array + cur_ind * size_e, store, size_e);
+
+		swap(array + cur_ind * size_e, array + new_ind * size_e);
+		stored_ind = new_ind;
+
 	}
 
 	insertion(array, size, size_e, compare);
