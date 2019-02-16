@@ -22,7 +22,6 @@ void insertion(void *array, int size_a, int size_e, int (*compare)(void *, void 
 //mergesort
 //inplace merge
 void merge(void *array, int l_size, int r_size, int size_e, int (*compare)(void *, void *)) {
-
 	int size = l_size + r_size;
 
 	void *store = malloc(size_e);
