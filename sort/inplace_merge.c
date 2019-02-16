@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#include "copy.h"
 #include "shuffle.h"
 #include "swap.h"
 
@@ -33,10 +34,19 @@ void merge(void *array, int l_size, int r_size, int size_e, int (*compare)(void 
 
 	int stored_ind = -1;
 	
-	for(int i = size - 2; i > 0; --i) {
+	for(int i = size - 2; i > l_size; --i) {
 		int new_ind = (i - l_size) * 2 + 1;
-		if(i % 2) {
-			
+		int cur_ind = i;
+		while(!(cur_ind % 2)) {
+			cur_ind /= 2;
+		}
+
+		if(i == stored_ind) {
+
+		} else {
+			copy(array + cur_ind * size_e, store, size_e);
+			swap(array + cur_ind * size_e, array + new_ind * size_e);
+			stored_ind = new_ind;
 		}
 	}
 
