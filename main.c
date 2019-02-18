@@ -30,7 +30,7 @@ SDL_Renderer *ren;
 SDL_Texture **tex;
 SDL_Rect *rect;
 
-SDL_Rect rect_bg = {0, 0, 1920, 1080};
+SDL_Rect rect_bg;
 SDL_Texture *bg;
 char *img;
 
@@ -55,9 +55,8 @@ int main(int argc, char **argv) {
 	if(strstr(argv[0], "radix"))
 		radix_flag = 1;
 
-	int width = rect_bg.w;
-	int height = rect_bg.h;
-
+	rect_bg.w = 2560;
+	rect_bg.h = 1440;
 
  start:;
 	int *array = shuffledArray(size);
@@ -118,29 +117,31 @@ int main(int argc, char **argv) {
 	int size_obj = sizeof(int);
 
 	if(flag & 16) {
-		float rect_width = ((float)width / size);
 		if(repeat) {
-			int w_flags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
-			int r_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
+			unsigned int w_flags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
+			unsigned int r_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
 			SDL_Init(SDL_INIT_VIDEO);
-			win = SDL_CreateWindow("Sorting", 0, 0, width, height, w_flags);
+			win = SDL_CreateWindow("Sorting", 0, 0, rect_bg.w, rect_bg.h, w_flags);
 			ren = SDL_CreateRenderer(win, -1, r_flags);
 			tex = malloc(size * sizeof(*tex));
 			rect = malloc(size * sizeof(*rect));
 
-			SDL_RenderSetLogicalSize(ren, width, height);
-			//bg = IMG_LoadTexture(ren, img);
+			SDL_RenderSetLogicalSize(ren, rect_bg.w, rect_bg.h);
+
+			if(img)
+				bg = IMG_LoadTexture(ren, img);
+
 			repeat = 0;
 		}
 
 		for(int i = 0; i < size; ++i) {
 			tex[i] = IMG_LoadTexture(ren, "pink.png");
 
-			rect[i].w = rect_width;
-			rect[i].x = rect_width * i;
+			rect[i].w = rect_bg.w / size;
+			rect[i].x = rect_bg.w * i;
 
-			rect[i].h = (height * (array[i] + 1)) / size;
-			rect[i].y = height - rect[i].h;
+			rect[i].h = (rect_bg.h * (array[i] + 1)) / size;
+			rect[i].y = rect_bg.h - rect[i].h;
 		}
 
 		disp_array(tex, rect, size);
