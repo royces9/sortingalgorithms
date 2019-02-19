@@ -14,22 +14,15 @@ def sort_data(alg, prefix, count, left_range, right_range, step_size):
 
     for size in numpy.linspace(left_range, right_range, number_steps):
         size = str(int(size));
-        average = sort_time.sort_time(alg, count, size);
+        average, std = sort_time.sort_time(alg, count, size, "");
         fp.write(size + " " + str(average) + "\n");
 
     fp.close();
 
 
 if __name__ == "__main__":
-    flag = 0;
-    for i, arg in enumerate(sys.argv):
-        if arg == "-n":
-            flag = 1;
-        elif arg == "-r":
-            flag = 2;
-        elif arg == "-e":
-            flag = 3;
-        else:
+    if len(sys.argv) == 1:
+        sys.exit('./data_out alg prefix count left_range right_range step_size');
 
     alg = sys.argv[1];
 

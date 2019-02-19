@@ -25,6 +25,9 @@ def sort_time(alg_name, count, size, extra):
 
 
 if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        sys.exit('./sort_time.py alg count size [extra]');
+
     alg = sys.argv[1];
     count = int(sys.argv[2]);
     size = sys.argv[3];

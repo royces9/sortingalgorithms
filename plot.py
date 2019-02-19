@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import os
 import numpy
 import matplotlib.pyplot
@@ -16,7 +18,7 @@ def plot_alg(directory, file_names):
     matplotlib.pyplot.ylabel("Sort time, s");
     matplotlib.pyplot.xlabel("List size");
     matplotlib.pyplot.legend();
-    matplotlib.pyplot.show();
+    matplotlib.pyplot.savefig(directory + file + ".png");
 
 if __name__ == "__main__":
     directory = sys.argv[1];
