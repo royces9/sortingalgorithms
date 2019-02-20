@@ -73,16 +73,18 @@ void merge(void *array, int l_size, int r_size, int size_e, int (*compare)(void 
 		swap(array + i * size_e, array + new_ind * size_e, size_e);
 	}
 
-#if 0
+#if 1
+	//this one is better so far
 	for(int new_ind = 1; new_ind < size; new_ind += 2) {
 		int orig_ind = (new_ind - 1) / 2 + l_size;
 		int cur_ind = divide_two(orig_ind);
 
-		if(!cycle_order(array, new_ind, cur_ind, l_size, size_e, compare)) {
+		if(!next_in_order(array, new_ind, cur_ind, size_e, compare)) {
 			swap_cycle(array, new_ind, cur_ind, l_size, size_e);
 		}
 	}
 #else
+	//a little slower?
 	for(int new_ind = 1; !in_order(array, new_ind, size, size_e, compare); new_ind += 2) {
 		int orig_ind = (new_ind - 1) / 2 + l_size;
 		int cur_ind = divide_two(orig_ind);
