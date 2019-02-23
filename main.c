@@ -93,9 +93,23 @@ int main(int argc, char **argv) {
 				--i;
 				break;
 
-			case 'd':
-				for(int k = 0; k < size; ++k)
-					array[k] = 1;
+			case 'd':;
+				int max_val = 10;
+				int step = size / max_val;
+
+				for(int ind = 0, value = 0; value < max_val; ++value) {
+					for(int j = 0; j < step; ++j, ++ind) {
+						array[ind] = value;
+					}
+				}
+
+				int diff = size - step * max_val;
+
+				for(int l = 1; l <= diff; --l) {
+					array[size - l] = max_val;
+				}
+
+				shuffle(array, size);
 
 				--i;
 				break;
