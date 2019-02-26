@@ -224,6 +224,7 @@ void print_flags(void) {
 	puts("4: Verify correctly sorted");
 	puts("8: Print to stdout when swap/copy is called");
 	puts("16: Use SDL to visualize");
+	puts("32: Count number of comparisons");
 	puts("");
 
 	puts("-s: size of array");
