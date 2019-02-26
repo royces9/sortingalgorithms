@@ -6,23 +6,24 @@ import matplotlib.pyplot
 import sys
 
 
-def plot_alg(directory, file_names):
-    fig = matplotlib.pyplot.figure();
+def plot_file(file_name):
+    data = numpy.loadtxt(file_name);
+    matplotlib.pyplot.plot(data[:, 0], data[:, 1], label = file);
 
-    for file in file_names:
-        data = numpy.loadtxt(directory + file + ".dat", skiprows = 1);
-        matplotlib.pyplot.plot(data[:, 0], data[:, 1], label = file);
-
-
-    matplotlib.pyplot.xlim(data[0, 0], data[-1, 0]);
-    matplotlib.pyplot.ylabel("Sort time, s");
-    matplotlib.pyplot.xlabel("List size");
-    matplotlib.pyplot.legend();
-    matplotlib.pyplot.savefig(directory + file + ".png");
 
 if __name__ == "__main__":
-    directory = sys.argv[1];
+    if(len(sys.argv) == 1):
+        sys.exit("./plot.py x_label y_label file1 file2 ... fileN");
 
-    #without file extension, hardcode .dat
-    file_names = sys.argv[2:len(sys.argv)];
-    plot_alg(directory, file_names);
+    xlab = sys.argv[1];
+    ylab = sys.argv[2];
+
+    fig = matplotlib.pyplot.figure();
+
+    for f in sys.argv[3:-1]:
+        plot_file(f);
+
+    matplotlib.pyplot.xlabel(xlab);
+    matplotlib.pyplot.ylabel(ylab);
+    matplotlib.pyplot.legend(sys.argv[3:-1]);
+    matplotlib.show();
