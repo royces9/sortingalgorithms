@@ -17,6 +17,7 @@
  * 4: check sorted
  * 8: print swap/copy
  * 16: disp swap/copy in SDL
+ * 32: print #of calls to swap and copy
  */
 
 void sort(void *, int, int, int (*)(void *, void *), void *);
@@ -39,7 +40,6 @@ void *comp_array[] = {&int_compare, &radix_compare,
 void print_flags();
 
 int main(int argc, char **argv) {
-
 	if(argc == 1)
 		print_flags();
 
@@ -58,7 +58,6 @@ int main(int argc, char **argv) {
 	rect_bg.w = 2560;
 	rect_bg.h = 1440;
 
- start:;
 	int *array = shuffledArray(size);
 
 	if(argc > 1) {
