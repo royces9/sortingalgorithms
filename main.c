@@ -9,6 +9,9 @@
 #include "radix_compare.h"
 #include "sdl_compare.h"
 #include "sdl_radix_compare.h"
+#include "int_count_comp.h"
+#include "sdl_count_comp.h"
+
 #include "shuffle.h"
 
 /*
@@ -36,8 +39,14 @@ SDL_Texture *bg;
 char *img;
 
 void *comp_array[] = {&int_compare, &radix_compare,
-		      &sdl_compare, &sdl_radix_compare};
+		      &sdl_compare, &sdl_radix_compare,
+		      &int_count_comp, &radix_compare,
+		      &sdl_count_comp, &sdl_radix_compare
+};
+
 void print_flags();
+
+int compare_count;
 
 int main(int argc, char **argv) {
 	if(argc == 1)
@@ -48,12 +57,10 @@ int main(int argc, char **argv) {
 	struct timeval start;
 	struct timeval end;
 
-	int repeat = 1;
-
-	int radix_flag = 0;
+	int compare_index = 0;
 
 	if(strstr(argv[0], "radix"))
-		radix_flag = 1;
+		compare_index += 1;
 
 	rect_bg.w = 2560;
 	rect_bg.h = 1440;
@@ -92,9 +99,23 @@ int main(int argc, char **argv) {
 				--i;
 				break;
 
-			case 'd':
-				for(int k = 0; k < size; ++k)
-					array[k] = 1;
+			case 'd':;
+				int max_val = 10;
+				int step = size / max_val;
+
+				for(int ind = 0, value = 0; value < max_val; ++value) {
+					for(int j = 0; j < step; ++j, ++ind) {
+						array[ind] = value;
+					}
+				}
+
+				int diff = size - step * max_val;
+
+				for(int l = 1; l <= diff; --l) {
+					array[size - l] = max_val;
+				}
+
+				shuffle(array, size);
 
 				--i;
 				break;
@@ -110,28 +131,28 @@ int main(int argc, char **argv) {
 	globalArray = array;
 	globalSize = size;
 
-	void *comp = comp_array[radix_flag];
+	if(flag & 32)
+		compare_index += 4;
+
+	void *comp = comp_array[compare_index];
 
 	void *sort_obj = array;
 	int size_obj = sizeof(int);
 
 	if(flag & 16) {
-		if(repeat) {
-			unsigned int w_flags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
-			unsigned int r_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
-			SDL_Init(SDL_INIT_VIDEO);
-			win = SDL_CreateWindow("Sorting", 0, 0, rect_bg.w, rect_bg.h, w_flags);
-			ren = SDL_CreateRenderer(win, -1, r_flags);
-			tex = malloc(size * sizeof(*tex));
-			rect = malloc(size * sizeof(*rect));
+		unsigned int w_flags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
+		unsigned int r_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
+		SDL_Init(SDL_INIT_VIDEO);
+		win = SDL_CreateWindow("Sorting", 0, 0, rect_bg.w, rect_bg.h, w_flags);
+		ren = SDL_CreateRenderer(win, -1, r_flags);
+		tex = malloc(size * sizeof(*tex));
+		rect = malloc(size * sizeof(*rect));
 
-			SDL_RenderSetLogicalSize(ren, rect_bg.w, rect_bg.h);
+		SDL_RenderSetLogicalSize(ren, rect_bg.w, rect_bg.h);
 
-			if(img)
-				bg = IMG_LoadTexture(ren, img);
+		if(img)
+			bg = IMG_LoadTexture(ren, img);
 
-			repeat = 0;
-		}
 
 		for(int i = 0; i < size; ++i) {
 			tex[i] = IMG_LoadTexture(ren, "pink.png");
@@ -145,35 +166,48 @@ int main(int argc, char **argv) {
 
 		disp_array(tex, rect, size);
 
-		comp = comp_array[radix_flag + 2];
+		comp = comp_array[compare_index + 2];
 
 		sort_obj = rect;
 		size_obj = sizeof(*rect);
 	}
 
-	if(flag & 1)
-		printArray(array, size);
+	do {
+		if(flag & 1)
+			printArray(array, size);
 
-	gettimeofday(&start, NULL);
-	sort(sort_obj, size, size_obj, comp, extra);
-	gettimeofday(&end, NULL);
+		gettimeofday(&start, NULL);
+		sort(sort_obj, size, size_obj, comp, extra);
+		gettimeofday(&end, NULL);
 
-	if(flag & 1)
-		printArray(array, size);
+		if(flag & 1)
+			printArray(array, size);
 
-	if(flag & 2)
-		printf("Time elapsed: %lf s\n", timeDifference(start, end));
+		if(flag & 2)
+			printf("Time elapsed: %lf s\n", timeDifference(start, end));
 
-	if(flag & 4)
-		check_array(array, size);
+		if(flag & 4)
+			check_array(array, size);
+
+		if(flag & 16) {
+			SDL_Delay(500);
+			shuffle(array, size);
+
+			for(int i = 0; i < size; ++i) {
+				rect[i].w = rect_bg.w / size;
+				rect[i].x = rect_bg.w * i;
+
+				rect[i].h = (rect_bg.h * (array[i] + 1)) / size;
+				rect[i].y = rect_bg.h - rect[i].h;
+			}
+		}
+
+		if(flag & 32)
+			printf("%d\n", compare_count);
+	} while(flag & 16);
 
 	free(array);
 	free(extra);
-
-	if(flag & 16) {
-		SDL_Delay(500);
-		goto start;
-	}
 
 	return 0;
 }

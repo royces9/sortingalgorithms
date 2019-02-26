@@ -12,6 +12,17 @@ extern SDL_Renderer *ren;
 extern SDL_Rect rect_bg;
 extern SDL_Texture *bg;
 
+void shuffle(int *array, int size) {
+	//shuffle array
+	for(int i = 0; i < (size - 1); i++) {
+		int j = i + rand() / (RAND_MAX / (size - i) + 1);
+		int temp = array[j];
+		array[j] = array[i];
+		array[i] = temp;
+	}
+
+}
+
 int *shuffledArray(int size) {
 	//seed rand();
 	struct timeval t2;
@@ -24,13 +35,7 @@ int *shuffledArray(int size) {
 	for(int i = 0; i < size; i++)
 		array[i] = i;
 
-	//shuffle array
-	for(int i = 0; i < (size - 1); i++) {
-		int j = i + rand() / (RAND_MAX / (size - i) + 1);
-		int temp = array[j];
-		array[j] = array[i];
-		array[i] = temp;
-	}
+	shuffle(array, size);
 
 	return array;
 }

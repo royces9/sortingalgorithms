@@ -6,6 +6,7 @@
 
 #include <sys/time.h>
 
+void shuffle(int *array, int size);
 int *shuffledArray(int size);
 void printArray(int *array, int size);
 void copyArray(void *src, void *dest, int size_a, int size_e);
