@@ -39,6 +39,7 @@ void buildHeap(void *array, int size_a, int size_e, int (*compare)(void *, void 
 		swimHeap(array, i, size_e, compare);
 }
 
+
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	size_a *= size_e;
 	buildHeap(array, size_a, size_e, compare);
