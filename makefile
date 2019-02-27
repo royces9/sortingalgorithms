@@ -1,6 +1,6 @@
-CC = gcc
-SORTFLAGS = -g -MMD -O3 -Wall -I. -I.. -Icompare/
-FLAGS = -g -MMD -O3 -Wall `sdl2-config --cflags` -I. -I.. -Icompare/
+CC = gcc -pg -no-pie
+SORTFLAGS = -MMD -O3 -Wall -I. -I.. -Icompare/
+FLAGS = -MMD -Wall `sdl2-config --cflags` -I. -I.. -Icompare/
 LDFLAGS = `sdl2-config --libs` -lSDL2_image -lm -pthread
 
 MAINC = $(wildcard *.c)
