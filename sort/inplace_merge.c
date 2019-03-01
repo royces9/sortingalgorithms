@@ -6,9 +6,8 @@ void insertion(void *array, int size_a, int size_e, int (*compare)(void *, void 
 	int begin = 0;
 	for(int i = 1; i < size_a; ++i) {
 		if(compare(array + (i - 1) * size_e, array + i * size_e)) {
-			for(int j = begin; compare(array + j * size_e, array + i * size_e) && (j < size_a); ++j) {
-				begin = j;
-			}
+			for(; compare(array + i * size_e, array + begin * size_e) && (begin < size_a); ++begin);
+
 			for(int k = i; k > begin; --k) {
 				swap(array + (k - 1) * size_e, array + k * size_e, size_e);
 			}
