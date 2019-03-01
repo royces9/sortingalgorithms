@@ -1,7 +1,22 @@
-#include "copy.h"
 #include "shuffle.h"
 #include "swap.h"
 
+
+void insertion(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+	int begin = 0;
+	for(int i = 1; i < size_a; ++i) {
+		if(compare(array + (i - 1) * size_e, array + i * size_e)) {
+			for(; compare(array + i * size_e, array + begin * size_e) && (begin < size_a); ++begin);
+
+			for(int k = i; k > begin; --k) {
+				swap(array + (k - 1) * size_e, array + k * size_e, size_e);
+			}
+		}
+	}
+}
+
+
+/*
 void insertion(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	for(int i = 1; i < size_a; ++i) {
                 for(int j = i; (j > 0) && compare(array + (j - 1) * size_e, array + j * size_e); --j) {
@@ -9,7 +24,7 @@ void insertion(void *array, int size_a, int size_e, int (*compare)(void *, void 
 		}
 	}
 }
-	  
+*/
 
 int divide_two(int a) {
 	while(!(a % 2))
@@ -40,6 +55,8 @@ int next_in_order(void *array, int cur_ind, int new_ind, int size_e, int (*compa
 
 //mergesort
 //inplace merge
+//alternates the two sub array elements
+//then uses insertion sort on the merged list
 void merge(void *array, int l_size, int r_size, int size_e, int (*compare)(void *, void *)) {
         int size = l_size + r_size;
 
@@ -48,13 +65,13 @@ void merge(void *array, int l_size, int r_size, int size_e, int (*compare)(void 
 		swap(array + i * size_e, array + new_ind * size_e, size_e);
 	}
 
-	for(int new_ind = 1; new_ind < size; new_ind += 2) {
-		int orig_ind = (new_ind - 1) / 2 + l_size;
+	//how orig_ind is defined
+	//orig_ind = (new_ind - 1) / 2 + l_size;
+	for(int new_ind = 1, orig_ind = l_size; new_ind < size; new_ind += 2, ++orig_ind) {
 		int cur_ind = divide_two(orig_ind);
 
-		if(!next_in_order(array, new_ind, cur_ind, size_e, compare)) {
+		if(!next_in_order(array, new_ind, cur_ind, size_e, compare))
 			swap_cycle(array, new_ind, cur_ind, l_size, size_e);
-		}
 	}
 
 	insertion(array, size, size_e, compare);
