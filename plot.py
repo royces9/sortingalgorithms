@@ -21,6 +21,9 @@ def plot_alg(directory, file_names):
     matplotlib.pyplot.savefig(directory + file + ".png");
 
 if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        sys.exit('./plot.py directory file1 file2 ... fileN');
+
     directory = sys.argv[1];
 
     #without file extension, hardcode .dat
