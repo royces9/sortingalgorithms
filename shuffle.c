@@ -31,7 +31,7 @@ int *shuffledArray(int size) {
 
 	
 	//make array and populate
-	int *array = malloc(sizeof(*array) * size);
+	int *array = malloc(size * sizeof(*array));
 	for(int i = 0; i < size; i++)
 		array[i] = i;
 

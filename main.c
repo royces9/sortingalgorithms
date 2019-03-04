@@ -45,12 +45,16 @@ void *comp_array[] = {&int_compare, &radix_compare,
 };
 
 void print_flags();
+int *make_array(int argc, char **argv, int *size, int **extra, int *flag, unsigned int *type);
+void assign_rect(SDL_Rect *rect, int *array, int size);
 
 int compare_count;
 
 int main(int argc, char **argv) {
 	if(argc == 1)
 		print_flags();
+
+	unsigned int type = 0;
 
 	int size = 10;
 	int *extra = NULL;
@@ -65,68 +69,7 @@ int main(int argc, char **argv) {
 	rect_bg.w = 2560;
 	rect_bg.h = 1440;
 
-	int *array = shuffledArray(size);
-
-	if(argc > 1) {
-		for(int i = 1; i < argc; i += 2) {
-			switch(*(argv[i] + 1)) {
-			case 'f':
-				flag = atoi(argv[i + 1]);
-				break;
-				
-			case 's':
-				free(array);
-				size = atoi(argv[i + 1]);
-				array = shuffledArray(size);
-				break;
-
-			case 'e':
-				extra = malloc(sizeof(*extra));
-				*extra = atoi(argv[i + 1]);
-				break;
-
-			case 'r':
-				for(int k = size - 1, j = 0; k >= 0; --k, ++j)
-					array[k] = j;
-				
-				--i;
-				break;
-
-			case 'a':
-				for(int k = 0; k < size; ++k)
-					array[k] = k;
-
-				--i;
-				break;
-
-			case 'd':;
-				int max_val = 10;
-				int step = size / max_val;
-
-				for(int ind = 0, value = 0; value < max_val; ++value) {
-					for(int j = 0; j < step; ++j, ++ind) {
-						array[ind] = value;
-					}
-				}
-
-				int diff = size - step * max_val;
-
-				for(int l = 1; l <= diff; --l) {
-					array[size - l] = max_val;
-				}
-
-				shuffle(array, size);
-
-				--i;
-				break;
-
-			default:
-				break;
-			}
-		}
-	} else {
-		flag = 7;
-	}
+	int *array = make_array(argc, argv, &size, &extra, &flag, &type);
 
 	globalArray = array;
 	globalSize = size;
@@ -154,15 +97,10 @@ int main(int argc, char **argv) {
 			bg = IMG_LoadTexture(ren, img);
 
 
-		for(int i = 0; i < size; ++i) {
+		assign_rect(rect, array, size);
+
+		for(int i = 0; i < size; ++i)
 			tex[i] = IMG_LoadTexture(ren, "pink.png");
-
-			rect[i].w = rect_bg.w / size;
-			rect[i].x = rect_bg.w * i;
-
-			rect[i].h = (rect_bg.h * (array[i] + 1)) / size;
-			rect[i].y = rect_bg.h - rect[i].h;
-		}
 
 		disp_array(tex, rect, size);
 
@@ -191,19 +129,14 @@ int main(int argc, char **argv) {
 
 		if(flag & 16) {
 			SDL_Delay(500);
-			shuffle(array, size);
-
-			for(int i = 0; i < size; ++i) {
-				rect[i].w = rect_bg.w / size;
-				rect[i].x = rect_bg.w * i;
-
-				rect[i].h = (rect_bg.h * (array[i] + 1)) / size;
-				rect[i].y = rect_bg.h - rect[i].h;
-			}
+			free(array);
+			array = make_array(argc, argv, &size, &extra, &flag, &type);
+			assign_rect(rect, array, size);
 		}
 
 		if(flag & 32)
 			printf("%d\n", compare_count);
+
 	} while(flag & 16);
 
 	free(array);
@@ -242,4 +175,94 @@ void print_flags(void) {
 
 	puts("-d: all elements of array are 1");
 	puts("");
+}
+
+
+int *make_array(int argc, char **argv, int *size, int **extra, int *flag, unsigned int *type) {
+	if(argc > 1) {
+		for(int i = 1; i < argc; i += 2) {
+			switch(*(argv[i] + 1)) {
+			case 'f':
+				*flag = atoi(argv[i + 1]);
+				break;
+				
+			case 's':
+				*size = atoi(argv[i + 1]);
+				break;
+
+			case 'e':
+				*extra = malloc(sizeof(*extra));
+				**extra = atoi(argv[i + 1]);
+				break;
+
+			case 'r':
+				*type = 1;
+				--i;
+				break;
+
+			case 'a':
+				*type = 2;
+				--i;
+				break;
+
+			case 'd':;
+				*type = 4;
+				--i;
+				break;
+ 
+			default:
+				break;
+			}
+		}
+	} else {
+		*flag = 7;
+	}
+
+	int *array = NULL;
+	if(!*type) {
+		array = shuffledArray(*size);
+
+	} else if(*type == 1) {
+		array = malloc(*size * sizeof(*array));
+
+		for(int k = *size - 1, j = 0; k >= 0; --k, ++j)
+			array[k] = j;
+
+	} else if(*type == 2) {
+		array = malloc(*size * sizeof(*array));
+
+		for(int k = 0; k < *size; ++k)
+			array[k] = k;
+
+	} else if(*type == 4) {
+		int max_val = 10;
+		int step = *size / max_val;
+
+		for(int ind = 0, value = 0; value < max_val; ++value) {
+			for(int j = 0; j < step; ++j, ++ind) {
+				array[ind] = value;
+			}
+		}
+
+		int diff = *size - step * max_val;
+
+		for(int l = 1; l <= diff; --l) {
+			array[*size - l] = max_val;
+		}
+
+		shuffle(array, *size);
+
+	}
+
+	return array;
+}
+
+void assign_rect(SDL_Rect *rect, int *array, int size) {
+	for(int i = 0; i < size; ++i) {
+		rect[i].w = rect_bg.w / size;
+		rect[i].x = rect_bg.w * i;
+
+		rect[i].h = (rect_bg.h * (array[i] + 1)) / size;
+		rect[i].y = rect_bg.h - rect[i].h;
+	}
 }
