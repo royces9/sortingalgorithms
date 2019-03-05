@@ -2,10 +2,9 @@
 #include <pthread.h>
 
 #include "shuffle.h"
+#include "copy.h"
 
 pthread_mutex_t print_lock;
-
-#include "copy.h"
 
 struct thread_data {
 	void *array;
