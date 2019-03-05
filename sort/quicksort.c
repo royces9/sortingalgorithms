@@ -27,11 +27,12 @@ void sort_r(void *array, int size_a, int size_e, int (*compare)(void *, void *))
 		     size_e);
 	}
 
+	//put pivot into correct place
 	swap(array, array + (left - 1) * size_e, size_e);
 
 	if((left - 1) > 2) {
 		sort_r(array, left - 1, size_e, compare);
-	} else if((left - 1) > 1) {
+	} else if((left - 1) > 1){
 		if(compare(array, array + size_e))
 			swap(array, array + size_e, size_e);
 	}

@@ -86,8 +86,6 @@ void disp_array(SDL_Texture **tex, SDL_Rect *rect, int size) {
 		SDL_RenderCopy(ren, tex[i], NULL, rect + i);
 	}
 
-
-
 	SDL_RenderPresent(ren);
 	SDL_RenderClear(ren);
 

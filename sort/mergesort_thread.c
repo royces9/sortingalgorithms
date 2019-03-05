@@ -9,6 +9,7 @@ pthread_mutex_t print_lock;
 
 typedef struct {
 	void *array;
+	void *scratch;
 	int (*compare)(void *, void *);
 	int size_a;
 	int size_e;
@@ -82,12 +83,12 @@ void init_sort_thread(void *arg) {
 	int (*compare)(void *, void *) = (*(data *) arg).compare;
 	int size_a = (*(data *) arg).size_a;
 	int size_e = (*(data *) arg).size_e;
-
-	void *scratch = malloc(size_a * size_e);
+	void *scratch = (*(data *) arg).scratch;
+	//void *scratch = malloc(size_a * size_e);
 
 	start_sort(array, scratch, size_a, size_e, compare);
 
-	free(scratch);
+	//free(scratch);
 }
 
 
@@ -103,8 +104,10 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), v
 
 	int i = 0;
 	data *data_struct = malloc(count * sizeof(*data_struct));
+	void *scratch = malloc(size_a * size_e);
 	for(; i < count - 1; ++i) {
 		data_struct[i].array = array + (i * part) * size_e;
+		data_struct[i].scratch = scratch + (i * part) * size_e;
 		data_struct[i].compare = compare;
 		data_struct[i].size_a = part;
 		data_struct[i].size_e = size_e;
@@ -112,6 +115,7 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), v
 	}
 
 	data_struct[i].array = array + (i * part) * size_e;
+	data_struct[i].scratch = scratch + (i * part) * size_e;
 	data_struct[i].compare = compare;
 	data_struct[i].size_a = size_a - (i * part);
 	data_struct[i].size_e = size_e;
@@ -121,7 +125,7 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), v
 	for(int j = 0; j < count; ++j)
 		pthread_join(*(t + j), NULL);
 
-	void *scratch = malloc(size_a * size_e);
+	//void *scratch = malloc(size_a * size_e);
 	merge_all(array, scratch, size_a, size_e, count, compare);
 
 	free(t);
