@@ -2,16 +2,13 @@
 #include <pthread.h>
 
 #include "shuffle.h"
-
-pthread_mutex_t print_lock;
-
 #include "copy.h"
 #include "swap.h"
 
+pthread_mutex_t print_lock;
 
 struct thread_data {
 	void *array;
-	void *scratch;
 	int (*compare)(void *, void *);
 	int size_a;
 	int size_e;
@@ -140,9 +137,25 @@ void start_sort(void *array, void *scratch, int size_a, int size_e, int (*compar
 
 
 void init_sort_thread(void *arg) {
-	struct thread_data _d = *(struct thread_data *)arg;
+	void *array = (*(struct thread_data *) arg).array;
+	int (*compare)(void *, void *) = (*(struct thread_data *) arg).compare;
+	int size_a = (*(struct thread_data *) arg).size_a;
+	int size_e = (*(struct thread_data *) arg).size_e;
 
-	start_sort(_d.array, _d.scratch, _d.size_a, _d.size_e, _d.compare);
+	void *scratch = malloc(size_a * size_e);
+
+	start_sort(array, scratch, size_a, size_e, compare);
+
+	free(scratch);
+
+	/*
+	struct thread_data _d = *(struct thread_data *)arg;
+	void *scratch = malloc(_d.size_a * _d.size_e);
+
+	start_sort(_d.array, scratch, _d.size_a, _d.size_e, _d.compare);
+
+	free(scratch);
+	*/
 }
 
 
@@ -156,12 +169,10 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), v
 
 	pthread_t *t = malloc(count * sizeof(*t));
 	struct thread_data *_d = malloc(count * sizeof(*_d));
-	void *scratch = malloc(size_a * size_e);
 
 	int i = 0;
 	for(; i < count - 1; ++i) {
 		_d[i].array = array + (i * part) * size_e;
-		_d[i].scratch = scratch + (i * part) * size_e;
 		_d[i].compare = compare;
 		_d[i].size_a = part;
 		_d[i].size_e = size_e;
@@ -169,7 +180,6 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), v
 	}
 
 	_d[i].array = array + (i * part) * size_e;
-	_d[i].scratch = scratch + (i * part) * size_e;
 	_d[i].compare = compare;
 	_d[i].size_a = size_a - (i * part);
 	_d[i].size_e = size_e;
@@ -181,7 +191,7 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), v
 
 	free(t);
 	free(_d);
-
+	void *scratch = malloc(size_a * size_e);
 	merge_all(array, scratch, size_a, size_e, part, count, compare);
 
 	free(scratch);
