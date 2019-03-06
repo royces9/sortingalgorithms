@@ -44,6 +44,19 @@ int next_in_order(void *array, int cur_ind, int new_ind, int size_e, int (*compa
 }
 
 
+void small(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+	int log = 0;
+	for(int size = size_a; !(size % 2) ; size /= 2, ++log);
+	log <<= 1;
+	for(int j = 3; j < log; j += 2) {
+		for(int i = size_a - 1; i >= j; --i) {
+			if(compare(array + (i - j) * size_e, array + i * size_e)) {
+				swap(array + (i - j) * size_e, array + i * size_e, size_e);
+			}
+		}
+	}
+}
+
 //mergesort
 //inplace merge
 //alternates the two sub array elements
@@ -64,6 +77,8 @@ void merge(void *array, int l_size, int r_size, int size_e, int (*compare)(void 
 		if(!next_in_order(array, new_ind, cur_ind, size_e, compare))
 			swap_cycle(array, new_ind, cur_ind, l_size, size_e);
 	}
+
+	small(array, size, size_e, compare);
 
 	insertion(array, size, size_e, compare);
 }
