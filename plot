@@ -13,7 +13,7 @@ def plot_file(file_name):
 
 if __name__ == "__main__":
     if(len(sys.argv) == 1):
-        sys.exit("./plot.py x_label y_label file1 file2 ... fileN");
+        sys.exit("./plot x_label y_label file1 file2 ... fileN");
 
     xlab = sys.argv[1];
     ylab = sys.argv[2];

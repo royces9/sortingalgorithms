@@ -15,7 +15,7 @@ def avg_comparison(alg, size, count):
 
 if __name__ == "__main__":
     if(len(sys.argv) == 1):
-        sys.exit("./time.py alg count output_file left_range right_range step_size");
+        sys.exit("./time alg count output_file left_range right_range step_size");
 
     alg = sys.argv[1];
     count = int(sys.argv[2]);

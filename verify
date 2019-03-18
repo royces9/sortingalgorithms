@@ -6,7 +6,7 @@ import sys
 
 if __name__ == "__main__":
     if(len(sys.argv) == 1):
-        sys.exit("./verify.py alg size count");
+        sys.exit("./verify alg size count");
 
     alg = sys.argv[1];
     size = sys.argv[2];

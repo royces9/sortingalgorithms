@@ -36,8 +36,10 @@ $(MAINO): $(MAINC) $(MAINH)
 clean:
 	del *.d
 	del *.o
-	del obj/*.o
-	del compare/*.o
+	del */*.o
+	del */*.d
+	del *~
+	del */*~
 	del vgcore.*
 	del $(patsubst $(SORTF)/%, %, $(EXE))
 

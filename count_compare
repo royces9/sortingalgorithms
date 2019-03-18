@@ -4,17 +4,17 @@ import subprocess
 import sys
 import numpy
 
-def avg_comparison(alg, size, count):
+def avg_comparison(alg, size, count, extra):
     comp = 0;
     for i in range(0, count):
-        p = subprocess.Popen("./" + alg + " -f 32 -s " + size, shell = True, stdout = subprocess.PIPE);
+        p = subprocess.Popen("./" + alg + " -f 32 -s " + size + " -e " + extra, shell = True, stdout = subprocess.PIPE);
         comp += float(p.stdout.read().decode("utf-8"));
 
     return comp / count;
 
 if __name__ == "__main__":
     if(len(sys.argv) == 1):
-        sys.exit("./count_compare.py alg count output_file left_range right_range step_size");
+        sys.exit("./count_compare alg count output_file left_range right_range step_size [extra]");
     
     alg = sys.argv[1];
     count = int(sys.argv[2]);
@@ -25,7 +25,13 @@ if __name__ == "__main__":
     stepsize = int(sys.argv[6]);
     step = int((right - left) / stepsize) + 1;
 
+    if len(sys.argv) == 8:
+        extra = sys.argv[7];
+    else:
+        extra = "";
+                
+
     with open(outfile, "w+") as fp:
         for size in numpy.linspace(left, right, step):
-            avg = avg_comparison(alg, str(int(size)), count);
+            avg = avg_comparison(alg, str(int(size)), count, extra);
             fp.write(str(int(size)) + " " + str(avg) + "\n");        
