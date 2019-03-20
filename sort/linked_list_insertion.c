@@ -4,16 +4,16 @@
 #include "copy.h"
 
 
-typedef struct list {
+struct list {
 	struct list *prev;
 	struct list *next;
 	void *data;
-} list;
+};
 
 
-list *init_list(void) {
+struct list *init_list__(void) {
 	//make an anchor
-	list *out = malloc(sizeof(*out));
+	struct list *out = malloc(sizeof(*out));
 	out->prev = out;
 	out->next = out;
 	out->data = NULL;
@@ -23,8 +23,8 @@ list *init_list(void) {
 
 
 //insert after *ll
-void append_list(list *ll, void *array, int size_e) {
-	list *new = malloc(sizeof(*new));
+void append_list__(struct list *ll, void *array, int size_e) {
+	struct list *new = malloc(sizeof(*new));
 
 	new->next = ll->next;
 	new->prev = ll;
@@ -38,8 +38,8 @@ void append_list(list *ll, void *array, int size_e) {
 
 
 //insert before *ll
-void prepend_list(list *ll, void *array, int size_e) {
-	list *new = malloc(sizeof(*new));
+void prepend_list__(struct list *ll, void *array, int size_e) {
+	struct list *new = malloc(sizeof(*new));
 
 	new->next = ll;
 	new->prev = ll->prev;
@@ -53,21 +53,21 @@ void prepend_list(list *ll, void *array, int size_e) {
 
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	list *data = init_list();
+	struct list *data = init_list__();
 
-	append_list(data, array, size_e);
+	append_list__(data, array, size_e);
 
-	list *curr = data->next;
+	struct list *curr = data->next;
 
 	for(int i = 1; i < size_a; ++i) {
 		while(curr->data) {
 			if(compare(array + i * size_e, curr->data)) {
-				append_list(curr, array + i * size_e, size_e);
+				append_list__(curr, array + i * size_e, size_e);
 				break;
 			} else {
 				curr = curr->prev;
 				if(!curr->data)
-					append_list(curr, array + i * size_e, size_e);
+					append_list__(curr, array + i * size_e, size_e);
 			}
 		}
 
@@ -84,5 +84,6 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 		free(curr->prev->data);
 		free(curr->prev);
 	}
+
 	free(data);
 }

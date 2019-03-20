@@ -1,11 +1,12 @@
 #include "shuffle.h"
 
+#include "heap.h"
 #include "swap.h"
 
 
 //heapsort
 //min heap
-
+/*
 //swim the last index in the heap
 void swimHeap(void *array, int child, int size_a, int size_e, int (*compare)(void *, void *)) {
 	//index
@@ -46,19 +47,49 @@ void buildHeap(void *array, int size_a, int size_e, int (*compare)(void *, void 
 	for(int i = size_a - 2; i >= 0; --i)
 		swimHeap(array, i, size_a, size_e, compare);
 }
+*/
+
+int (*g_comp)(void *, void *);
+
+int heap_compare(void *a, void *b) {
+	return !g_comp(a, b);
+}
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	buildHeap(array, size_a, size_e, compare);
+	/*
+	g_comp = compare;
 
-	for(int lastHeapIndex = 0;
-	    lastHeapIndex < (size_a - 3);
-	    ++lastHeapIndex) {
+	build_heap(array, size_a , size_e, g_comp);
 
-		swap(array + lastHeapIndex * size_e, array + (size_a - 1) * size_e, size_e);
-		sinkHeap(array + (lastHeapIndex + 1) * size_e, size_a - (lastHeapIndex + 1), size_e, compare);
+	for(int last = size_a - 1;
+	    last > 2;
+	    --last) {
+		swap(array + last * size_e, array, size_e);
+		sink_heap(array, last, size_e, g_comp);
+	}
+
+	//last two elements
+	if(size_a > 2)
+		swap(array + 2 * size_e, array, size_e);
+
+	if(g_comp(array, array + size_e))
+		swap(array + size_e, array, size_e);
+	*/
+
+	/*
+	build_heap(array, size_a, size_e, g_comp);
+
+	for(int last = 0;
+	    last < (size_a - 3);
+	    ++last) {
+
+		swap(array + last * size_e, array + (size_a - 1) * size_e, size_e);
+		sink_heap(array + (last + 1) * size_e, size_a - (last + 1), size_e, g_comp);
 	}
 
 	swap(array + (size_a - 3) * size_e, array + (size_a - 1) * size_e, size_e);
-	if(compare(array + (size_a - 2) * size_e, array + (size_a - 1) * size_e))
+
+	if(g_comp(array + (size_a - 2) * size_e, array + (size_a - 1) * size_e))
 		swap(array + (size_a - 2) * size_e, array + (size_a - 1) * size_e, size_e);
+	*/
 }

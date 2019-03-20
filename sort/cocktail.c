@@ -3,25 +3,23 @@
 
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	for(int j = 0, left_bound = 0, right_bound = size_a;
-	    j < size_a/2;
-	    ++j) {
+	int begin = 0;
+	int end = size_a;
 
-		int min = left_bound;
-		for(int i = left_bound + 1; i < right_bound; ++i) {
-			if(compare(array + min * size_e, array + i * size_e))
-				min = i;
+	for(int flag = 1; flag;) {
+		flag = 0;
+		for(int i = ++begin; i < size_a; ++i) {
+			if(compare(array + (i - 1) * size_e, array + i * size_e)) {
+				swap(array + (i - 1) * size_e, array + i * size_e, size_e);
+				flag = 1;
+			}
 		}
-		swap(array + left_bound * size_e, array + min * size_e, size_e);
-		++left_bound;
 
-		int max = right_bound - 1;
-		for(int i = right_bound - 2; i >= left_bound; --i) {
-			if(compare(array + i * size_e, array + max * size_e))
-				max = i;
+		for(int j = --end; j > 0; --j) {
+			if(compare(array + (j - 1) * size_e, array + j * size_e)) {
+				swap(array + (j - 1) * size_e, array + j * size_e, size_e);
+				flag = 1;
+			}
 		}
-		
-		swap(array + (right_bound - 1) * size_e, array + max * size_e, size_e);
-		--right_bound;
 	}
 }

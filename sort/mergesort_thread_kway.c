@@ -4,6 +4,7 @@
 #include "shuffle.h"
 #include "copy.h"
 #include "swap.h"
+#include "heap.h"
 
 pthread_mutex_t print_lock;
 
@@ -21,42 +22,10 @@ struct heap_data {
 };
 
 
-void swim_heap(struct heap_data *heap, int child, int (*compare)(void *, void *)) {
-	int parent = (child - 1) / 2;
-
-	while(child && compare(heap[parent].array, heap[child].array)) {
-		swap(heap + parent, heap + child, sizeof(*heap));
-
-		child = parent;
-		parent = (child - 1) / 2;
-	}
-}
-
-
-void sink_heap(struct heap_data *heap, int size_a, int (*compare)(void *, void *)) {
-	int child = 1;
-
-	if(size_a > 2)
-		child = compare(heap[1].array, heap[2].array) ? 2 : 1;
-
-	int parent = 0;
-
-	while((child < size_a) && compare(heap[parent].array, heap[child].array)) {
-		swap(heap + child, heap + parent, sizeof(*heap));
-
-		parent = child;
-		child = 2 * (parent + 1);
-
-		if((child >= size_a) || compare(heap[child].array, heap[child - 1].array))
-			--child;
-	}
-}
-
-
-struct heap_data *build_heap(int count, void *array, int size_a, int size_e,
+struct heap_data *build_heap_data(int count, void *array, int size_a, int size_e,
 			     int part, int (*compare)(void *, void *)) {
 
-	struct heap_data *heap = malloc(count * sizeof(*heap));
+ 	struct heap_data *heap = malloc(count * sizeof(*heap));
 
 	int i = 0;
 	for(; i < (count - 1); ++i) {
@@ -67,31 +36,44 @@ struct heap_data *build_heap(int count, void *array, int size_a, int size_e,
 	heap[i].array = array + (i * part) * size_e;
 	heap[i].end = array + size_a * size_e;
 
-	for(int j = 1; j < count; ++j)
-		swim_heap(heap, j, compare);
+	build_heap(heap, count, sizeof(*heap), compare);
 
 	return heap;
 }
 
+
+int (*global_comp)(void *, void *);
+
+int heap_comp(void *a, void *b) {
+	return !global_comp(((struct heap_data *)a)->array, ((struct heap_data *)b)->array);
+}
 
 void merge_all(void *array, void *scratch,
 	       int size_a, int size_e,
 	       int part, int count,
 	       int (*compare)(void *, void *)) {
 
-	struct heap_data *heap = build_heap(count, array, size_a, size_e, part, compare);
-
-	for(int i = 0; (i < size_a); ++i) {
+	global_comp = compare;
+					     
+	struct heap_data *heap = build_heap_data(count, array, size_a, size_e, part, &heap_comp);
+	
+	for(int i = 0; i < size_a; ++i) {
 		copy(heap[0].array, scratch + i * size_e, size_e);
 		heap[0].array += size_e;
 
 		if(heap[0].array >= heap[0].end) {
 			--count;
 			
-			swap(heap, heap + count, sizeof(*heap));
+			swap((char *)heap, (char *)(heap + count), sizeof(*heap));
 		}
 
-		sink_heap(heap, count, compare);
+		if(count > 2) {
+			sink_heap(heap, count, sizeof(*heap), heap_comp);
+		} else if(count == 2) {
+			if(compare(heap[0].array, heap[1].array)) {
+				swap((char *)heap, (char *)(heap + 1), sizeof(*heap));
+			}
+		}
 	}
 
 	for(int j = 0; j < size_a; ++j)

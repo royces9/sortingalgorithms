@@ -1,7 +1,6 @@
 #include "shuffle.h"
 #include "swap.h"
 
-
 void sort_r(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int left = 1;
 	int right = size_a - 1;

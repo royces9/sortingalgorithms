@@ -9,7 +9,7 @@ extern int flag;
 extern SDL_Texture **tex;
 extern SDL_Rect *rect;
 
-void swap(void *a, void *b, int size_e) {
+void swap(char *a, char *b, int size_e) {
 	int word_loops = size_e / sizeof(int);
 	int byte_loops = size_e % sizeof(int);
 
@@ -23,12 +23,21 @@ void swap(void *a, void *b, int size_e) {
 	}
 
 	for(int i = 0; i < byte_loops; ++i) {
+		char c_temp = *a;
+		*a = *b;
+		*b = c_temp;
+
+		++a;
+		++b;
+		
+		/*
 		char c_temp  = *(char *)a;
 		*(char *)a = *(char *)b;
 		*(char *)b = c_temp;
 
 		a += sizeof(char);
-		a += sizeof(char);
+		b += sizeof(char);
+		*/
 	}
 
 	if(flag & 8)

@@ -102,16 +102,15 @@ void init_sort_thread(void *arg) {
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), void *extra) {
 	int count = 2;
 
-	if(extra) {
+	if(extra)
 		count = *(int *) extra;
-	}
 
 	int part = size_a / count;
 
 	pthread_t *t = malloc(count * sizeof(*t));
-
-	int i = 0;
 	struct thread_data *_d = malloc(count * sizeof(*_d));
+	
+	int i = 0;
 	for(; i < count - 1; ++i) {
 		_d[i].array = array + (i * part) * size_e;
 		_d[i].compare = compare;
