@@ -1,57 +1,68 @@
-CC = gcc
-CFLAGS = -MMD -g -O3 -Wall -I. -I.. -Icompare/ -Idata_structures/
-FLAGS = -MMD -Wall `sdl2-config --cflags` -I. -I.. -Icompare/
-LDFLAGS = `sdl2-config --libs` -lSDL2_image -lm -pthread
+CC := gcc
+CFLAGS := -MMD -g -O3 -Wall -I. -I.. -Icompare/ -Idata_structures/ -Iaux/
+SDLFLAG := `sdl2-config --cflags`
+LDFLAGS := `sdl2-config --libs` -lSDL2_image -lm -pthread
 
-MAINC = $(wildcard *.c)
-MAINO = $(MAINC:.c=.o)
-MAINH = $(MAINC:.c=.h)
 
-OBJF = obj
-SORTF = sort
-DATAF = data_structures
 
-SORTC = $(subst $(SORTF)/,,$(wildcard $(SORTF)/*.c))
-OBJS = $(SORTC:.c=.o)
-EXE =  $(SORTC:.c=)
+OBJ := obj
+COMP := compare
+SORT := sort
+DATA := data_structures
+AUX := aux
 
-COMPC = $(wildcard compare/*.c)
-COMPH = $(COMPC:.c=.h)
-COMPO = $(COMPC:.c=.o)
 
-DATAC = $(wildcard $(DATAF)/*.c)
-DATAH = $(DATAC:.c=.h)
-DATAO = $(DATAC:.c=.o)
+AUXC := $(wildcard $(AUX)/*.c)
+AUXH := $(AUXC:.c=.h)
+AUXO := $(addprefix $(OBJ)/, $(AUXC:.c=.o))
+
+COMPC := $(wildcard $(COMP)/*.c)
+COMPH := $(COMPC:.c=.h)
+COMPO := $(addprefix $(OBJ)/, $(COMPC:.c=.o))
+
+DATAC := $(wildcard $(DATA)/*.c)
+DATAH := $(DATAC:.c=.h)
+DATAO := $(addprefix $(OBJ)/, $(DATAC:.c=.o))
+
+SORTC := $(wildcard $(SORT)/*.c)
+SORTO := $(addprefix $(OBJ)/, $(SORTC:.c=.o))
+EXE :=  $(subst $(SORT)/,,$(SORTC:.c=))
+
+MAINO := $(OBJ)/main.o
+
+-include $(OBJ)/*/*.d
+
+.DEFAULT_GOAL = all
 
 all: $(EXE)
 
-$(EXE): $(OBJS) $(MAINO) $(COMPO) $(DATAO)
-	$(CC) $(OBJF)/$(@F).o $(DATAO) $(COMPO) $(MAINO) -o $@ $(LDFLAGS)
+%: $(OBJ)/$(SORT)/%.o $(MAINO) $(AUXO) $(COMPO) $(DATAO)
+	$(CC) $< $(MAINO) $(AUXO) $(COMPO) $(DATAO) -o $@ $(LDFLAGS)
 
-$(OBJS): $(MAINC) $(MAINH)
-	$(CC) $(CFLAGS) -c $(SORTF)/$*.c -o $(OBJF)/$@
+$(OBJ)/$(AUX)/%.o: $(AUX)/%.c $(AUX)/%.h
+	$(CC) $(SDLFLAG) $(CFLAGS) -c $< -o $@
 
-$(DATAO): $(DATAC) $(DATAH)
-	$(CC) $(CFLAGS) -c $*.c -o $@
+$(OBJ)/$(COMP)/%.o: $(COMP)/%.c $(COMP)/%.h
+	$(CC) $(CFLAGS) -c $< -o $@
 
-$(COMPO): $(COMPC) $(COMPH)
-	$(CC) $(FLAGS) -c $*.c -o $@
+$(OBJ)/$(DATA)/%.o: $(DATA)/%.c $(DATA)/%.h
+	$(CC) $(CFLAGS) -c $< -o $@
 
-$(MAINO): $(MAINC) $(MAINH)
-	$(CC) $(FLAGS) -c $ $*.c -o $(@F)
+$(MAINO): main.c
+	$(CC) $(SDLFLAG) $(CFLAGS) -c $< -o $@
 
-.PHONY: clean
+
+$(OBJ)/$(SORT)/%.o: $(SORT)/%.c
+	$(CC) $(CFLAGS) -c $(SORT)/$(*F).c -o $@
+
+
+
 clean:
-	del *.d
-	del *.o
-	del */*.o
-	del */*.d
-	del *~
-	del */*~
+	del obj/*/*.d
+	del obj/*/*.o
+	del obj/*.o
+	del obj/*.d
 	del vgcore.*
-	del $(patsubst $(SORTF)/%, %, $(EXE))
+	del $(EXE)
 
--include $($(OBJF)/*:.o=.d)
--include $(DATAC:.c=.d)
--include $(SORTC:.c=.d)
--include $(MAINC:.c=.d)
+.PHONY: all clean

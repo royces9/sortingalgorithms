@@ -1,7 +1,6 @@
 #include "shuffle.h"
 #include "swap.h"
 
-
 //insertion sort
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	for(int i = 1; i < size_a; ++i) {

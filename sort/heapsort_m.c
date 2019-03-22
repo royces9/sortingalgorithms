@@ -1,51 +1,14 @@
 #include "shuffle.h"
 #include "swap.h"
+#include "heap.h"
 
-//heapsort
-//max heap
-
-//swim the last index in the heap
-void swimHeap(void *array, int last_index, int size_e, int (*compare)(void *, void *)) {
-	int child = last_index;
-	int parent = (child - size_e) / 2;
-	parent -= parent % size_e;
-	while((!compare(array + child, array + parent)) && child) {
-		swap(array + child, array + parent, size_e);
-
-		child = parent;
-		parent = (child - size_e) / 2;
-		parent -= parent % size_e;
-	}
-}
-
-
-void sinkHeap(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	int child = !compare(array + 2 * size_e, array + size_e) ? 2 * size_e : size_e;
-	int parent = 0;
-
-	while((child < size_a) && !compare(array + child, array + parent)) {
-		swap(array + child, array + parent, size_e);
-
-		parent = child;
-		int left = 2 * parent + size_e;
-		int right = left + size_e;
-		child = ((right < size_a) && !compare(array + right, array + left)) ? right : left;
-	}
-}
-
-
-void buildHeap(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	for(int i = size_e; i < size_a; i += size_e)
-		swimHeap(array, i, size_e, compare);
-}
-
+//experimental thing with heap
 
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	size_a *= size_e;
-	buildHeap(array, size_a, size_e, compare);
+	build_heap(array, size_a, size_e, compare);
 
-	for(int i = size_a - size_e; i > 0; i -= size_e) {
+	for(int i = size_a - 1; i > 0; --i) {
 		array += size_e;
-		buildHeap(array, i, size_e, compare);
+		build_heap(array, i, size_e, compare);
 	}
 }

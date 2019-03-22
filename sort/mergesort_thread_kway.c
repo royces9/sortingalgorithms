@@ -167,7 +167,6 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), v
 	_d[i].size_e = size_e;
 	pthread_create(t + i, NULL, (void * (*) (void *)) &init_sort_thread, (void *) (_d + i));
 
-
 	for(int j = 0; j < count; ++j)
 		pthread_join(*(t + j), NULL);
 

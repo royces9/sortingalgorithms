@@ -4,15 +4,15 @@
 #include "copy.h"
 
 
-typedef struct{
+struct queue{
 	void *array;
 	int left;
 	int right;
 	int occ;
-} queue;
+};
 
 
-void init_queue(void *array, queue *qq, int size_e, int (*compare)(void *, void *)) {
+void init_queue(void *array, struct queue *qq, int size_e, int (*compare)(void *, void *)) {
 	qq->occ = 1;
 	if(compare(array, array + size_e)) {
 		copy(array,          qq->array, size_e);
@@ -24,7 +24,7 @@ void init_queue(void *array, queue *qq, int size_e, int (*compare)(void *, void 
 }
 
 
-int append_queue(queue *qq, void *value, int size_a, int size_e, int (*compare)(void *, void *)) {
+int append_queue(struct queue *qq, void *value, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int out = 0;
 	if(compare(value, qq->array + qq->left * size_e)) {
 		copy(value, qq->array + ++qq->left * size_e, size_e);
@@ -80,7 +80,7 @@ void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, 
  */
 void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int *stack = NULL;
-	queue qq;
+	struct queue qq;
 	qq.array = malloc(size_a * size_e + sizeof(*stack) * size_a);
 	qq.left = 0;
 	qq.right = size_a - 1;

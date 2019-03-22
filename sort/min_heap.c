@@ -75,7 +75,6 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	if(g_comp(array, array + size_e))
 		swap(array + size_e, array, size_e);
 	*/
-
 	/*
 	build_heap(array, size_a, size_e, g_comp);
 
