@@ -40,11 +40,9 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 		int tempIndex = size_a - 1;
 
 		for(int k = 0; k < size_a; ++k) {
-			if(!compare(&j, array + k * size_e)) {
-				copy(array + k * size_e, dupArray + copyIndex++ * size_e, size_e);
-			} else {
-				copy(array + k * size_e, dupArray + tempIndex-- * size_e, size_e);
-			}
+			int ind = compare(&j, array + k * size_e) ? tempIndex-- : copyIndex++;
+
+			copy(array + k * size_e, dupArray + ind * size_e, size_e);
 		}
 
 		for(int l = 0; l < copyIndex; ++l)

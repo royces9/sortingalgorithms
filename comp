@@ -23,14 +23,14 @@ def compare_sorts(algorithms, no_algs, count, size):
 if __name__ == "__main__":
     length = len(sys.argv);
     if(length == 1):
-        sys.exit('./comp alg1 alg2 ... algn list_count list_size');
-        
+        sys.exit('./comp list_count list_size alg1 alg2 ... algn');
 
-    algorithms = sys.argv[1:(length - 2)];
+
+    algorithms = sys.argv[3:length];
     no_algs = len(algorithms);
 
-    count = int(sys.argv[length - 2]);
-    size = sys.argv[length - 1];
+    count = int(sys.argv[1]);
+    size = sys.argv[2];
 
     avg = compare_sorts(algorithms, no_algs, count, size);
 

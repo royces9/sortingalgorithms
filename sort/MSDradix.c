@@ -26,7 +26,7 @@ int highest_bit(void *array, int size_a, int size_e, int (*compare)(void *, void
 
 
 //MSD radix
-void MSDradix(void *array, int size_a, int size_e, uint64_t bit , int (*compare)(void *, void *)) {
+void MSDradix(void *array, int size_a, int size_e, uint64_t bit, int (*compare)(void *, void *)) {
 	int left = 0;
 	int right = size_a - 1;
 
@@ -41,12 +41,10 @@ void MSDradix(void *array, int size_a, int size_e, uint64_t bit , int (*compare)
 
 	bit >>= 1;
 	if(bit > 0) {
-		if(right != (size_a - 1)) {
-			MSDradix(array, right, size_e, bit, compare);
+		MSDradix(array, right, size_e, bit, compare);
+
+		if(right != (size_a - 1))
 			MSDradix(array + right * size_e, size_a - right, size_e, bit, compare);
-		} else {
-			MSDradix(array, size_a, size_e, bit, compare);
-		}
 	}
 }
 

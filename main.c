@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
 	void *comp = comp_array[compare_index];
 
 	void *sort_obj = array;
-	int size_obj = sizeof(int);
+	int size_obj = sizeof(*array);
 
 	if(flag & 16) {
 		unsigned int w_flags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
