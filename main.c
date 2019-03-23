@@ -44,9 +44,12 @@ void *comp_array[] = {&int_compare, &radix_compare,
 		      &sdl_count_comp, &sdl_radix_compare
 };
 
+struct rect_cont *cont;
+	
 void print_flags();
 int *make_array(int argc, char **argv, int *size, int **extra, int *flag, unsigned int *type);
 void assign_rect(SDL_Rect *rect, int *array, int size);
+void assign_cont(struct rect_cont *cont, int *array, int size);
 
 int compare_count;
 
@@ -89,7 +92,8 @@ int main(int argc, char **argv) {
 		win = SDL_CreateWindow("Sorting", 0, 0, rect_bg.w, rect_bg.h, w_flags);
 		ren = SDL_CreateRenderer(win, -1, r_flags);
 		tex = malloc(size * sizeof(*tex));
-		rect = malloc(size * sizeof(*rect));
+		//rect = malloc(size * sizeof(*rect));
+		cont = malloc(size * sizeof(*cont));
 
 		SDL_RenderSetLogicalSize(ren, rect_bg.w, rect_bg.h);
 
@@ -97,17 +101,23 @@ int main(int argc, char **argv) {
 			bg = IMG_LoadTexture(ren, img);
 
 
-		assign_rect(rect, array, size);
+		assign_cont(cont, array, size);
+		//assign_rect(rect, array, size);
 
 		for(int i = 0; i < size; ++i)
 			tex[i] = IMG_LoadTexture(ren, "pink.png");
 
-		disp_array(tex, rect, size);
+		//disp_array(tex, rect, size);
+		disp_cont(tex, cont, size);
 
 		comp = comp_array[compare_index + 2];
 
+		/*
 		sort_obj = rect;
 		size_obj = sizeof(*rect);
+		*/
+		sort_obj = cont;
+		size_obj = sizeof(*cont);
 	}
 
 	do {
@@ -131,7 +141,8 @@ int main(int argc, char **argv) {
 			SDL_Delay(500);
 			free(array);
 			array = make_array(argc, argv, &size, &extra, &flag, &type);
-			assign_rect(rect, array, size);
+			assign_cont(cont, array, size);
+			//assign_rect(rect, array, size);
 		}
 
 		if(flag & 32)
@@ -255,6 +266,20 @@ int *make_array(int argc, char **argv, int *size, int **extra, int *flag, unsign
 	}
 
 	return array;
+}
+
+
+void assign_cont(struct rect_cont *cont, int *array, int size ) {
+	for(int i = 0; i < size; ++i) {
+		cont[i].rect.w = rect_bg.w / size;
+		cont[i].rect.x = rect_bg.w * i;
+
+		cont[i].rect.h = (rect_bg.h * (array[i] + 1)) / size;
+		cont[i].rect.y = rect_bg.h - cont[i].rect.h;
+
+		cont[i].val = array[i];
+	}
+
 }
 
 void assign_rect(SDL_Rect *rect, int *array, int size) {

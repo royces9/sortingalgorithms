@@ -8,6 +8,7 @@ extern int globalSize;
 extern int flag;
 extern SDL_Texture **tex;
 extern SDL_Rect *rect;
+extern struct rect_cont *cont;
 
 void swap(char *a, char *b, int size_e) {
 	int word_loops = size_e / sizeof(int);
@@ -44,5 +45,5 @@ void swap(char *a, char *b, int size_e) {
 		printArray(globalArray, globalSize);
 
 	if(flag & 16)
-		disp_array(tex, rect, globalSize);
+		disp_cont(tex, cont, globalSize);
 }

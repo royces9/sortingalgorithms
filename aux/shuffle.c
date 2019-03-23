@@ -96,3 +96,24 @@ void disp_array(SDL_Texture **tex, SDL_Rect *rect, int size) {
 		}
 	}
 }
+
+
+void disp_cont(SDL_Texture **tex, struct rect_cont *cont, int size) {
+	int width = cont->rect.w;
+	SDL_RenderCopy(ren, bg, NULL, &rect_bg);
+
+	for(int i = 0; i < size; ++i) {
+		cont[i].rect.x = width * i;
+		SDL_RenderCopy(ren, tex[i], NULL, &cont[i].rect);
+	}
+
+	SDL_RenderPresent(ren);
+	SDL_RenderClear(ren);
+
+	SDL_Event event;
+	while(SDL_PollEvent(&event)) {
+		if(event.type == SDL_QUIT) {
+			exit(1);
+		}
+	}
+}
