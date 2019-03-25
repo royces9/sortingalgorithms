@@ -3,5 +3,5 @@
 #include "sdl_compare.h"
 
 int sdl_compare(void *a, void *b) {
-	return ((struct rect_cont *)a)->rect.val > ((struct rect_cont *)b)->rect.val;
+	return ((struct rect_cont *)a)->val > ((struct rect_cont *)b)->val;
 }
