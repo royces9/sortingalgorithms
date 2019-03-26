@@ -3,7 +3,7 @@
 
 #include "shuffle.h"
 #include "copy.h"
-
+#include "swap.h"
 
 int highest_bit(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int out = 1;
@@ -40,13 +40,14 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 		int tempIndex = size_a - 1;
 
 		for(int k = 0; k < size_a; ++k) {
-			int ind = compare(&j, array + k * size_e) ? tempIndex-- : copyIndex++;
-
-			copy(array + k * size_e, dupArray + ind * size_e, size_e);
+			if(compare(&j, array + k * size_e)) {
+				copy(array + k * size_e, dupArray + tempIndex * size_e, size_e);
+				--tempIndex;
+			} else {
+				copy(array + k * size_e, array + copyIndex * size_e, size_e);
+				++copyIndex;
+			}
 		}
-
-		for(int l = 0; l < copyIndex; ++l)
-			copy(dupArray + l * size_e, array + l * size_e, size_e);
 
 		for(int l = copyIndex; l < size_a; ++l)
 			copy(dupArray + ((size_a - 1) + copyIndex - l) * size_e, array + l * size_e, size_e);

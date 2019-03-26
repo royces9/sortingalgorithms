@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "shuffle.h"
 #include "swap.h"
@@ -27,24 +28,41 @@ int highest_bit(void *array, int size_a, int size_e, int (*compare)(void *, void
 
 //MSD radix
 void MSDradix(void *array, int size_a, int size_e, uint64_t bit, int (*compare)(void *, void *)) {
-	int left = 0;
-	int right = size_a - 1;
 
-	while(right > left) {
-		for(; (left < right) && !compare(&bit, array + left * size_e); ++left);
-		for(; (right > left) && compare(&bit, array + right * size_e); --right);
+	void *temp = malloc(size_a * size_e);
+	for(uint64_t i = bit; i > 0; bit >>= 1) {
+		int left = 0;
+		int right = size_a - 1;
+		for(int j = 0; j < size_a - 1; ++j) {
+			if(compare(&i, array + j * size_e)) {
+				ind = left;
+			} else {
+				ind = right;
+			}
+		}
 
-		swap(array + left * size_e,
-		     array + right * size_e,
-		     size_e);
+		while(right > left) {
+			for(; (left < right) && !compare(&bit, array + left * size_e); ++left);
+			for(; (right > left) && compare(&bit, array + right * size_e); --right);
+
+			swap(array + left * size_e,
+			     array + right * size_e,
+			     size_e);
+		}
 	}
 
 	bit >>= 1;
+		
 	if(bit > 0) {
-		MSDradix(array, right, size_e, bit, compare);
+		if(right == (size_a - 1)) {
+			MSDradix(array, size_a, size_e, bit, compare);
+		} else {
+			if(right > 1)
+				MSDradix(array, right, size_e, bit, compare);
 
-		if(right != (size_a - 1))
-			MSDradix(array + right * size_e, size_a - right, size_e, bit, compare);
+			if((size_a - right) > 1)
+				MSDradix(array + right * size_e, size_a - right, size_e, bit, compare);
+		}
 	}
 }
 

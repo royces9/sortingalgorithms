@@ -64,24 +64,7 @@ void merge(void *array, int l_size, int r_size, int size_e, int (*compare)(void 
 		if(!next_in_order(array, new_ind, cur_ind, size_e, compare))
 			swap_cycle(array, new_ind, cur_ind, l_size, size_e);
 	}
-
-	int left = 0;
-	int right = 1;
-
-	printArray(array, size);
-	while((right < size) || (left < size)) {
-		if(compare(array + left * size_e, array + right * size_e)) {
-			swap(array + left * size_e, array + right * size_e, size_e);
-			++right;
-			++left;
-		} else {
-			++right;
-			++left;
-		}
-
-	}
-	printArray(array, size);
-	puts("\n");
+ 
 	insertion(array, size, size_e, compare);
 }
 

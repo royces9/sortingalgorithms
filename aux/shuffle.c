@@ -69,7 +69,7 @@ double timeDifference(struct timeval start, struct timeval end) {
 
 void check_array(int *array, int size) {
 	for(int i = 1; i < size; ++i) {
-		if(array[i] != (array[i - 1] + 1)) {
+		if(array[i] <  (array[i - 1])) {
 			printf("Sorted incorrectly.\n");
 			break;
 		}
