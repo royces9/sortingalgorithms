@@ -5,7 +5,7 @@
 
 
 //mergesort
-void merge(void *array, void *scratch, int left_size, int right_size, int size_e, int (*compare)(void *, void*)){
+void merge(char *array, char *scratch, int left_size, int right_size, int size_e, int (*compare)(void *, void*)){
 	int total_size = left_size + right_size;
 	int head[2] = {0, left_size};
 
@@ -47,7 +47,7 @@ void merge(void *array, void *scratch, int left_size, int right_size, int size_e
 }
 
 
-void start_sort(void *array, void *scratch, int size_a, int size_e, int (*compare)(void *, void *)) {
+void start_sort(char *array, char *scratch, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int left_size = size_a / 2;
 	int right_size = size_a - left_size;
 
@@ -61,8 +61,8 @@ void start_sort(void *array, void *scratch, int size_a, int size_e, int (*compar
 }
 
 
-void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	void *scratch = malloc(size_a * size_e);
+void sort(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+	char *scratch = malloc(size_a * size_e);
 
 	start_sort(array, scratch, size_a, size_e, compare);
 

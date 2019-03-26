@@ -5,12 +5,12 @@
 #include "swap.h"
 
 
-void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+void sort(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
         int leftCount = 0;
 	int rightCount = size_a - 1;
 
-	void *pivot = compare(array, array + size_e * size_a / 2) ? array : array + size_e * size_a / 2;
-	void *pivot2 = compare(array, array + size_e * size_a - 1) ? array : array + size_e * size_a - 1;
+	char *pivot = compare(array, array + size_e * size_a / 2) ? array : array + size_e * size_a / 2;
+	char *pivot2 = compare(array, array + size_e * size_a - 1) ? array : array + size_e * size_a - 1;
 	pivot = compare(pivot, pivot2) ? pivot2 : pivot;
 
 	pivot2 = malloc(size_e);

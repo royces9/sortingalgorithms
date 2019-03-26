@@ -2,7 +2,7 @@
 #include "swap.h"
 
 
-void insertion(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+void insertion(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int begin = 0;
 	for(int i = 1; i < size_a; ++i) {
 		if(compare(array + (i - 1) * size_e, array + i * size_e)) {
@@ -24,7 +24,7 @@ int divide_two(int a) {
 }
 
 
-void swap_cycle(void *array, int start_ind, int cur_ind, int l_size, int size_e) {
+void swap_cycle(char *array, int start_ind, int cur_ind, int l_size, int size_e) {
 	//new location
 	int new_ind = start_ind;
 
@@ -38,7 +38,7 @@ void swap_cycle(void *array, int start_ind, int cur_ind, int l_size, int size_e)
 
 
 
-int next_in_order(void *array, int cur_ind, int new_ind, int size_e, int (*compare)(void *, void *)) {
+int next_in_order(char *array, int cur_ind, int new_ind, int size_e, int (*compare)(void *, void *)) {
 	//equivalent to !(compare(cur, new) ^ (cur > new));
 	return compare(array + cur_ind * size_e, array + new_ind * size_e) ^ (cur_ind < new_ind);
 }
@@ -48,7 +48,7 @@ int next_in_order(void *array, int cur_ind, int new_ind, int size_e, int (*compa
 //inplace merge
 //alternates the two sub array elements
 //then uses insertion sort on the merged list
-void merge(void *array, int l_size, int r_size, int size_e, int (*compare)(void *, void *)) {
+void merge(char *array, int l_size, int r_size, int size_e, int (*compare)(void *, void *)) {
         int size = l_size + r_size;
 
 	for(int i = l_size - 1; i > 0; --i) {
@@ -70,7 +70,7 @@ void merge(void *array, int l_size, int r_size, int size_e, int (*compare)(void 
 
 
 //bottom up
-void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+void sort(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int left = size_a / 2;
 	int right = size_a - left;
 

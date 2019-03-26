@@ -1,7 +1,7 @@
 #include "heap.h"
 #include "swap.h"
 
-void swim_heap(void *array, int child, int size_e, int (*compare)(void *, void *)) {
+void swim_heap(char *array, int child, int size_e, int (*compare)(void *, void *)) {
 	//index
 	int parent = (child - 1) / 2;
 
@@ -14,7 +14,7 @@ void swim_heap(void *array, int child, int size_e, int (*compare)(void *, void *
 }
 
 
-void sink_heap(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+void sink_heap(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int child = compare(array + 2 * size_e, array + size_e) ? 2 : 1;
 	int parent = 0;
 
@@ -30,7 +30,7 @@ void sink_heap(void *array, int size_a, int size_e, int (*compare)(void *, void 
 }
 
 
-void build_heap(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+void build_heap(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	for(int i = 1; i < size_a; ++i)
 		swim_heap(array, i, size_e, compare);
 }

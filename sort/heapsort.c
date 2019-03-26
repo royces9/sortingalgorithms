@@ -5,7 +5,7 @@
 //heapsort
 //max heap
 
-void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+void sort(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	build_heap(array, size_a , size_e, compare);
 
 	for(int last = size_a - 1;

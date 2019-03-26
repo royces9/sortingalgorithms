@@ -4,7 +4,7 @@
 
 //experimental thing with heap
 
-void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+void sort(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	build_heap(array, size_a, size_e, compare);
 
 	for(int i = size_a - 1; i > 0; --i) {

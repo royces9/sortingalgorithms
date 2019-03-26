@@ -2,7 +2,7 @@
 #include "swap.h"
 
 
-void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+void sort(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	for(int j = 0, min = 0;
 	    j < size_a;
 	    ++j, min = j) {

@@ -9,7 +9,7 @@
 pthread_mutex_t print_lock;
 
 struct thread_data {
-	void *array;
+	char *array;
 	int (*compare)(void *, void *);
 	int size_a;
 	int size_e;
@@ -17,12 +17,12 @@ struct thread_data {
 
 
 struct heap_data {
-	void *array;
-	void *end;
+	char *array;
+	char *end;
 };
 
 
-struct heap_data *build_heap_data(int count, void *array, int size_a, int size_e,
+struct heap_data *build_heap_data(int count, char *array, int size_a, int size_e,
 			     int part, int (*compare)(void *, void *)) {
 
  	struct heap_data *heap = malloc(count * sizeof(*heap));
@@ -36,7 +36,7 @@ struct heap_data *build_heap_data(int count, void *array, int size_a, int size_e
 	heap[i].array = array + (i * part) * size_e;
 	heap[i].end = array + size_a * size_e;
 
-	build_heap(heap, count, sizeof(*heap), compare);
+	build_heap((char *)heap, count, sizeof(*heap), compare);
 
 	return heap;
 }
@@ -48,7 +48,7 @@ int heap_comp(void *a, void *b) {
 	return !global_comp(((struct heap_data *)a)->array, ((struct heap_data *)b)->array);
 }
 
-void merge_all(void *array, void *scratch,
+void merge_all(char *array, char *scratch,
 	       int size_a, int size_e,
 	       int part, int count,
 	       int (*compare)(void *, void *)) {
@@ -68,7 +68,7 @@ void merge_all(void *array, void *scratch,
 		}
 
 		if(count > 2) {
-			sink_heap(heap, count, sizeof(*heap), heap_comp);
+			sink_heap((char *)heap, count, sizeof(*heap), heap_comp);
 		} else if(count == 2) {
 			if(compare(heap[0].array, heap[1].array)) {
 				swap((char *)heap, (char *)(heap + 1), sizeof(*heap));
@@ -83,7 +83,7 @@ void merge_all(void *array, void *scratch,
 }
 
 
-void merge(void *array, void * scratch, int left_size, int right_size, int size_e, int (*compare)(void *, void *)) {
+void merge(char *array, char *scratch, int left_size, int right_size, int size_e, int (*compare)(void *, void *)) {
 	int total_size = left_size + right_size;
 	int head[2] = {0, left_size};
 
@@ -104,7 +104,7 @@ void merge(void *array, void * scratch, int left_size, int right_size, int size_
 }
 
 
-void start_sort(void *array, void *scratch, int size_a, int size_e, int (*compare)(void *, void *)) {
+void start_sort(char *array, char *scratch, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int left_size = size_a / 2;
 	int right_size = size_a - left_size;
 
@@ -141,7 +141,7 @@ void init_sort_thread(void *arg) {
 }
 
 
-void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), void *extra) {
+void sort(char *array, int size_a, int size_e, int (*compare)(void *, void *), void *extra) {
 	int count = 2;
 
 	if(extra)

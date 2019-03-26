@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -MMD -g -O3 -Wall -I. -I.. -Icompare/ -Idata_structures/ -Iaux/
+CFLAGS := -MMD -g -O3 -Wall -Wpedantic -I. -I.. -Icompare/ -Idata_structures/ -Iaux/
 SDLFLAG := `sdl2-config --cflags`
 LDFLAGS := `sdl2-config --libs` -lSDL2_image -lm -pthread
 

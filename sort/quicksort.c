@@ -1,13 +1,13 @@
 #include "shuffle.h"
 #include "swap.h"
 
-void sort_r(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+void sort_r(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int left = 1;
 	int right = size_a - 1;
 
 	//choose pivot and put into first slot
-	void *pivot = array + (right / 2) * size_e;
-	void *end = array + right * size_e;
+	char *pivot = array + (right / 2) * size_e;
+	char *end = array + right * size_e;
 
 	int comp = compare(array, pivot);
 
@@ -50,7 +50,7 @@ void sort_r(void *array, int size_a, int size_e, int (*compare)(void *, void *))
 }
 
 
-void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+void sort(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	if(size_a > 2) {
 		sort_r(array, size_a, size_e, compare);
 

@@ -5,7 +5,7 @@
 
 
 //mergesort
-void merge(void *array, void *scratch, int left_size, int right_size, int size_e, int (*compare)(void *, void *)) {
+void merge(char *array, char *scratch, int left_size, int right_size, int size_e, int (*compare)(void *, void *)) {
         int total_size = left_size + right_size;
 	int head[2] = {0, left_size};
 
@@ -29,7 +29,7 @@ void merge(void *array, void *scratch, int left_size, int right_size, int size_e
 
 
 //bottom up
-void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+void sort(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	//number of merges in layer
 	int merge_count = size_a / 2;
 
@@ -37,7 +37,7 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int left_over = size_a % 2;
 
 	int offset = 0;
-	void *scratch = malloc(size_a * size_e);
+	char *scratch = malloc(size_a * size_e);
 
 	for(int size = 1; size < size_a; size <<= 1) {
 

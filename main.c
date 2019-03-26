@@ -38,7 +38,7 @@ SDL_Rect rect_bg;
 SDL_Texture *bg;
 char *img;
 
-void *comp_array[] = {&int_compare, &radix_compare,
+int (*comp_array[])(void *, void *) = {&int_compare, &radix_compare,
 		      &sdl_compare, &sdl_radix_compare,
 		      &int_count_comp, &radix_compare,
 		      &sdl_count_comp, &sdl_radix_compare
@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
 	if(flag & 32)
 		compare_index += 4;
 
-	void *comp = comp_array[compare_index];
+	int (*comp)(void *, void *) = comp_array[compare_index];
 
 	void *sort_obj = array;
 	int size_obj = sizeof(*array);

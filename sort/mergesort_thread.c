@@ -7,14 +7,14 @@
 pthread_mutex_t print_lock;
 
 struct thread_data {
-	void *array;
+	char *array;
 	int (*compare)(void *, void *);
 	int size_a;
 	int size_e;
 };
 
 
-void merge(void *array, void * scratch, int left_size, int right_size, int size_e, int (*compare)(void *, void *)) {
+void merge(char *array, char *scratch, int left_size, int right_size, int size_e, int (*compare)(void *, void *)) {
 	int total_size = left_size + right_size;
 	int head[2] = {0, left_size};
 
@@ -35,7 +35,7 @@ void merge(void *array, void * scratch, int left_size, int right_size, int size_
 }
 
 
-void merge_all(void *array, void *scratch, int size_a, int size_e, int count, int (*compare)(void *, void *)) {
+void merge_all(char *array, char *scratch, int size_a, int size_e, int count, int (*compare)(void *, void *)) {
 	int part = size_a / count;
 
 	//number of merges in layer
@@ -62,7 +62,7 @@ void merge_all(void *array, void *scratch, int size_a, int size_e, int count, in
 }
 
 
-void start_sort(void *array, void *scratch, int size_a, int size_e, int (*compare)(void *, void *)) {
+void start_sort(char *array, char *scratch, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int left_size = size_a / 2;
 	int right_size = size_a - left_size;
 
@@ -77,12 +77,12 @@ void start_sort(void *array, void *scratch, int size_a, int size_e, int (*compar
 
 
 void init_sort_thread(void *arg) {
-	void *array = (*(struct thread_data *) arg).array;
+	char *array = (*(struct thread_data *) arg).array;
         int (*compare)(void *, void *) = (*(struct thread_data *) arg).compare;
 	int size_a = (*(struct thread_data *) arg).size_a;
 	int size_e = (*(struct thread_data *) arg).size_e;
 
-	void *scratch = malloc(size_a * size_e);
+	char *scratch = malloc(size_a * size_e);
 
 	start_sort(array, scratch, size_a, size_e, compare);
 
@@ -99,7 +99,7 @@ void init_sort_thread(void *arg) {
 }
 
 
-void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *), void *extra) {
+void sort(char *array, int size_a, int size_e, int (*compare)(void *, void *), void *extra) {
 	int count = 2;
 
 	if(extra)

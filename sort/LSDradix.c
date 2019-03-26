@@ -5,7 +5,7 @@
 #include "copy.h"
 #include "swap.h"
 
-int highest_bit(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+int highest_bit(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int out = 1;
 
 	int total_bits = size_e * 8 - 1;
@@ -29,8 +29,8 @@ int highest_bit(void *array, int size_a, int size_e, int (*compare)(void *, void
 
 
 //LSD radix
-void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	void *dupArray = malloc(size_e * size_a);
+void sort(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+	char *dupArray = malloc(size_e * size_a);
 
 	int max = highest_bit(array, size_a, size_e, compare);
 

@@ -10,7 +10,7 @@ extern SDL_Texture **tex;
 extern SDL_Rect *rect;
 extern struct rect_cont *cont;
 
-void copy(void *src, void *dest, int size_e) {
+void copy(char *src, char *dest, int size_e) {
 	int word_loops = size_e / sizeof(int);
 	int byte_loops =  size_e % sizeof(int);
  
@@ -22,10 +22,10 @@ void copy(void *src, void *dest, int size_e) {
 	}
 
 	for(int i = 0; i < byte_loops; ++i) {
-		*(char *)dest = *(char *)src;
+		*dest = *src;
 
-		dest += sizeof(char);
-		src += sizeof(char);
+		++dest;
+		++src;
 	}
 
         if(flag & 16)

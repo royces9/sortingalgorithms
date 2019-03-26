@@ -2,7 +2,7 @@
 #include "swap.h"
 
 
-void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+void sort(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int begin = 0;
 	int end = size_a;
 

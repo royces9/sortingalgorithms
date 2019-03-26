@@ -5,7 +5,7 @@
 #include "shuffle.h"
 
 
-void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+void sort(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	struct list *data = init_list();
 
 	append_list(data, array, size_e);
@@ -29,7 +29,7 @@ void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 
 	curr = data->next;
 
-	void *scratch = malloc(size_a * size_e);
+	char *scratch = malloc(size_a * size_e);
 
 	for(int i = 0; i < size_a; ++i) {
 		copy(curr->data, scratch + i * size_e, size_e);

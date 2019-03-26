@@ -5,14 +5,14 @@
 
 
 struct queue{
-	void *array;
+	char *array;
 	int left;
 	int right;
 	int occ;
 };
 
 
-void init_queue(void *array, struct queue *qq, int size_e, int (*compare)(void *, void *)) {
+void init_queue(char *array, struct queue *qq, int size_e, int (*compare)(void *, void *)) {
 	qq->occ = 1;
 	if(compare(array, array + size_e)) {
 		copy(array,          qq->array, size_e);
@@ -40,9 +40,9 @@ int append_queue(struct queue *qq, void *value, int size_a, int size_e, int (*co
 }
 
 
-void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, void*)){
+void merge(char *array, int size, int size2, int size_e, int (*compare)(void *, void*)){
 	int total_size = size + size2;
-	void *combinedArray = malloc(size_e * total_size);
+	char *combinedArray = malloc(size_e * total_size);
 
 	int head[2] = {0, size};
 
@@ -78,7 +78,7 @@ void merge(void *array, int size, int size2, int size_e, int (*compare)(void *, 
  * into array, and start a new queue, then merge all the sorted subarrays
  *
  */
-void sort(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+void sort(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 
 
 	struct queue qq;

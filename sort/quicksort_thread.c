@@ -7,7 +7,7 @@
 pthread_mutex_t lock;
 
 struct thread_data {
-	void *array;
+	char *array;
 	int (*compare)(void *, void *);
 	int size_a;
 	int size_e;
@@ -23,12 +23,12 @@ void no_op(pthread_mutex_t *a) {
 }
 
 
-void sort_n(void *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+void sort_n(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int left = 1;
 	int right = size_a - 1;
 
-	void *pivot = array + (right / 2) * size_e;
-	void *end = array + right * size_e;
+	char *pivot = array + (right / 2) * size_e;
+	char *end = array + right * size_e;
 
 	int comp = compare(array, pivot);
 
@@ -73,7 +73,7 @@ void sort_n(void *array, int size_a, int size_e, int (*compare)(void *, void *))
 void sort_r(void *arg) {
 	struct thread_data data = *(struct thread_data *) arg;
 
-	void *array = data.array;
+	char *array = data.array;
 	int (*compare)(void *, void *) = data.compare;
 	int size_a = data.size_a;
 	int size_e = data.size_e;

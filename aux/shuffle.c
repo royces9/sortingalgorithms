@@ -49,19 +49,6 @@ void printArray(int *array, int size) {
 }
 
 
-void copyArray(void *src, void *dest, int size_a, int size_e) {
-        int word_loops = (size_e * size_a) / 4;
-	int byte_loops =  (size_e * size_a) % 4;
-
-	for(int i = 0; i < word_loops; ++i) {
-		*(int *)(dest++) = *(int *)(src++);
-	}
-
-	for(int i = 0; i < byte_loops; ++i)
-		*(char *)(dest++) = *(char *)(src++);
-}
-
-
 double timeDifference(struct timeval start, struct timeval end) {
 	return ((double)end.tv_usec - (double)start.tv_usec)/1000000 + ((double)end.tv_sec - (double)start.tv_sec);
 }
