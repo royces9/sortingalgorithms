@@ -11,4 +11,10 @@ void sort(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 		array += size_e;
 		build_heap(array, i, size_e, compare);
 	}
+
+
+	for(int front = 0, back = size_a - 1; front < back; ++front, --back) {
+		swap(array + front * size_e, array + back * size_e, size_e);
+	}
+
 }

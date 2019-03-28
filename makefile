@@ -4,7 +4,6 @@ SDLFLAG := `sdl2-config --cflags`
 LDFLAGS := `sdl2-config --libs` -lSDL2_image -lm -pthread
 
 
-
 OBJ := obj
 COMP := compare
 SORT := sort
@@ -34,6 +33,7 @@ MAINO := $(OBJ)/main.o
 
 .DEFAULT_GOAL = all
 
+
 all: $(EXE)
 
 %: $(OBJ)/$(SORT)/%.o $(MAINO) $(AUXO) $(COMPO) $(DATAO)
@@ -54,7 +54,6 @@ $(MAINO): main.c
 
 $(OBJ)/$(SORT)/%.o: $(SORT)/%.c
 	$(CC) $(CFLAGS) -c $(SORT)/$(*F).c -o $@
-
 
 
 clean:

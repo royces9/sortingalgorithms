@@ -34,7 +34,6 @@ void sort_r(char *array, int size_a, int size_e, int (*compare)(void *, void *))
 
 	if(left > 2) {
 		sort_r(array, left, size_e, compare);
-
 	} else if(left == 2) {
 		if(compare(array, array + size_e))
 			swap(array, array + size_e, size_e);
@@ -42,7 +41,6 @@ void sort_r(char *array, int size_a, int size_e, int (*compare)(void *, void *))
 
 	if((size_a - left - 1) > 2) {
 		sort_r(array + (left + 1) * size_e, size_a - left - 1, size_e, compare);
-
 	} else if((size_a - left - 1) == 2) {
 		if(compare(array + (left + 1) * size_e, array + (left + 2) * size_e))
 			swap(array + (left + 1) * size_e, array + (left + 2) * size_e, size_e);
