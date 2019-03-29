@@ -30,15 +30,6 @@ void swap(char *a, char *b, int size_e) {
 
 		++a;
 		++b;
-		
-		/*
-		char c_temp  = *(char *)a;
-		*(char *)a = *(char *)b;
-		*(char *)b = c_temp;
-
-		a += sizeof(char);
-		b += sizeof(char);
-		*/
 	}
 
 	if(flag & 8)

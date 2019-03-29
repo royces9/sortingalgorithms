@@ -8,6 +8,7 @@
 
 struct rect_cont {
 	SDL_Rect rect;
+	SDL_Texture *tex;
 	int val;
 };
 
@@ -17,7 +18,7 @@ void printArray(int *array, int size);
 void copyArray(void *src, void *dest, int size_a, int size_e);
 double timeDifference(struct timeval start, struct timeval end);
 void check_array(int *array, int size);
-void disp_array(SDL_Texture **tex, SDL_Rect *rect, int size);
 void disp_cont(SDL_Texture **tex, struct rect_cont *cont, int size);
+void change_colour(SDL_Texture **tex, struct rect_cont *cont, struct rect_cont *ar, struct rect_cont *br, int size);
 
 #endif //SHUFFLE

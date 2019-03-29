@@ -37,6 +37,7 @@ SDL_Rect *rect;
 SDL_Rect rect_bg;
 SDL_Texture *bg;
 char *img;
+struct rect_cont *cont;
 
 int (*comp_array[])(void *, void *) = {&int_compare, &radix_compare,
 		      &sdl_compare, &sdl_radix_compare,
@@ -44,12 +45,12 @@ int (*comp_array[])(void *, void *) = {&int_compare, &radix_compare,
 		      &sdl_count_comp, &sdl_radix_compare
 };
 
-struct rect_cont *cont;
+
 	
 void print_flags();
 int *make_array(int argc, char **argv, int *size, int **extra, int *flag, unsigned int *type);
 void assign_rect(SDL_Rect *rect, int *array, int size);
-void assign_cont(struct rect_cont *cont, int *array, int size);
+void assign_cont(struct rect_cont *cont, int *array, SDL_Texture **tex, int size);
 
 int compare_count;
 
@@ -92,7 +93,6 @@ int main(int argc, char **argv) {
 		win = SDL_CreateWindow("Sorting", 0, 0, rect_bg.w, rect_bg.h, w_flags);
 		ren = SDL_CreateRenderer(win, -1, r_flags);
 		tex = malloc(size * sizeof(*tex));
-		//rect = malloc(size * sizeof(*rect));
 		cont = malloc(size * sizeof(*cont));
 
 		SDL_RenderSetLogicalSize(ren, rect_bg.w, rect_bg.h);
@@ -100,22 +100,14 @@ int main(int argc, char **argv) {
 		if(img)
 			bg = IMG_LoadTexture(ren, img);
 
-
-		assign_cont(cont, array, size);
-		//assign_rect(rect, array, size);
-
 		for(int i = 0; i < size; ++i)
 			tex[i] = IMG_LoadTexture(ren, "pink.png");
 
-		//disp_array(tex, rect, size);
+		assign_cont(cont, array, tex, size);
 		disp_cont(tex, cont, size);
 
 		comp = comp_array[compare_index + 2];
 
-		/*
-		sort_obj = rect;
-		size_obj = sizeof(*rect);
-		*/
 		sort_obj = cont;
 		size_obj = sizeof(*cont);
 	}
@@ -141,8 +133,7 @@ int main(int argc, char **argv) {
 			SDL_Delay(500);
 			free(array);
 			array = make_array(argc, argv, &size, &extra, &flag, &type);
-			assign_cont(cont, array, size);
-			//assign_rect(rect, array, size);
+			assign_cont(cont, array, tex, size);
 		}
 
 		if(flag & 32)
@@ -269,7 +260,7 @@ int *make_array(int argc, char **argv, int *size, int **extra, int *flag, unsign
 }
 
 
-void assign_cont(struct rect_cont *cont, int *array, int size ) {
+void assign_cont(struct rect_cont *cont, int *array, SDL_Texture **tex, int size) {
 	for(int i = 0; i < size; ++i) {
 		cont[i].rect.w = rect_bg.w / size;
 		cont[i].rect.x = rect_bg.w * i;
@@ -277,17 +268,9 @@ void assign_cont(struct rect_cont *cont, int *array, int size ) {
 		cont[i].rect.h = (rect_bg.h * (array[i] + 1)) / size;
 		cont[i].rect.y = rect_bg.h - cont[i].rect.h;
 
+		cont[i].tex = tex[i];
+
 		cont[i].val = array[i];
 	}
 
-}
-
-void assign_rect(SDL_Rect *rect, int *array, int size) {
-	for(int i = 0; i < size; ++i) {
-		rect[i].w = rect_bg.w / size;
-		rect[i].x = rect_bg.w * i;
-
-		rect[i].h = (rect_bg.h * (array[i] + 1)) / size;
-		rect[i].y = rect_bg.h - rect[i].h;
-	}
 }
