@@ -19,6 +19,7 @@ void copyArray(void *src, void *dest, int size_a, int size_e);
 double timeDifference(struct timeval start, struct timeval end);
 void check_array(int *array, int size);
 void disp_cont(SDL_Texture **tex, struct rect_cont *cont, int size);
-void change_colour(SDL_Texture **tex, struct rect_cont *cont, struct rect_cont *ar, struct rect_cont *br, int size);
+void disp_cont2(SDL_Texture **tex, struct rect_cont *cont, int ai, int bi, int size);
+void change_colour(SDL_Texture **tex, struct rect_cont *cont, int ai, int bi, int size);
 
 #endif //SHUFFLE

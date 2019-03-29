@@ -47,8 +47,10 @@ int next_in_order(char *array, int cur_ind, int new_ind, int size_e, int (*compa
 void small(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int log = 0;
 	for(int size = size_a; !(size % 2) ; size /= 2, ++log);
-	log <<= 1;
-	for(int j = 3; j < log; j += 2) {
+	//log <<= 1;
+	++log;
+	for(int k = 3; k < log; k += 2) {
+		int j = 3;
 		for(int i = size_a - 1; i >= j; --i) {
 			if(compare(array + (i - j) * size_e, array + i * size_e)) {
 				swap(array + (i - j) * size_e, array + i * size_e, size_e);

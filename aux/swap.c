@@ -35,6 +35,10 @@ void swap(char *a, char *b, int size_e) {
 	if(flag & 8)
 		printArray(globalArray, globalSize);
 
-	if(flag & 16)
-		disp_cont(tex, cont, globalSize);
+	if(flag & 16) {
+		int ai = (struct rect_cont *) a - cont - 1;
+		int bi = (struct rect_cont *) b - cont - 1;
+
+		disp_cont2(tex, cont, ai, bi, globalSize);
+	}
 }

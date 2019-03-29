@@ -84,12 +84,12 @@ void disp_cont(SDL_Texture **tex, struct rect_cont *cont, int size) {
 	}
 }
 
-void change_colour(SDL_Texture **tex, struct rect_cont *cont, struct rect_cont *ar, struct rect_cont *br, int size) {
+void disp_cont2(SDL_Texture **tex, struct rect_cont *cont, int ai, int bi, int size) {
 	int width = cont->rect.w;
 	SDL_RenderCopy(ren, bg, NULL, &rect_bg);
 
-	SDL_SetTextureColorMod(tex[ar->val], 255, 0, 0);
-	SDL_SetTextureColorMod(tex[br->val], 255, 0, 0);
+	SDL_SetTextureColorMod(tex[ai], 0, 255, 0);
+	SDL_SetTextureColorMod(tex[bi], 0, 255, 0);
 
 	for(int i = 0; i < size; ++i) {
 		cont[i].rect.x = width * i;
@@ -99,8 +99,35 @@ void change_colour(SDL_Texture **tex, struct rect_cont *cont, struct rect_cont *
 	SDL_RenderPresent(ren);
 	SDL_RenderClear(ren);
 
-	SDL_SetTextureColorMod(tex[ar->val], 255, 255, 255);
-	SDL_SetTextureColorMod(tex[br->val], 255, 255, 255);
+	SDL_SetTextureColorMod(tex[ai], 255, 255, 255);
+	SDL_SetTextureColorMod(tex[bi], 255, 255, 255);
+
+	
+	SDL_Event event;
+	while(SDL_PollEvent(&event)) {
+		if(event.type == SDL_QUIT) {
+			exit(1);
+		}
+	}
+}
+
+void change_colour(SDL_Texture **tex, struct rect_cont *cont, int ai, int bi, int size) {
+	int width = cont->rect.w;
+	SDL_RenderCopy(ren, bg, NULL, &rect_bg);
+
+	SDL_SetTextureColorMod(tex[ai], 255, 0, 0);
+	SDL_SetTextureColorMod(tex[bi], 255, 0, 0);
+
+	for(int i = 0; i < size; ++i) {
+		cont[i].rect.x = width * i;
+		SDL_RenderCopy(ren, tex[i], NULL, &cont[i].rect);
+	}
+
+	SDL_RenderPresent(ren);
+	SDL_RenderClear(ren);
+
+	SDL_SetTextureColorMod(tex[ai], 255, 255, 255);
+	SDL_SetTextureColorMod(tex[bi], 255, 255, 255);
 
 	SDL_Event event;
 	while(SDL_PollEvent(&event)) {
