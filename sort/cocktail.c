@@ -15,10 +15,12 @@ void sort(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 			}
 		}
 
-		for(int j = right; j > left; --j) {
-			if(compare(array + (j - 1) * size_e, array + j * size_e)) {
-				swap(array + (j - 1) * size_e, array + j * size_e, size_e);
-				flag = 1;
+		if(flag) {
+			for(int j = right; j > left; --j) {
+				if(compare(array + (j - 1) * size_e, array + j * size_e)) {
+					swap(array + (j - 1) * size_e, array + j * size_e, size_e);
+					flag = 1;
+				}
 			}
 		}
 	}
