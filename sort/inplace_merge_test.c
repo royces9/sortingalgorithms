@@ -24,16 +24,17 @@ int divide_two(int a) {
 }
 
 
-void swap_cycle(char *array, int start_ind, int cur_ind, int l_size, int size_e) {
-	//new location
-	int new_ind = start_ind;
+int swap_cycle(char *array, int start_ind, int cur_ind, int l_size, int size_e) {
+	int out = 0;
 
-	while(cur_ind != start_ind) {
+	for(int new_ind = start_ind; cur_ind != start_ind; ++out) {
 		swap(array + cur_ind * size_e, array + new_ind * size_e, size_e);
 
 		new_ind = cur_ind;
 		cur_ind = divide_two(((new_ind - 1) / 2) + l_size);
 	}
+
+	return out;
 }
 
 
@@ -73,11 +74,13 @@ void merge(char *array, int l_size, int r_size, int size_e, int (*compare)(void 
 
 	//how orig_ind is defined
 	//orig_ind = (new_ind - 1) / 2 + l_size;
-	for(int new_ind = 1, orig_ind = l_size; new_ind < size; new_ind += 2, ++orig_ind) {
+	for(int new_ind = 1, orig_ind = l_size, total = 1;
+	    total < size;
+	    new_ind += 2, ++orig_ind, total += 2) {
 		int cur_ind = divide_two(orig_ind);
 
 		if(!next_in_order(array, new_ind, cur_ind, size_e, compare))
-			swap_cycle(array, new_ind, cur_ind, l_size, size_e);
+			total += swap_cycle(array, new_ind, cur_ind, l_size, size_e);
 	}
 
 	small(array, size, size_e, compare);

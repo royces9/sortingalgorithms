@@ -207,9 +207,13 @@ int *make_array(int argc, char **argv, int *size, int **extra, int *flag, unsign
 				--i;
 				break;
 
-			case 'd':;
+			case 'd':
 				*type = 4;
 				--i;
+				break;
+
+			case 'b':
+				img = argv[i + 1];
 				break;
  
 			default:
