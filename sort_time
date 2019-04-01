@@ -10,18 +10,19 @@ def sort_time(alg_name, count, size, extra):
     if extra:
         extra = " -e " + extra;
 
-    for i in range(0, count):
-        input_str  = "./" + alg_name + " -f 2 -s " + size + extra;
-        p = subprocess.Popen(input_str, shell = True, stdout = subprocess.PIPE);
+    alg_exec  = "./" + alg_name + " -f 2 -s " + size + extra;
+
+    std = 0;
+
+    for i in range(count):
+        p = subprocess.Popen(alg_exec, shell = True, stdout = subprocess.PIPE);
         time[i] = float(p.stdout.read().decode("utf-8").split(" ")[2]);
         time_sum += time[i];
 
     avg = time_sum / count;
     temp = 0;
-    for i in range(0, count):
-        temp += ((time[i] - avg) ** 2)
 
-    std = temp / (count - 1);
+    std = sum((time[i] - avg) ** 2 for i in range(count)) / (count - 1);
 
     return [avg, std];
 

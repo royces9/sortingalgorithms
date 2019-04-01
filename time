@@ -6,8 +6,9 @@ import numpy
 
 def avg_comparison(alg, size, count):
     comp = 0;
-    for i in range(0, count):
-        p = subprocess.Popen("./" + alg + " -f 2 -s " + size, shell = True, stdout = subprocess.PIPE);
+    alg_exec = "./" + alg + " -f 2 -s " + size;
+    for _ in range(count):
+        p = subprocess.Popen(alg_exec, shell = True, stdout = subprocess.PIPE);
         split = p.stdout.read().decode("utf-8").split();
         comp += float(split[2]);
 

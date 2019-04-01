@@ -1,18 +1,16 @@
 #!/usr/bin/python
 
-#input format
-# ./compare.py alg1 alg2 ... algn list_count list_size
-
 import subprocess
 import sys
 
-def compare_sorts(algorithms, no_algs, count, size):
-    avg = [0] * (no_algs);
-
+def compare_sorts(algorithms, count, size):
+    avg = [0] * len(algorithms);
+            
+    alg_exec = "./" + alg + " -f 2 -s " + size;
     for j, alg in enumerate(algorithms):
         time = 0;
-        for i in range(0, count):
-            p = subprocess.Popen(["./" + alg + " -f 2 -s " + size], shell = True, stdout = subprocess.PIPE);
+        for _ in range(count):
+            p = subprocess.Popen(alg_exec, shell = True, stdout = subprocess.PIPE);
             time += float(((p.stdout.read()).decode("utf-8")).split(" ")[2]);
 
         avg[j] = time / count;
@@ -27,22 +25,16 @@ if __name__ == "__main__":
 
 
     algorithms = sys.argv[3:length];
-    no_algs = len(algorithms);
 
     count = int(sys.argv[1]);
     size = sys.argv[2];
 
-    avg = compare_sorts(algorithms, no_algs, count, size);
+    avg = compare_sorts(algorithms, count, size);
 
-    alg_name_length = [0] * (no_algs + 1);
-
-    for i, alg in enumerate(algorithms):
-        alg_name_length[i] = len(alg);
+    alg_name_length = [len(alg) for alg in algorithms];
 
     max_length = max(alg_name_length);
 
-    for i, a in enumerate(avg):
-        padding = max_length - alg_name_length[i];
-        print(algorithms[i] + ": " + " " * padding + str(a));
-
-
+    for alg, l, a in zip(algorithms, alg_name_length, avg):
+        padding = max_length - l;
+        print(alg + ": " + " " * padding + str(a));

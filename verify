@@ -20,20 +20,26 @@ if __name__ == "__main__":
     tally = [0] * len(sizes);
 
     for i, size in enumerate(sizes):
-        for x in range(0, count):
-            p = subprocess.Popen(["./" + alg + " -f 4 -s " + str(size)], shell = True, stdout = subprocess.PIPE);
+        alg_exec = ["./" + alg + " -f 4 -s " + str(size)
+        for _ in range(0, count):
+            p = subprocess.Popen(alg_exec, shell = True, stdout = subprocess.PIPE);
             out = (p.stdout.read()).decode("utf-8");
 
             if out:
                 tally[i] += 1;
+                print(str(size) + " failed.");
 
 
-    for i, size in enumerate(sizes):
-        if tally[i] != 0 :
-            print(str(size) + " failed " + str(tally[i]) + " times.");
+    for tal, size in zip(tally, sizes):
+        if tal != 0:
+            print(str(size) + " failed " + str(tal) + "times.");
 
     total = sum(tally);
+
     if total != 0:
-        print("Total failed sorts: " + str(total));
+        str_out = "Total failed sorts: " + str(total);
+
     else:
-        print("No failed sorts.");
+        str_out = "No failed sorts.";
+
+    print(str_out);
