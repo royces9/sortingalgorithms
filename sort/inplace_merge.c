@@ -23,28 +23,16 @@ void small(char *array, int size_a, int size_e, int (*compare)(void *, void *)) 
 
 
 void cocktail(char *array, int size_a, int size_e, int (*compare)(void *, void*)) {
-        int left = 0;
+	int left = 0;
 	int right = size_a - 1;
 
-	for(int flag = 1; flag && (left < right); ++left, --right) {
-		flag = 0;
-		for(int i = left; i < right; ++i) {
-			if(compare(array + i * size_e, array + (i + 1) * size_e)) {
-				swap(array + i * size_e, array + (i + 1) * size_e, size_e);
-				flag = 1;
-			}
-		}
+	for(int i = 0; left < right; ++i, ++left, --right) {
+		if(compare(array + left * size_e, array + (left + 1) * size_e))
+			swap(array + left * size_e, array + (left + 1) * size_e, size_e);
 
-		if(flag) {
-			for(int j = right; j > left; --j) {
-				if(compare(array + (j - 1) * size_e, array + j * size_e)) {
-					swap(array + (j - 1) * size_e, array + j * size_e, size_e);
-					flag = 1;
-				}
-			}
-		}
+		if(compare(array + (right - 1) * size_e, array + right * size_e))
+			swap(array + (right - 1) * size_e, array + right * size_e, size_e);
 	}
-	
 }
 
 
@@ -129,8 +117,9 @@ void merge(char *array, int l_size, int r_size, int size_e, int (*compare)(void 
 	//small(array, size, size_e, compare);
 
 	//odd_even(array, size, size_e, compare);
-	//insertion(array, size, size_e, compare);
-	cocktail(array, size, size_e, compare);
+
+	//cocktail(array, size, size_e, compare);
+	insertion(array, size, size_e, compare);
 }
 
 

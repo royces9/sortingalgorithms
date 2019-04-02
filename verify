@@ -20,8 +20,8 @@ if __name__ == "__main__":
     tally = [0] * len(sizes);
 
     for i, size in enumerate(sizes):
-        alg_exec = ["./" + alg + " -f 4 -s " + str(size)
-        for _ in range(0, count):
+        alg_exec = "./" + alg + " -f 4 -s " + str(size);
+        for _ in range(count):
             p = subprocess.Popen(alg_exec, shell = True, stdout = subprocess.PIPE);
             out = (p.stdout.read()).decode("utf-8");
 
@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     for tal, size in zip(tally, sizes):
         if tal != 0:
-            print(str(size) + " failed " + str(tal) + "times.");
+            print(str(size) + " failed " + str(tal) + " times.");
 
     total = sum(tally);
 
