@@ -6,9 +6,10 @@ import sys
 def compare_sorts(algorithms, count, size):
     avg = [0] * len(algorithms);
             
-    alg_exec = "./" + alg + " -f 2 -s " + size;
+
     for j, alg in enumerate(algorithms):
         time = 0;
+        alg_exec = "./" + alg + " -f 2 -s " + size;
         for _ in range(count):
             p = subprocess.Popen(alg_exec, shell = True, stdout = subprocess.PIPE);
             time += float(((p.stdout.read()).decode("utf-8")).split(" ")[2]);

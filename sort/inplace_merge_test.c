@@ -4,24 +4,6 @@
 typedef unsigned int uint;
 
 
-void small(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-	int log = 0;
-	for(int size = size_a; size; size >>= 1, ++log);
-
-	log /= 8;
-	++log;
-	log *= 2;
-	
-	for(int gap = log + 1; gap > 1; gap -= 2) {
-		for(int i = size_a - 1; i >= gap; --i) {
-			if(compare(array + (i - gap) * size_e, array + i * size_e)) {
-				swap(array + (i - gap) * size_e, array + i * size_e, size_e);
-			}
-		}
-	}
-}
-
-
 void insertion(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int begin = 0;
 	for(int i = 1; i < size_a; ++i) {
@@ -37,14 +19,14 @@ void insertion(char *array, int size_a, int size_e, int (*compare)(void *, void 
 
 
 uint divide_two(uint a) {
-	uint count = a & (~(a - 1));
-
-	return a / count;
+	uint pow = a & (~(a - 1));
+	pow = __builtin_ctz(pow);
+	return a >> pow;
 }
 
 
 int swap_cycle(char *array, uint start_ind, uint cur_ind, uint l_size, int size_e) {
-	int out = 0;
+	int out = 1;
 
 	for(uint new_ind = start_ind; cur_ind != start_ind; ++out) {
 		swap(array + cur_ind * size_e, array + new_ind * size_e, size_e);
@@ -75,8 +57,7 @@ void merge(char *array, int l_size, int r_size, int size_e, int (*compare)(void 
 		swap(array + i * size_e, array + new_ind * size_e, size_e);
 	}
 
-	//how orig_ind is defined
-	//orig_ind = (new_ind - 1) / 2 + l_size;
+
 	for(uint new_ind = 1, orig_ind = l_size, total = 1;
 	    total < size;
 	    new_ind += 2, ++orig_ind, total += 2) {
@@ -85,8 +66,6 @@ void merge(char *array, int l_size, int r_size, int size_e, int (*compare)(void 
 		if(!next_in_order(array, new_ind, cur_ind, size_e, compare))
 			total += swap_cycle(array, new_ind, cur_ind, l_size, size_e);
 	}
-
-	//small(array, size, size_e, compare);
 
 	insertion(array, size, size_e, compare);
 }

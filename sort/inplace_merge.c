@@ -22,34 +22,6 @@ void small(char *array, int size_a, int size_e, int (*compare)(void *, void *)) 
 }
 
 
-void cocktail(char *array, int size_a, int size_e, int (*compare)(void *, void*)) {
-	int left = 0;
-	int right = size_a - 1;
-
-	for(int i = 0; left < right; ++i, ++left, --right) {
-		if(compare(array + left * size_e, array + (left + 1) * size_e))
-			swap(array + left * size_e, array + (left + 1) * size_e, size_e);
-
-		if(compare(array + (right - 1) * size_e, array + right * size_e))
-			swap(array + (right - 1) * size_e, array + right * size_e, size_e);
-	}
-}
-
-
-void odd_even(char *array, int size_a, int size_e, int (*compare)(void *, void*)) {
-        int flag = 1;
-	for(int i = 0; (i < size_a) && flag; ++i) {
-		flag = 0;
-		for(int j = (i % 2) + 1; j < size_a; j +=2) {
-			if(compare(array + (j - 1) * size_e, array + j * size_e)) {
-				swap(array + (j - 1) * size_e, array + j * size_e, size_e);
-				flag = 1;
-			}
-		}
-	}
-}
-
-
 void insertion(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int begin = 0;
 	for(int i = 1; i < size_a; ++i) {
@@ -65,14 +37,14 @@ void insertion(char *array, int size_a, int size_e, int (*compare)(void *, void 
 
 
 uint divide_two(uint a) {
-	uint count = a & (~(a - 1));
-
-	return a / count;
+	//find first 1 bit from the lsb
+	uint pow = __builtin_ctz(a);
+	return a >> pow;
 }
 
 
 int swap_cycle(char *array, uint start_ind, uint cur_ind, uint l_size, int size_e) {
-	int out = 0;
+	int out = 1;
 
 	for(uint new_ind = start_ind; cur_ind != start_ind; ++out) {
 		swap(array + cur_ind * size_e, array + new_ind * size_e, size_e);
@@ -99,12 +71,13 @@ void merge(char *array, int l_size, int r_size, int size_e, int (*compare)(void 
         uint size = l_size + r_size;
 
 	for(int i = l_size - 1; i > 0; --i) {
-		uint new_ind = i * 2;
-		swap(array + i * size_e, array + new_ind * size_e, size_e);
+		uint new_ind = i * size_e;
+		swap(array + new_ind, array + new_ind * 2, size_e);
 	}
 
 	//how orig_ind is defined
 	//orig_ind = (new_ind - 1) / 2 + l_size;
+
 	for(uint new_ind = 1, orig_ind = l_size, total = 1;
 	    total < size;
 	    new_ind += 2, ++orig_ind, total += 2) {
@@ -114,11 +87,6 @@ void merge(char *array, int l_size, int r_size, int size_e, int (*compare)(void 
 			total += swap_cycle(array, new_ind, cur_ind, l_size, size_e);
 	}
 
-	//small(array, size, size_e, compare);
-
-	//odd_even(array, size, size_e, compare);
-
-	//cocktail(array, size, size_e, compare);
 	insertion(array, size, size_e, compare);
 }
 
