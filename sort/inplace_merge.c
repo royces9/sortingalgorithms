@@ -70,9 +70,10 @@ int next_in_order(char *array, uint cur_ind, uint new_ind, int size_e, int (*com
 void merge(char *array, int l_size, int r_size, int size_e, int (*compare)(void *, void *)) {
         uint size = l_size + r_size;
 
-	for(int i = l_size - 1; i > 0; --i) {
-		uint new_ind = i * size_e;
-		swap(array + new_ind, array + new_ind * 2, size_e);
+	for(int i = (l_size - 1) * size_e; i > 0; i -= size_e) {
+		//uint new_ind = i * size_e;
+		//swap(array + new_ind, array + new_ind * 2, size_e);
+		swap(array + i, array + i * 2, size_e);
 	}
 
 	//how orig_ind is defined
