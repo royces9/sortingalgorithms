@@ -18,9 +18,8 @@ void insertion(char *array, int size_a, int size_e, int (*compare)(void *, void 
 }
 
 
-uint divide_two(uint a) {
-	uint pow = a & (~(a - 1));
-	pow = __builtin_ctz(pow);
+inline uint divide_two(uint a) {
+	uint pow = __builtin_ctz(a);
 	return a >> pow;
 }
 
@@ -38,12 +37,11 @@ int swap_cycle(char *array, uint start_ind, uint cur_ind, uint l_size, int size_
 	return out;
 }
 
-
-int next_in_order(char *array, uint cur_ind, uint new_ind, int size_e, int (*compare)(void *, void *)) {
-	//equivalent to !(compare(cur, new) ^ (cur > new));
-	return compare(array + cur_ind * size_e, array + new_ind * size_e) ^ (cur_ind < new_ind);
+//check that the values are in order, indexes can loop
+//so pointer values are checked too
+int in_order(char *a, char *b, int (*compare)(void *, void *)) {
+	return compare(a, b) == (a > b);
 }
-
 
 //mergesort
 //inplace merge
@@ -52,9 +50,8 @@ int next_in_order(char *array, uint cur_ind, uint new_ind, int size_e, int (*com
 void merge(char *array, int l_size, int r_size, int size_e, int (*compare)(void *, void *)) {
         uint size = l_size + r_size;
 
-	for(int i = l_size - 1; i > 0; --i) {
-		uint new_ind = i * 2;
-		swap(array + i * size_e, array + new_ind * size_e, size_e);
+	for(int i = (l_size - 1) * size_e; i > 0; i -= size_e) {
+		swap(array + i, array + i * 2, size_e);
 	}
 
 
@@ -63,7 +60,7 @@ void merge(char *array, int l_size, int r_size, int size_e, int (*compare)(void 
 	    new_ind += 2, ++orig_ind, total += 2) {
 		uint cur_ind = divide_two(orig_ind);
 
-		if(!next_in_order(array, new_ind, cur_ind, size_e, compare))
+		if(!in_order(array + new_ind * size_e, array + cur_ind * size_e, compare))
 			total += swap_cycle(array, new_ind, cur_ind, l_size, size_e);
 	}
 

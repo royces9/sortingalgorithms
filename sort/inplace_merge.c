@@ -36,7 +36,7 @@ void insertion(char *array, int size_a, int size_e, int (*compare)(void *, void 
 }
 
 
-uint divide_two(uint a) {
+inline uint divide_two(uint a) {
 	//find first 1 bit from the lsb
 	uint pow = __builtin_ctz(a);
 	return a >> pow;
@@ -49,6 +49,7 @@ int swap_cycle(char *array, uint start_ind, uint cur_ind, uint l_size, int size_
 	for(uint new_ind = start_ind; cur_ind != start_ind; ++out) {
 		swap(array + cur_ind * size_e, array + new_ind * size_e, size_e);
 
+
 		new_ind = cur_ind;
 		cur_ind = divide_two(((new_ind - 1) / 2) + l_size);
 	}
@@ -57,11 +58,11 @@ int swap_cycle(char *array, uint start_ind, uint cur_ind, uint l_size, int size_
 }
 
 
-int next_in_order(char *array, uint cur_ind, uint new_ind, int size_e, int (*compare)(void *, void *)) {
-	//equivalent to !(compare(cur, new) ^ (cur > new));
-	return compare(array + cur_ind * size_e, array + new_ind * size_e) ^ (cur_ind < new_ind);
+//checkthat the valuesare in order, indexes can loop
+//so pointer values are checked too
+inline int in_order(char *a, char *b, int (*compare)(void *, void *)) {
+	return compare(a, b) == (a > b);
 }
-
 
 //mergesort
 //inplace merge
@@ -70,21 +71,18 @@ int next_in_order(char *array, uint cur_ind, uint new_ind, int size_e, int (*com
 void merge(char *array, int l_size, int r_size, int size_e, int (*compare)(void *, void *)) {
         uint size = l_size + r_size;
 
-	for(int i = (l_size - 1) * size_e; i > 0; i -= size_e) {
-		//uint new_ind = i * size_e;
-		//swap(array + new_ind, array + new_ind * 2, size_e);
+	for(int i = (l_size - 1) * size_e; i > 0; i -= size_e)
 		swap(array + i, array + i * 2, size_e);
-	}
 
 	//how orig_ind is defined
 	//orig_ind = (new_ind - 1) / 2 + l_size;
-
 	for(uint new_ind = 1, orig_ind = l_size, total = 1;
 	    total < size;
 	    new_ind += 2, ++orig_ind, total += 2) {
 		uint cur_ind = divide_two(orig_ind);
 
-		if(!next_in_order(array, new_ind, cur_ind, size_e, compare))
+		//if(!next_in_order(array, new_ind, cur_ind, size_e, compare))
+		if(!in_order(array + new_ind * size_e, array + cur_ind * size_e, compare))
 			total += swap_cycle(array, new_ind, cur_ind, l_size, size_e);
 	}
 
