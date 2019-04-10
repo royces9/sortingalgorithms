@@ -1,8 +1,7 @@
 #!/usr/bin/python
 
-import os
-import numpy
 import matplotlib.pyplot
+import numpy
 import sys
 
 
