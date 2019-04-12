@@ -36,11 +36,14 @@ void MSDradix(char *array, int size_a, int size_e, uint64_t bit, int (*compare)(
 		int right = size_a - 1;
 		int ind = 0;
 		for(int j = 0; j < size_a - 1; ++j) {
+			ind = compare(&i, array + j * size_e) ? left : right;
+			/*
 			if(compare(&i, array + j * size_e)) {
 				ind = left;
 			} else {
 				ind = right;
 			}
+			*/
 			copy(array + ind * size_e, temp + j * size_e, size_e);
 		}
 
