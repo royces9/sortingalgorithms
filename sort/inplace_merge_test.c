@@ -4,6 +4,15 @@
 typedef unsigned int uint;
 
 
+void insertion_(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
+	for(int i = 1; i < size_a; ++i) {
+		for(int j = i; (j > 0) && compare(array + (j - 1) * size_e, array + j * size_e); --j) {
+			swap(array + (j - 1) * size_e, array + j * size_e, size_e);
+		}
+	}
+}
+
+
 void insertion(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int begin = 0;
 	for(int i = 1; i < size_a; ++i) {
@@ -50,21 +59,6 @@ int in_order(char *a, char *b, int (*compare)(void *, void *)) {
 void merge(char *array, int l_size, int r_size, int size_e, int (*compare)(void *, void *)) {
         uint size = l_size + r_size;
 
-	for(int i = (l_size - 1) * size_e; i > 0; i -= size_e) {
-		swap(array + i, array + i * 2, size_e);
-	}
-
-
-	for(uint new_ind = 1, orig_ind = l_size, total = 1;
-	    total < size;
-	    new_ind += 2, ++orig_ind, total += 2) {
-		uint cur_ind = divide_two(orig_ind);
-
-		if(!in_order(array + new_ind * size_e, array + cur_ind * size_e, compare))
-			total += swap_cycle(array, new_ind, cur_ind, l_size, size_e);
-	}
-
-	insertion(array, size, size_e, compare);
 }
 
 

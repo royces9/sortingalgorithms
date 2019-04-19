@@ -1,8 +1,10 @@
 #include "shuffle.h"
 #include "swap.h"
 
-typedef unsigned int uint;
+//pretty sure this is something like Batcher odd even merge
+//or inplace weave merge? idk
 
+typedef unsigned int uint;
 
 void small(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int log = 0;
@@ -81,7 +83,6 @@ void merge(char *array, int l_size, int r_size, int size_e, int (*compare)(void 
 	    new_ind += 2, ++orig_ind, total += 2) {
 		uint cur_ind = divide_two(orig_ind);
 
-		//if(!next_in_order(array, new_ind, cur_ind, size_e, compare))
 		if(!in_order(array + new_ind * size_e, array + cur_ind * size_e, compare))
 			total += swap_cycle(array, new_ind, cur_ind, l_size, size_e);
 	}
