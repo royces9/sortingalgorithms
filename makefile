@@ -36,25 +36,39 @@ MAINO := $(OBJ)/main.o
 
 all: $(EXE)
 
-%: $(OBJ)/$(SORT)/%.o $(MAINO) $(AUXO) $(COMPO) $(DATAO)
+%: $(OBJ)/$(SORT)/%.o $(MAINO) $(AUXO) $(COMPO) $(DATAO) | $(OBJ)
 	$(CC) $< $(MAINO) $(AUXO) $(COMPO) $(DATAO) -o $@ $(LDFLAGS)
 
-$(OBJ)/$(AUX)/%.o: $(AUX)/%.c $(AUX)/%.h
+$(OBJ)/$(AUX)/%.o: $(AUX)/%.c $(AUX)/%.h | $(OBJ)/$(AUX)
 	$(CC) $(SDLFLAG) $(CFLAGS) -c $< -o $@
 
-$(OBJ)/$(COMP)/%.o: $(COMP)/%.c $(COMP)/%.h
+$(OBJ)/$(COMP)/%.o: $(COMP)/%.c $(COMP)/%.h | $(OBJ)/$(COMP)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ)/$(DATA)/%.o: $(DATA)/%.c $(DATA)/%.h
+$(OBJ)/$(DATA)/%.o: $(DATA)/%.c $(DATA)/%.h | $(OBJ)/$(DATA)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(MAINO): main.c
 	$(CC) $(SDLFLAG) $(CFLAGS) -c $< -o $@
 
 
-$(OBJ)/$(SORT)/%.o: $(SORT)/%.c
+$(OBJ)/$(SORT)/%.o: $(SORT)/%.c | $(OBJ)/$(SORT)
 	$(CC) $(CFLAGS) -c $(SORT)/$(*F).c -o $@
 
+$(OBJ):
+	mkdir $(OBJ)
+
+$(OBJ)/$(COMP): | $(OBJ)
+	mkdir $(OBJ)/$(COMP)
+
+$(OBJ)/$(SORT): | $(OBJ)
+	mkdir $(OBJ)/$(SORT)
+
+$(OBJ)/$(DATA): | $(OBJ)
+	mkdir $(OBJ)/$(DATA)
+
+$(OBJ)/$(AUX): | $(OBJ)
+	mkdir $(OBJ)/$(AUX)
 
 clean:
 	del obj/*/*.d
