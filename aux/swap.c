@@ -32,6 +32,7 @@ void swap(char *a, char *b, int size_e) {
 		++b;
 	}
 
+#ifndef DISP
 	if(flag & 8)
 		printArray(globalArray, globalSize);
 
@@ -41,4 +42,5 @@ void swap(char *a, char *b, int size_e) {
 
 		disp_cont2(tex, cont, ai, bi, globalSize);
 	}
+#endif //DISP
 }

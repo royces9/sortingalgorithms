@@ -1,4 +1,3 @@
-#include "shuffle.h"
 #include "swap.h"
 
 void sort_r(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {

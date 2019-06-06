@@ -1,4 +1,3 @@
-#include "shuffle.h"
 #include "swap.h"
 
 #define SMALL_SIZE 10
@@ -13,12 +12,10 @@ void insertion(char *array, int size_a, int size_e, int (*compare)(void *, void 
 }
 
 void sort_r(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
-
 	if(size_a < SMALL_SIZE) {
 		insertion(array, size_a, size_e, compare);
 		return;
 	}
-
 	int left = 1;
 	int right = size_a - 1;
 
@@ -26,29 +23,34 @@ void sort_r(char *array, int size_a, int size_e, int (*compare)(void *, void *))
 	char *pivot = array + (right / 2) * size_e;
 	char *end = array + right * size_e;
 
-	int comp = compare(array, pivot);
-
-	if(comp ^ compare(pivot, end)) {
-		if(!(compare(array, end) ^ comp))
-			swap(array, end, size_e);
-	} else {
+	if(compare(array, pivot))
 		swap(array, pivot, size_e);
-	}
+
+	if(compare(pivot, end))
+		swap(pivot, end, size_e);
+	else if(compare(array, pivot))
+		swap(array, pivot, size_e);
 	
+	int piv_loc = 0;
 	//partitioning
 	while(right > left) {
-		for(; (right > left) && compare(array + right * size_e, array); --right);
-		for(; (left < right) && compare(array, array + left * size_e); ++left);
+		for(;compare(pivot, array + left * size_e); ++left);
+		for(;compare(array + right * size_e, pivot); --right);
 
+		if(pivot == (array + left * size_e)) {
+			pivot = array + right * size_e;			
+		} else if(pivot == (array + right * size_e)) {
+			pivot = array + left * size_e;
+		}
 		swap(array + left * size_e,
 		     array + right * size_e,
 		     size_e);
-
-		--right;
 	}
 
-	swap(array, array + left * size_e, size_e);
 
+	sort_r(array, piv_loc, size_e, compare);
+	sort_r(array + piv_loc * size_e, size_a - piv_loc, size_e, compare);
+	/*
 	if(left > 2) {
 		sort_r(array, left, size_e, compare);
 	} else if(left == 2) {
@@ -62,6 +64,7 @@ void sort_r(char *array, int size_a, int size_e, int (*compare)(void *, void *))
 		if(compare(array + (left + 1) * size_e, array + (left + 2) * size_e))
 			swap(array + (left + 1) * size_e, array + (left + 2) * size_e, size_e);
 	}
+	*/
 }
 
 

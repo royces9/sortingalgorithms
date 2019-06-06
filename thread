@@ -31,7 +31,7 @@ if __name__ == "__main__":
     right = int(sys.argv[6]);
     stepsize = int(sys.argv[7]);
 
-    step = int((right - left) / stepsize) + 1;
+    step = ((right - left) // stepsize) + 1;
 
     with open(outfile, "w+") as fp:
         for thread_count in numpy.linspace(left, right, step):
