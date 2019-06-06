@@ -12,7 +12,7 @@ void merge(char *array, char *scratch, int left_size, int right_size, int size_e
 	int i = 0;
 	//keeps iterating until one of the sub lists is exhausted of elements
 	for(; (head[1] < total_size) && (head[0] < left_size); ++i) {
-                int index = compare(array + head[0] * size_e, array + head[1] * size_e);
+                int index = compare(array + head[0] * size_e, array + head[1] * size_e) > 0;
 		int src = head[index]++;
 		copy(array + src * size_e, scratch + i * size_e, size_e);
 	}

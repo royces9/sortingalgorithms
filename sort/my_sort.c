@@ -14,7 +14,7 @@ struct queue{
 
 void init_queue(char *array, struct queue *qq, int size_e, int (*compare)(void *, void *)) {
 	qq->occ = 1;
-	if(compare(array, array + size_e)) {
+	if(compare(array, array + size_e) > 0) {
 		copy(array,          qq->array, size_e);
 		copy(array + size_e, qq->array + qq->right * size_e, size_e);
 	} else {
@@ -26,11 +26,11 @@ void init_queue(char *array, struct queue *qq, int size_e, int (*compare)(void *
 
 int append_queue(struct queue *qq, void *value, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int out = 0;
-	if(compare(value, qq->array + qq->left * size_e)) {
+	if(compare(value, qq->array + qq->left * size_e) > 0) {
 		copy(value, qq->array + ++qq->left * size_e, size_e);
 		out = 1;
 		qq->occ = 1;
-	} else if(compare(qq->array + qq->right * size_e, value)){
+	} else if(compare(qq->array + qq->right * size_e, value) > 0){
 		copy(value, qq->array + --qq->right * size_e, size_e);
 		out = 2;
 		qq->occ = 1;
@@ -55,7 +55,9 @@ void merge(char *array, int size, int size2, int size_e, int (*compare)(void *, 
 		} else if(head[0] >= size) {
 			src = head[1]++;
 		} else {
-			src = head[compare(array + head[0] * size_e, array + head[1] * size_e)]++;
+			int ind = compare(array + head[0] * size_e, array + head[1] * size_e) > 0;
+			src = head[ind];
+			++head[ind];
 		}
 
 		copy(array + src * size_e, combinedArray + i * size_e, size_e);

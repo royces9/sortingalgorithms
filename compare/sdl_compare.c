@@ -14,5 +14,5 @@ int sdl_compare(void *a, void *b) {
 	int ai = (ar - cont);
 	int bi = (br - cont);
 	change_colour(tex, cont, ai, bi, globalSize);
-	return ar->val > br->val;
+	return ar->val - br->val;
 }

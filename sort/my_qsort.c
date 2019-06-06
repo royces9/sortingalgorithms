@@ -5,7 +5,7 @@
 
 void insertion(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	for(int i = 1; i < size_a; ++i) {
-		for(int j = i; (j > 0) && compare(array + (j - 1) * size_e, array + j * size_e); --j) {
+		for(int j = i; (j > 0) && (compare(array + (j - 1) * size_e, array + j * size_e) > 0); --j) {
 			swap(array + (j - 1) * size_e, array + j * size_e, size_e);
 		}
 	}
@@ -23,19 +23,19 @@ void sort_r(char *array, int size_a, int size_e, int (*compare)(void *, void *))
 	char *pivot = array + (right / 2) * size_e;
 	char *end = array + right * size_e;
 
-	if(compare(array, pivot))
+	if(compare(array, pivot) > 0)
 		swap(array, pivot, size_e);
 
-	if(compare(pivot, end))
+	if(compare(pivot, end) > 0)
 		swap(pivot, end, size_e);
-	else if(compare(array, pivot))
+	else if(compare(array, pivot) > 0)
 		swap(array, pivot, size_e);
 	
 	int piv_loc = 0;
 	//partitioning
 	while(right > left) {
-		for(;compare(pivot, array + left * size_e); ++left);
-		for(;compare(array + right * size_e, pivot); --right);
+		for(;compare(pivot, array + left * size_e) > 0; ++left);
+		for(;compare(array + right * size_e, pivot) > 0; --right);
 
 		if(pivot == (array + left * size_e)) {
 			pivot = array + right * size_e;			

@@ -16,7 +16,7 @@ void small(char *array, int size_a, int size_e, int (*compare)(void *, void *)) 
 	
 	for(int gap = log + 1; gap > 1; gap -= 2) {
 		for(int i = size_a - 1; i >= gap; --i) {
-			if(compare(array + (i - gap) * size_e, array + i * size_e)) {
+			if(compare(array + (i - gap) * size_e, array + i * size_e) > 0) {
 				swap(array + (i - gap) * size_e, array + i * size_e, size_e);
 			}
 		}
@@ -27,8 +27,8 @@ void small(char *array, int size_a, int size_e, int (*compare)(void *, void *)) 
 void insertion(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	int begin = 0;
 	for(int i = 1; i < size_a; ++i) {
-		if(compare(array + (i - 1) * size_e, array + i * size_e)) {
-			for(; compare(array + i * size_e, array + begin * size_e) && (begin < size_a); ++begin);
+		if(compare(array + (i - 1) * size_e, array + i * size_e) > 0) {
+			for(; (compare(array + i * size_e, array + begin * size_e) > 0) && (begin < size_a); ++begin);
 
 			for(int k = i; k > begin; --k) {
 				swap(array + (k - 1) * size_e, array + k * size_e, size_e);
@@ -63,7 +63,7 @@ int swap_cycle(char *array, uint start_ind, uint cur_ind, uint l_size, int size_
 //checkthat the valuesare in order, indexes can loop
 //so pointer values are checked too
 inline int in_order(char *a, char *b, int (*compare)(void *, void *)) {
-	return compare(a, b) == (a > b);
+	return (compare(a, b) > 0) == (a > b);
 }
 
 //mergesort

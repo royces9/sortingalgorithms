@@ -19,6 +19,6 @@ void sort(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
 	if(size_a > 2)
 		swap(array + 2 * size_e, array, size_e);
 
-	if(compare(array, array + size_e))
+	if(compare(array, array + size_e) > 0)
 		swap(array + size_e, array, size_e);
 }

@@ -70,7 +70,7 @@ void merge_all(char *array, char *scratch,
 		if(count > 2) {
 			sink_heap((char *)heap, count, sizeof(*heap), heap_comp);
 		} else if(count == 2) {
-			if(compare(heap[0].array, heap[1].array)) {
+			if(compare(heap[0].array, heap[1].array) > 0) {
 				swap((char *)heap, (char *)(heap + 1), sizeof(*heap));
 			}
 		}
@@ -89,7 +89,7 @@ void merge(char *array, char *scratch, int left_size, int right_size, int size_e
 
         int i = 0;
 	for(; (head[1] < total_size) && (head[0] < left_size); ++i) {
-		int index = compare(array + head[0] * size_e, array + head[1] * size_e);
+		int index = compare(array + head[0] * size_e, array + head[1] * size_e) > 0;
 		int src = head[index]++;
 		copy(array + src * size_e, scratch + i * size_e, size_e);
 	}

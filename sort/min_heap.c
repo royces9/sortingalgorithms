@@ -10,7 +10,7 @@
 int (*g_comp)(void *, void *);
 
 int heap_compare(void *a, void *b) {
-	return !g_comp(a, b);
+	return -g_comp(a, b);
 }
 
 void sort(char *array, int size_a, int size_e, int (*compare)(void *, void *)) {
