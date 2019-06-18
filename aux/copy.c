@@ -28,6 +28,8 @@ void copy(char *src, char *dest, int size_e) {
 		++src;
 	}
 
+#ifdef DISP
         if(flag & 16)
 		disp_cont(tex, cont, globalSize);
+#endif //DISP
 }
