@@ -32,7 +32,7 @@ void swap(char *a, char *b, int size_e) {
 		++b;
 	}
 
-#ifndef DISP
+#ifdef DISP
 	if(flag & 8)
 		printArray(globalArray, globalSize);
 
