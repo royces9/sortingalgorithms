@@ -183,7 +183,7 @@ void print_flags(void) {
 int *make_array(int argc, char **argv, int *size, int **extra, int *flag, unsigned int *type) {
 	if(argc > 1) {
 		for(int i = 1; i < argc; i += 2) {
-			switch(*(argv[i] + 1)) {
+			switch(argv[i][1]) {
 			case 'f':
 				*flag = atoi(argv[i + 1]);
 				break;

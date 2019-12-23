@@ -44,14 +44,13 @@ void MSDradix(char *array, int size_a, int size_e, uint64_t bit, int (*compare)(
 		MSDradix(array, left, size_e, bit >> 1, compare);
 		MSDradix(array + left * size_e, size_a - left, size_e, bit >> 1, compare);
 	}
-	printf("%u\n", bit);
+
 	return;
 
 	char *temp = malloc(size_a * size_e);
 	for(uint64_t i = bit; i > 0; i >>= 1) {
 		int left = 0;
 		int right = size_a - 1;
-		int ind = 0;
 		for(int j = 0; j < size_a; ++j) {
 			//ind = compare(&i, array + j * size_e) ? left : right;
 			if(compare(&i, array + j * size_e)) {

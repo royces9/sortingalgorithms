@@ -2,6 +2,7 @@
 
 import subprocess
 import sys
+import time
 
 def compare_sorts(algorithms, count, size):
     avg = [0] * len(algorithms);
@@ -23,7 +24,6 @@ if __name__ == "__main__":
     length = len(sys.argv);
     if(length == 1):
         sys.exit('./comp list_count list_size alg1 alg2 ... algn');
-
 
     algorithms = sys.argv[3:length];
 
